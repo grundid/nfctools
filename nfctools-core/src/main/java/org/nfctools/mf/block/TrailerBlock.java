@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Adrian Stabiszewski, as@nfctools.org
+ * Copyright 2011-2012 Adrian Stabiszewski, as@nfctools.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.nfctools.mf.block;
 
 import org.nfctools.mf.Key;
