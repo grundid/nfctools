@@ -15,12 +15,14 @@
  */
 package org.nfctools.ndef.mime;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+
+import org.nfctools.ndef.NdefConstants;
 
 public class TextMimeRecord extends MimeRecord {
 
-	private static final String DEFAULT_ENCODING = "utf8";
 	private String content;
+	private Charset encoding = NdefConstants.DEFAULT_CHARSET;
 
 	public TextMimeRecord(String contentType, String content) {
 		super(contentType);
@@ -29,12 +31,7 @@ public class TextMimeRecord extends MimeRecord {
 
 	public TextMimeRecord(String contentType, byte[] content) {
 		super(contentType);
-		try {
-			this.content = new String(content, DEFAULT_ENCODING);
-		}
-		catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		this.content = new String(content, encoding);
 	}
 
 	public String getContent() {
@@ -47,12 +44,7 @@ public class TextMimeRecord extends MimeRecord {
 
 	@Override
 	public byte[] getContentAsBytes() {
-		try {
-			return content.getBytes(DEFAULT_ENCODING);
-		}
-		catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		return content.getBytes(encoding);
 	}
 
 	@Override

@@ -15,6 +15,8 @@
  */
 package org.nfctools.ndef;
 
+import java.nio.charset.Charset;
+
 public class NdefConstants {
 
 	/**
@@ -62,5 +64,8 @@ public class NdefConstants {
 	public static final short TNF_EXTERNAL_TYPE = 4;
 	public static final short TNF_UNKNOWN = 5;
 	public static final short TNF_UNCHANGED = 6;
+
+	public static final Charset UTF_8_CHARSET = Charset.forName("UTF-8");
+	public static final Charset DEFAULT_CHARSET = Charset.forName("US-ASCII"); // http://www.ietf.org/rfc/rfc2046.txt point 4.1.2
 
 }
