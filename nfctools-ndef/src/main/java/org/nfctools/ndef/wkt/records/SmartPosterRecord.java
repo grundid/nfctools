@@ -25,6 +25,15 @@ public class SmartPosterRecord extends Record {
 	private UriRecord uri;
 	private ActionRecord action;
 
+	public SmartPosterRecord(TextRecord title, UriRecord uri, ActionRecord action) {
+		this.title = title;
+		this.uri = uri;
+		this.action = action;
+	}
+	
+	public SmartPosterRecord() {
+	}
+
 	public TextRecord getTitle() {
 		return title;
 	}
@@ -53,4 +62,43 @@ public class SmartPosterRecord extends Record {
 	public String toString() {
 		return "SmartPoster: [" + getTitle() + ", " + getUri() + ", " + getAction() + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SmartPosterRecord other = (SmartPosterRecord) obj;
+		if (action == null) {
+			if (other.action != null)
+				return false;
+		} else if (!action.equals(other.action))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (uri == null) {
+			if (other.uri != null)
+				return false;
+		} else if (!uri.equals(other.uri))
+			return false;
+		return true;
+	}
+	
+	
 }

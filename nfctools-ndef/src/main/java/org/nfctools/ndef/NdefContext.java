@@ -79,8 +79,8 @@ public class NdefContext {
 		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverSelectRecordDecoder());
 
 		// external type decoders
-		ndefRecordDecoder.addWellKnownRecordDecoder(new AndroidApplicationRecordDecoder());
-		ndefRecordDecoder.addWellKnownRecordDecoder(new ExternalTypeDecoder()); // catch all external type
+		ndefRecordDecoder.addExternalRecordDecoder(new AndroidApplicationRecordDecoder());
+		ndefRecordDecoder.addExternalRecordDecoder(new ExternalTypeDecoder()); // catch all external type
 
 		// encoders
 		ndefRecordEncoder.addRecordEncoder(new EmptyRecordEncoder());

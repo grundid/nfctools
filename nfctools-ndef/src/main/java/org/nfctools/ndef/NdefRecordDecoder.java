@@ -58,7 +58,7 @@ public class NdefRecordDecoder {
 				
 			case NdefConstants.TNF_MIME_MEDIA: {
 				if(mimeRecordDecoder.canDecode(ndefRecord)) {
-					return handleMimeMediaType(ndefRecord, messageDecoder);
+					return mimeRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
 				}
 				break;
 			}

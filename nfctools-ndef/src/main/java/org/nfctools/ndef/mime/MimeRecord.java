@@ -21,6 +21,9 @@ public abstract class MimeRecord extends Record {
 
 	protected String contentType;
 
+	public MimeRecord() {
+	}
+	
 	protected MimeRecord(String contentType) {
 		this.contentType = contentType;
 	}

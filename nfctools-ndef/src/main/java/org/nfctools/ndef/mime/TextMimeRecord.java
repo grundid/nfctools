@@ -22,16 +22,49 @@ import org.nfctools.ndef.NdefConstants;
 public class TextMimeRecord extends MimeRecord {
 
 	private String content;
-	private Charset encoding = NdefConstants.DEFAULT_CHARSET;
+	private Charset charset = NdefConstants.DEFAULT_CHARSET;
 
 	public TextMimeRecord(String contentType, String content) {
 		super(contentType);
+		
+		this.charset = extractContentTypeCharset();
+		
 		this.content = content;
 	}
 
 	public TextMimeRecord(String contentType, byte[] content) {
 		super(contentType);
-		this.content = new String(content, encoding);
+		
+		this.charset = extractContentTypeCharset();
+		
+		this.content = new String(content, charset);
+	}
+
+	public Charset extractContentTypeCharset() {
+		int index = contentType.indexOf(';');
+		
+		if(index != -1) {
+			// check for charset=
+			int charsetIndex = contentType.indexOf("charset=", index);
+			if(charsetIndex != -1) {
+				int charsetEndIndex = contentType.indexOf(';', charsetIndex + 8);
+				
+				if(charsetEndIndex == -1) {
+					return Charset.forName(contentType.substring(charsetIndex + 8));
+				} else {
+					return Charset.forName(contentType.substring(charsetIndex + 8, charsetEndIndex).trim());
+				}
+			}
+		}
+		return NdefConstants.DEFAULT_CHARSET;
+	}
+
+	public Charset getCharset() {
+		return charset;
+	}
+
+	public void setCharset(Charset charset) {
+		this.charset = charset;
 	}
 
 	public String getContent() {
@@ -44,12 +77,45 @@ public class TextMimeRecord extends MimeRecord {
 
 	@Override
 	public byte[] getContentAsBytes() {
-		return content.getBytes(encoding);
+		return content.getBytes(charset);
 	}
 
 	@Override
 	public String toString() {
-		return "Content-Type: " + contentType + "; Content: [" + getContent() + "]";
+		return "Content-Type: " + contentType + "; Charset: " + charset + "; Content: [" + getContent() + "]";
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((charset == null) ? 0 : charset.hashCode());
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TextMimeRecord other = (TextMimeRecord) obj;
+		if (charset == null) {
+			if (other.charset != null)
+				return false;
+		} else if (!charset.equals(other.charset))
+			return false;
+		if (content == null) {
+			if (other.content != null)
+				return false;
+		} else if (!content.equals(other.content))
+			return false;
+		return true;
+	}
+
+
+	
 }
