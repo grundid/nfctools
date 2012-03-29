@@ -33,7 +33,7 @@ public class UnknownRecordEncoder implements RecordEncoder {
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		UnknownRecord unknownRecord = (UnknownRecord)record;
 		
-	    return new NdefRecord(NdefConstants.TNF_UNKNOWN, new byte[]{}, new byte[]{}, new byte[]{});
+	    return new NdefRecord(NdefConstants.TNF_UNKNOWN, NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY);
 
 	}
 	

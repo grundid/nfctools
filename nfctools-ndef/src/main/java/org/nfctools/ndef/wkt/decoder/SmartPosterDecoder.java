@@ -17,6 +17,7 @@ package org.nfctools.ndef.wkt.decoder;
 
 import java.util.List;
 
+import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
@@ -25,10 +26,10 @@ import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
 
-public class SmartPosterDecoder extends AbstractRecordDecoder<SmartPosterRecord> {
+public class SmartPosterDecoder extends AbstractTypeRecordDecoder<SmartPosterRecord> {
 
 	public SmartPosterDecoder() {
-		super(SmartPosterRecord.TYPE);
+		super(NdefConstants.TNF_WELL_KNOWN, SmartPosterRecord.TYPE);
 	}
 
 	@Override

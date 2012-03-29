@@ -23,12 +23,7 @@ import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 public class ExternalTypeDecoder extends AbstractRecordDecoder<ExternalType> {
 
 	public ExternalTypeDecoder() {
-		super(new byte[0]);
-	}
-
-	@Override
-	public boolean canDecode(NdefRecord ndefRecord) {
-		return ndefRecord.getTnf() == NdefConstants.TNF_EXTERNAL_TYPE;
+		super(NdefConstants.TNF_EXTERNAL_TYPE);
 	}
 
 	@Override

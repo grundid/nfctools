@@ -1,19 +1,16 @@
 package org.nfctools.ndef.wkt.decoder;
 
-import java.util.Arrays;
-
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.records.HandoverSelectRecord;
 
-public class HandoverSelectRecordDecoder implements RecordDecoder<HandoverSelectRecord> {
+public class HandoverSelectRecordDecoder extends AbstractTypeRecordDecoder<HandoverSelectRecord> {
 
-	@Override
-	public boolean canDecode(NdefRecord ndefRecord) {
-		return ndefRecord.getTnf() == NdefConstants.TNF_WELL_KNOWN && Arrays.equals(ndefRecord.getType(), HandoverSelectRecord.TYPE);
+	public HandoverSelectRecordDecoder() {
+		super(NdefConstants.TNF_WELL_KNOWN, HandoverSelectRecord.TYPE);
 	}
-
+	
 	@Override
 	public HandoverSelectRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 

@@ -23,12 +23,7 @@ import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 public class MimeRecordDecoder extends AbstractRecordDecoder<MimeRecord> {
 
 	public MimeRecordDecoder() {
-		super(new byte[0]);
-	}
-
-	@Override
-	public boolean canDecode(NdefRecord ndefRecord) {
-		return ndefRecord.getTnf() == NdefConstants.TNF_MIME_MEDIA;
+		super(NdefConstants.TNF_MIME_MEDIA);
 	}
 
 	@Override
@@ -36,11 +31,11 @@ public class MimeRecordDecoder extends AbstractRecordDecoder<MimeRecord> {
 		String contentType = new String(ndefRecord.getType(), NdefConstants.DEFAULT_CHARSET); // http://www.ietf.org/rfc/rfc2046.txt
 
 		MimeRecord mimeRecord = null;
-		if (contentType.startsWith("text/"))
+		if (contentType.startsWith("text/")) {
 			mimeRecord = new TextMimeRecord(contentType, ndefRecord.getPayload());
-		else
+		} else {
 			mimeRecord = new BinaryMimeRecord(contentType, ndefRecord.getPayload());
-
+		}
 		setIdOnRecord(ndefRecord, mimeRecord);
 		return mimeRecord;
 	}

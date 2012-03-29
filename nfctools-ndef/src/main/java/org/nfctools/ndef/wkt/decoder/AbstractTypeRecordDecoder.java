@@ -15,29 +15,25 @@
  */
 package org.nfctools.ndef.wkt.decoder;
 
-import java.util.List;
-
-import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
-import org.nfctools.ndef.wkt.records.GcDataRecord;
+import org.nfctools.ndef.RecordUtils;
 
-public class GcDataRecordDecoder extends AbstractTypeRecordDecoder<GcDataRecord> {
+public abstract class AbstractTypeRecordDecoder<T extends Record> extends AbstractRecordDecoder<T> {
 
-	public GcDataRecordDecoder() {
-		super(NdefConstants.TNF_WELL_KNOWN, GcDataRecord.TYPE);
+	private byte[] type;
+
+	protected AbstractTypeRecordDecoder(int tnf, byte[] type) {
+		super(tnf);
+		this.type = type;
 	}
 
 	@Override
-	public GcDataRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		GcDataRecord dataRecord = new GcDataRecord();
+	public boolean canDecode(NdefRecord ndefRecord) {
+		return super.canDecode(ndefRecord) && RecordUtils.isEqualArray(ndefRecord.getType(), type);
+	}
 
-		List<Record> records = messageDecoder.decodeToRecords(ndefRecord.getPayload());
-		for (Record record : records) {
-			dataRecord.add(record);
-		}
-		setIdOnRecord(ndefRecord, dataRecord);
-		return dataRecord;
+	protected void setIdOnRecord(NdefRecord ndefRecord, Record record) {
+		record.setId(ndefRecord.getId());
 	}
 }

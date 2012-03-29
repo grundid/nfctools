@@ -17,6 +17,7 @@ package org.nfctools.ndef.wkt.decoder;
 
 import java.util.List;
 
+import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessage;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
@@ -26,10 +27,10 @@ import org.nfctools.ndef.wkt.records.GcDataRecord;
 import org.nfctools.ndef.wkt.records.GcTargetRecord;
 import org.nfctools.ndef.wkt.records.GenericControlRecord;
 
-public class GenericControlRecordDecoder extends AbstractRecordDecoder<GenericControlRecord> {
+public class GenericControlRecordDecoder extends AbstractTypeRecordDecoder<GenericControlRecord> {
 
 	public GenericControlRecordDecoder() {
-		super(GenericControlRecord.TYPE);
+		super(NdefConstants.TNF_WELL_KNOWN, GenericControlRecord.TYPE);
 	}
 
 	@Override

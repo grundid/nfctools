@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.ext;
-
-import java.nio.charset.Charset;
+package org.nfctools.ndef.reserved;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.wkt.decoder.AbstractTypeRecordDecoder;
+import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.encoder.RecordEncoder;
 
-public class AndroidApplicationRecordDecoder extends AbstractTypeRecordDecoder<AndroidApplicationRecord> {
-    
-	public AndroidApplicationRecordDecoder() {
-		super(NdefConstants.TNF_EXTERNAL_TYPE, AndroidApplicationRecord.TYPE);
+public class ReservedRecordEncoder implements RecordEncoder {
+
+	@Override
+	public boolean canEncode(Record record) {
+		return record instanceof ReservedRecord;
+	}
+
+	@Override
+	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+		ReservedRecord reservedRecord = (ReservedRecord)record;
+		
+	    return new NdefRecord(NdefConstants.TNF_RESERVED, NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY);
+
 	}
 	
-	@Override
-	public AndroidApplicationRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		 String packageName = new String(ndefRecord.getPayload(), Charset.forName("US-ASCII"));
-		
-		return new AndroidApplicationRecord(packageName);
-	}
 }

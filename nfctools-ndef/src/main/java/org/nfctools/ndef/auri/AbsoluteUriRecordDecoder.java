@@ -5,13 +5,12 @@ import java.nio.charset.Charset;
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.wkt.decoder.RecordDecoder;
+import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 
-public class AbsoluteUriRecordDecoder implements RecordDecoder<AbsoluteUriRecord> {
+public class AbsoluteUriRecordDecoder extends AbstractRecordDecoder<AbsoluteUriRecord> {
 
-	@Override
-	public boolean canDecode(NdefRecord ndefRecord) {
-		return ndefRecord.getTnf() == NdefConstants.TNF_ABSOLUTE_URI;
+	public AbsoluteUriRecordDecoder() {
+		super(NdefConstants.TNF_ABSOLUTE_URI);
 	}
 
 	@Override
