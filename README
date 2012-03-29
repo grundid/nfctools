@@ -1,0 +1,11 @@
+== NFC Tools for Java ==
+
+NFCTools is a collection of libraries and tools for NFC in Java. 
+The targeted devices are desktop Reader/Writer and Android smart phones. 
+
+Most functions in the library have been tested with a 
+Nexus S running ICS and a ACR 122 USB NFC dektop reader.
+
+The NDEF tag functions work with Mifare classic 1K and 4K cards.
+
+Please help support other tags and devices.
