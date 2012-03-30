@@ -16,13 +16,12 @@
 
 package org.nfctools.ndef.auri;
 
-import java.nio.charset.Charset;
-
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
+import org.nfctools.ndef.wkt.records.UriRecord;
 
 public class AbsoluteUriRecordEncoder implements RecordEncoder {
 
@@ -36,6 +35,6 @@ public class AbsoluteUriRecordEncoder implements RecordEncoder {
 
 		AbsoluteUriRecord absoluteUriRecord = (AbsoluteUriRecord)record;
 		
-	    return new NdefRecord(NdefConstants.TNF_ABSOLUTE_URI, NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY, absoluteUriRecord.getUri().getBytes(Charset.forName("US-ASCII")));
+	    return new NdefRecord(NdefConstants.TNF_ABSOLUTE_URI, UriRecord.TYPE, NdefConstants.EMPTY_BYTE_ARRAY, absoluteUriRecord.getUri().getBytes(NdefConstants.DEFAULT_CHARSET));
 	}
 }

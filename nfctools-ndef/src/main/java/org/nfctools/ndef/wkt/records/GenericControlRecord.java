@@ -91,4 +91,16 @@ public class GenericControlRecord extends Record {
 		return "GenericControl: [" + getTarget() + ", " + getAction() + ", " + getData() + "]";
 	}
 
+	public boolean hasTarget() {
+		return target != null;
+	}
+
+	public boolean hasAction() {
+		return action != null;
+	}
+
+	public boolean hasData() {
+		return data != null;
+	}
+
 }

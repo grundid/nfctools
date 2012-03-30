@@ -64,6 +64,10 @@ public class ActionRecord extends Record {
 			return false;
 		return true;
 	}
+
+	public boolean hasAction() {
+		return action != null;
+	}
 	
 
 }

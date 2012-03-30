@@ -37,4 +37,8 @@ public abstract class MimeRecord extends Record {
 	}
 
 	public abstract byte[] getContentAsBytes();
+
+	public boolean hasContentType() {
+		return contentType != null;
+	}
 }

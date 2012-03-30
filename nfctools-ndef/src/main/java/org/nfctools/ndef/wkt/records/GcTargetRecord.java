@@ -43,4 +43,8 @@ public class GcTargetRecord extends Record {
 	public String toString() {
 		return "Target: [" + targetIdentifier + "]";
 	}
+
+	public boolean hasTargetIdentifier() {
+		return targetIdentifier != null;
+	}
 }

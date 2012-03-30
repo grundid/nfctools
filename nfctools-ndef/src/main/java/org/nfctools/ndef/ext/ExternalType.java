@@ -47,4 +47,13 @@ public class ExternalType extends Record {
 	public String toString() {
 		return "Namespace: [" + namespace + "] Content: [" + content + "]";
 	}
+
+	public boolean hasNamespace() {
+		return namespace != null;
+	}
+	
+	public boolean hasContent() {
+		return content != null;
+	}
+
 }

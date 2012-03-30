@@ -133,6 +133,18 @@ public class TextRecord extends Record {
 			return false;
 		return true;
 	}
+
+	public boolean hasText() {
+		return text != null;
+	}
+
+	public boolean hasLocale() {
+		return locale != null;
+	}
+
+	public boolean hasEncoding() {
+		return encoding != null;
+	}
 	
 	
 }

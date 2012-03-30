@@ -73,6 +73,10 @@ public class UriRecord extends Record {
 			return false;
 		return true;
 	}
+
+	public boolean hasURI() {
+		return uri != null;
+	}
 	
 	
 }

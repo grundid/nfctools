@@ -17,11 +17,11 @@
 
 package org.nfctools.ndef.decoder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.UriRecordDecoder;

@@ -99,6 +99,18 @@ public class SmartPosterRecord extends Record {
 			return false;
 		return true;
 	}
+
+	public boolean hasTitle() {
+		return title != null;
+	}
+
+	public boolean hasURI() {
+		return uri != null;
+	}
+
+	public boolean hasAction() {
+		return action != null;
+	}
 	
 	
 }
