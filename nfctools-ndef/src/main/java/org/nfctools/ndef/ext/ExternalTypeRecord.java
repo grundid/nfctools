@@ -17,14 +17,17 @@ package org.nfctools.ndef.ext;
 
 import org.nfctools.ndef.Record;
 
-public class ExternalType extends Record {
+public class ExternalTypeRecord extends Record {
 
 	private String namespace;
 	private String content;
 
-	public ExternalType(String namespace, String content) {
+	public ExternalTypeRecord(String namespace, String content) {
 		this.namespace = namespace;
 		this.content = content;
+	}
+
+	public ExternalTypeRecord() {
 	}
 
 	public String getNamespace() {

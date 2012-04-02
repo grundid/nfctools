@@ -33,16 +33,23 @@ public class GcActionRecord extends Record {
 		this.action = action;
 	}
 
+	public GcActionRecord() {
+	}
+
 	public boolean hasActionRecord() {
 		return actionRecord != null;
 	}
 
 	public boolean hasAction() {
-		return actionRecord == null;
+		return action != null;
 	}
 
 	public Action getAction() {
 		return action;
+	}
+
+	public void setActionRecord(Record actionRecord) {
+		this.actionRecord = actionRecord;
 	}
 
 	public Record getActionRecord() {
@@ -52,5 +59,9 @@ public class GcActionRecord extends Record {
 	@Override
 	public String toString() {
 		return "Action: [" + (hasActionRecord() ? getActionRecord() : getAction()) + "]";
+	}
+
+	public void setAction(Action action) {
+		this.action = action;
 	}
 }

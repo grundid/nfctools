@@ -27,12 +27,19 @@ public class GcTargetRecord extends Record {
 		setTargetIdentifier(targetIdentifier);
 	}
 
+	public GcTargetRecord() {
+	}
+
 	public void setTargetIdentifier(Record targetIdentifier) {
-		if ((targetIdentifier instanceof UriRecord) || (targetIdentifier instanceof TextRecord))
-			this.targetIdentifier = targetIdentifier;
-		else
-			throw new IllegalArgumentException(targetIdentifier.getClass().getName()
-					+ " not supported as target identifier");
+		if(targetIdentifier != null) {
+			if ((targetIdentifier instanceof UriRecord) || (targetIdentifier instanceof TextRecord))
+				this.targetIdentifier = targetIdentifier;
+			else
+				throw new IllegalArgumentException(targetIdentifier.getClass().getName()
+						+ " not supported as target identifier");
+		} else {
+			this.targetIdentifier = null;
+		}
 	}
 
 	public Record getTargetIdentifier() {

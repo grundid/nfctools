@@ -38,6 +38,9 @@ public class GenericControlRecord extends Record {
 		this.configurationByte = configurationByte;
 	}
 
+	public GenericControlRecord() {
+	}
+
 	public void setConfigurationByte(byte configurationByte) {
 		this.configurationByte = configurationByte;
 	}

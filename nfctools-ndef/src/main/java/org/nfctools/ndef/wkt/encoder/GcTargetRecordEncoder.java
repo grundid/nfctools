@@ -30,7 +30,11 @@ public class GcTargetRecordEncoder implements RecordEncoder {
 
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		byte[] payload = messageEncoder.encodeSingle(((GcTargetRecord)record).getTargetIdentifier());
+		GcTargetRecord gcTargetRecord = (GcTargetRecord)record;
+		if(!gcTargetRecord.hasTargetIdentifier()) {
+			throw new IllegalArgumentException(record.getClass().getSimpleName() + " must have target identifier");
+		}
+		byte[] payload = messageEncoder.encodeSingle(gcTargetRecord.getTargetIdentifier());
 		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, GcTargetRecord.TYPE, record.getId(), payload);
 	}
 }
