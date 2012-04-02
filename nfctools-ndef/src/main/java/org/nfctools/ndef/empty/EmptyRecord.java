@@ -8,6 +8,10 @@ import org.nfctools.ndef.Record;
 
 public class EmptyRecord extends Record {
 	
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
