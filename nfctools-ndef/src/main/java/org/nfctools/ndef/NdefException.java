@@ -19,6 +19,8 @@ import java.io.IOException;
 
 public class NdefException extends IOException {
 
+	private static final long serialVersionUID = 1L;
+
 	public NdefException(String message) {
 		super(message);
 	}

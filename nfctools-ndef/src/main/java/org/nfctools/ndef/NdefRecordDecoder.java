@@ -107,15 +107,6 @@ public class NdefRecordDecoder {
 		throw new IllegalArgumentException("Unsupported NDEF record type [" + new String(ndefRecord.getType()) + "]");
 	}
 
-	private Record handleMimeMediaType(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		for (RecordDecoder<? extends Record> decoder : wellKnownRecordDecoders) {
-			if (decoder.canDecode(ndefRecord)) {
-				return decoder.decodeRecord(ndefRecord, messageDecoder);
-			}
-		}
-		throw new IllegalArgumentException("Unsupported NDEF record type [" + new String(ndefRecord.getType()) + "]");
-	}
-
 	private Record handleWellKnownRecordType(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		for (RecordDecoder<? extends Record> decoder : wellKnownRecordDecoders) {
 			if (decoder.canDecode(ndefRecord)) {

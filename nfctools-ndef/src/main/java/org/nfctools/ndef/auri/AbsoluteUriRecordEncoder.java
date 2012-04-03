@@ -23,6 +23,12 @@ import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
 import org.nfctools.ndef.wkt.records.UriRecord;
 
+/**
+ * 
+ * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
+ *
+ */
+
 public class AbsoluteUriRecordEncoder implements RecordEncoder {
 
 	@Override

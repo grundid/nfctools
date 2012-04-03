@@ -22,6 +22,12 @@ import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.records.HandoverCarrierRecord;
 
+/**
+ * 
+ * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
+ *
+ */
+
 public class HandoverCarrierRecordEncoder implements RecordEncoder {
 
 	@Override

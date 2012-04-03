@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * 
  */
 
 package org.nfctools.ndef.auri;
@@ -19,7 +20,11 @@ package org.nfctools.ndef.auri;
 import org.nfctools.ndef.Record;
 
 /**
- * @model
+ * 
+ * Absolute URI Record
+ * 
+ * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
+ *
  */
 
 public class AbsoluteUriRecord extends Record {
