@@ -20,15 +20,16 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
+import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.RecordUtils;
 import org.nfctools.ndef.wkt.records.TextRecord;
 
-public class TextRecordDecoder extends AbstractRecordDecoder<TextRecord> {
+public class TextRecordDecoder extends AbstractTypeRecordDecoder<TextRecord> {
 
 	public TextRecordDecoder() {
-		super(TextRecord.TYPE);
+		super(NdefConstants.TNF_WELL_KNOWN, TextRecord.TYPE);
 	}
 
 	// TODO ignore BOM for UTF-16 (BE) 	FE FF

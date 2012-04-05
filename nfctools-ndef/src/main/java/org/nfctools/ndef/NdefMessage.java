@@ -15,7 +15,6 @@
  */
 package org.nfctools.ndef;
 
-@SuppressWarnings("unused")
 public class NdefMessage {
 
 	private NdefRecord[] ndefRecords;

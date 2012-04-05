@@ -38,6 +38,9 @@ public class GenericControlRecord extends Record {
 		this.configurationByte = configurationByte;
 	}
 
+	public GenericControlRecord() {
+	}
+
 	public void setConfigurationByte(byte configurationByte) {
 		this.configurationByte = configurationByte;
 	}
@@ -89,6 +92,18 @@ public class GenericControlRecord extends Record {
 	@Override
 	public String toString() {
 		return "GenericControl: [" + getTarget() + ", " + getAction() + ", " + getData() + "]";
+	}
+
+	public boolean hasTarget() {
+		return target != null;
+	}
+
+	public boolean hasAction() {
+		return action != null;
+	}
+
+	public boolean hasData() {
+		return data != null;
 	}
 
 }

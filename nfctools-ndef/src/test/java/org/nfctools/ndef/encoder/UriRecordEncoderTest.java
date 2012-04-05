@@ -15,11 +15,12 @@
  */
 package org.nfctools.ndef.encoder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;

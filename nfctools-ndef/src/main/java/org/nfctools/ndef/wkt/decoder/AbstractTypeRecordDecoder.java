@@ -13,38 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nfctools.ndef.ext;
+package org.nfctools.ndef.wkt.decoder;
 
+import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
+import org.nfctools.ndef.RecordUtils;
 
-public class ExternalType extends Record {
+public abstract class AbstractTypeRecordDecoder<T extends Record> extends AbstractRecordDecoder<T> {
 
-	private String namespace;
-	private String content;
+	private byte[] type;
 
-	public ExternalType(String namespace, String content) {
-		this.namespace = namespace;
-		this.content = content;
-	}
-
-	public String getNamespace() {
-		return namespace;
-	}
-
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
+	protected AbstractTypeRecordDecoder(int tnf, byte[] type) {
+		super(tnf);
+		this.type = type;
 	}
 
 	@Override
-	public String toString() {
-		return "Namespace: [" + namespace + "] Content: [" + content + "]";
+	public boolean canDecode(NdefRecord ndefRecord) {
+		return super.canDecode(ndefRecord) && RecordUtils.isEqualArray(ndefRecord.getType(), type);
+	}
+
+	protected void setIdOnRecord(NdefRecord ndefRecord, Record record) {
+		record.setId(ndefRecord.getId());
 	}
 }

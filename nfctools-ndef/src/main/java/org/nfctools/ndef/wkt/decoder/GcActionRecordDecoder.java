@@ -15,16 +15,17 @@
  */
 package org.nfctools.ndef.wkt.decoder;
 
+import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
 
-public class GcActionRecordDecoder extends AbstractRecordDecoder<GcActionRecord> {
+public class GcActionRecordDecoder extends AbstractTypeRecordDecoder<GcActionRecord> {
 
 	public GcActionRecordDecoder() {
-		super(GcActionRecord.TYPE);
+		super(NdefConstants.TNF_WELL_KNOWN, GcActionRecord.TYPE);
 	}
 
 	@Override

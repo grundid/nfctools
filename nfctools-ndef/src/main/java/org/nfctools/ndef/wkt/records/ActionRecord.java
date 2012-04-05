@@ -27,6 +27,9 @@ public class ActionRecord extends Record {
 		this.action = action;
 	}
 
+	public ActionRecord() {
+	}
+
 	public Action getAction() {
 		return action;
 	}
@@ -35,4 +38,36 @@ public class ActionRecord extends Record {
 	public String toString() {
 		return "Action: " + action;
 	}
+
+	public void setAction(Action action) {
+		this.action = action;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ActionRecord other = (ActionRecord) obj;
+		if (action != other.action)
+			return false;
+		return true;
+	}
+
+	public boolean hasAction() {
+		return action != null;
+	}
+	
+
 }

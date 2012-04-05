@@ -31,7 +31,7 @@ public class NdefRecordEncoder {
 				return encoder.encodeRecord(record, messageEncoder);
 			}
 		}
-		throw new RuntimeException("unsupported record [" + record.getClass().getName() + "]");
+		throw new IllegalArgumentException("Unsupported record [" + record.getClass().getName() + "]");
 	}
 
 	public void addRecordEncoder(RecordEncoder recordEncoder) {

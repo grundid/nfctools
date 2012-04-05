@@ -58,4 +58,8 @@ public class GcDataRecord extends Record {
 		return sb.toString();
 	}
 
+	public void remove(Record record) {
+		records.remove(record);
+	}
+
 }

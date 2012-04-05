@@ -25,12 +25,12 @@ public class ExternalTypeEncoder implements RecordEncoder {
 
 	@Override
 	public boolean canEncode(Record record) {
-		return record instanceof ExternalType;
+		return record instanceof ExternalTypeRecord;
 	}
 
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		ExternalType externalType = (ExternalType)record;
+		ExternalTypeRecord externalType = (ExternalTypeRecord)record;
 		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, externalType.getNamespace().getBytes(), record.getId(),
 				externalType.getContent().getBytes());
 	}

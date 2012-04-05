@@ -15,7 +15,7 @@
  */
 package org.nfctools.ndef.encoder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.Charset;
 import java.util.Locale;

@@ -53,7 +53,7 @@ public class NdefMessageDecoder {
 		if (records.size() == 1)
 			return (T)records.get(0);
 		else
-			throw new RuntimeException("expected one record in payload but found: " + records.size());
+			throw new IllegalArgumentException("expected one record in payload but found: " + records.size());
 	}
 
 	public NdefMessage decode(byte[] ndefMessage) {

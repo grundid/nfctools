@@ -17,15 +17,16 @@ package org.nfctools.ndef.wkt.decoder;
 
 import java.util.List;
 
+import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.records.GcDataRecord;
 
-public class GcDataRecordDecoder extends AbstractRecordDecoder<GcDataRecord> {
+public class GcDataRecordDecoder extends AbstractTypeRecordDecoder<GcDataRecord> {
 
 	public GcDataRecordDecoder() {
-		super(GcDataRecord.TYPE);
+		super(NdefConstants.TNF_WELL_KNOWN, GcDataRecord.TYPE);
 	}
 
 	@Override
