@@ -34,10 +34,10 @@ public class CardResolver {
 			AcsConnectionToken connectionToken = new AcsConnectionToken(card);
 
 			switch (historicalBytes[10]) {
-			case 1:
-				return new MfCard1k(new byte[0], connectionToken);
-			case 2:
-				return new MfCard4k(new byte[0], connectionToken);
+				case 1:
+					return new MfCard1k(new byte[0], connectionToken);
+				case 2:
+					return new MfCard4k(new byte[0], connectionToken);
 			}
 		}
 
