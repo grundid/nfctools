@@ -75,7 +75,7 @@
 	</distributionManagement>
 
 	<scm>
-		<developerConnection>scm:git:ssh://git@github.com:grundid/nfctools.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@github.com:/grundid/nfctools.git</developerConnection>
 	</scm>
 
 	<build>
