@@ -15,9 +15,7 @@
  */
 package org.nfctools.ndef.decoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
@@ -38,20 +36,6 @@ public class GenericControlRecordDecoderTest {
 			(byte)0xd1, 0x01, 0x0e, 0x61, 0x00, (byte)0xd1, 0x01, 0x09, 0x54, 0x05, 0x65, 0x6e, 0x2d, 0x55, 0x53, 0x61,
 			0x64, 0x64, (byte)0xd1, 0x01, 0x0d, 0x64, (byte)0xd1, 0x01, 0x09, 0x54, 0x05, 0x65, 0x6e, 0x2d, 0x55, 0x53,
 			0x35, 0x30, 0x30 };
-
-	// D1024A47630091012274D1011E551D6C6F63616C686F73742F4170706C692F437573746F6D657242
-	//	6F6E757311010E6100D101095405656E2D555361646451010D64D101095405656E2D5553353030
-	// D10235 476300 9102224763D1011E551D6C6F63616C686F73742F4170706C692F437573746F6D6572426F6E757311020247630100510201476300
-	/*
-	 * 		for (int x = 0; x < s.length(); x++) {
-				char c = s.charAt(x);
-
-				System.out.print(",0x" + Integer.toHexString(c));
-
-			}
-
-		
-	 */
 
 	@Test
 	public void testDecodeGenericControlRecordFromSpec() throws Exception {

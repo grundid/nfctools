@@ -23,16 +23,7 @@ public class NdefMessage {
 		this.ndefRecords = ndefRecords;
 	}
 
-	public NdefMessage(byte[] bytes) {
-		throw new UnsupportedOperationException();
-	}
-
 	public NdefRecord[] getNdefRecords() {
 		return ndefRecords;
 	}
-
-	public byte[] toByteArray() {
-		throw new UnsupportedOperationException();
-	}
-
 }
