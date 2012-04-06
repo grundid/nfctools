@@ -55,7 +55,7 @@ public class TextRecordEncoder implements RecordEncoder {
 		System.arraycopy(lanuageData, 0, payload, 1, lanuageData.length);
 		System.arraycopy(textData, 0, payload, 1 + lanuageData.length, textData.length);
 
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, TextRecord.TYPE, record.getId(), payload);
+		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false, TextRecord.TYPE, record.getId(), payload);
 	}
 
 	private byte[] getTextAsBytes(TextRecord textRecord, Charset encoding) {

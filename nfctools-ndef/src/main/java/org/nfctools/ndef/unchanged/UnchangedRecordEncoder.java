@@ -41,8 +41,8 @@ public class UnchangedRecordEncoder implements RecordEncoder {
 			throw new IllegalArgumentException("Unexpected Record " + record.getClass().getName());
 		}
 
-		return new NdefRecord(NdefConstants.TNF_UNCHANGED, NdefConstants.EMPTY_BYTE_ARRAY, record.getId(),
-				NdefConstants.EMPTY_BYTE_ARRAY);
+		return new NdefRecord(NdefConstants.TNF_UNCHANGED, false, NdefConstants.EMPTY_BYTE_ARRAY,
+				record.getId(), NdefConstants.EMPTY_BYTE_ARRAY);
 
 	}
 

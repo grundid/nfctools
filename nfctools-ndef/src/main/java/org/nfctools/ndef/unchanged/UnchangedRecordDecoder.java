@@ -35,6 +35,20 @@ public class UnchangedRecordDecoder extends AbstractRecordDecoder<UnchangedRecor
 
 	@Override
 	protected UnchangedRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+		
+		/**
+		The value 0x06 (Unchanged) MUST be used in all middle record chunks and the terminating
+		record chunk used in chunked payloads (see section 2.3.3). It MUST NOT be used in any other
+		record. When used, the TYPE_LENGTH field MUST be zero and thus the TYPE field is omitted
+		from the NDEF record.		
+		*/
+		
+		// check that type is zero length
+		byte[] type = ndefRecord.getType();
+		if(type != null && type.length > 0) {
+			throw new IllegalArgumentException("Record type expected");
+		}
+
 		return new UnchangedRecord();
 	}
 }

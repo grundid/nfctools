@@ -47,7 +47,7 @@ public class GcActionRecordEncoder implements RecordEncoder {
 			System.arraycopy(subPayload, 0, payload, 1, subPayload.length);
 		}
 
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, GcActionRecord.TYPE, record.getId(), payload);
+		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false, GcActionRecord.TYPE, record.getId(), payload);
 
 	}
 }

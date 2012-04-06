@@ -39,7 +39,7 @@ public class AbsoluteUriRecordEncoder implements RecordEncoder {
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		AbsoluteUriRecord absoluteUriRecord = (AbsoluteUriRecord)record;
-		return new NdefRecord(NdefConstants.TNF_ABSOLUTE_URI, UriRecord.TYPE, absoluteUriRecord.getId(),
-				absoluteUriRecord.getUri().getBytes(NdefConstants.DEFAULT_CHARSET));
+		return new NdefRecord(NdefConstants.TNF_ABSOLUTE_URI, false, UriRecord.TYPE,
+				absoluteUriRecord.getId(), absoluteUriRecord.getUri().getBytes(NdefConstants.DEFAULT_CHARSET));
 	}
 }

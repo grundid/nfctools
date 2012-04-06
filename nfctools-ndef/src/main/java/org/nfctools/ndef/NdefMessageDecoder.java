@@ -72,7 +72,8 @@ public class NdefMessageDecoder {
 			int typeLength = bais.read();
 			int payloadLength = getPayloadLength((header & NdefConstants.SR) != 0, bais);
 			int idLength = getIdLength((header & NdefConstants.IL) != 0, bais);
-
+			boolean chunked = (header & NdefConstants.CF) != 0;
+					
 			byte[] type = RecordUtils.getBytesFromStream(typeLength, bais);
 			byte[] id = RecordUtils.getBytesFromStream(idLength, bais);
 			byte[] payload = RecordUtils.getBytesFromStream(payloadLength, bais);
@@ -83,7 +84,7 @@ public class NdefMessageDecoder {
 			if (bais.available() == 0 && (header & NdefConstants.ME) == 0)
 				throw new IllegalArgumentException("no Message End record at the end of array");
 
-			records.add(new NdefRecord(tnf, type, id, payload));
+			records.add(new NdefRecord(tnf, chunked, type, id, payload));
 		}
 		return new NdefMessage(records.toArray(new NdefRecord[0]));
 	}

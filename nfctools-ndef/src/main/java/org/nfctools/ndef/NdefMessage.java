@@ -15,6 +15,12 @@
  */
 package org.nfctools.ndef;
 
+/**
+ * The basic message construct defined by this specification. An NDEF message contains
+ * one or more NDEF records
+ * 
+ */
+
 public class NdefMessage {
 
 	private NdefRecord[] ndefRecords;

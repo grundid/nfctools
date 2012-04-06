@@ -16,7 +16,7 @@ public class GenericWellKnownRecordEncoder implements RecordEncoder {
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		AbstractWellKnownRecord abstractWellKnownRecord = (AbstractWellKnownRecord)record;
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, abstractWellKnownRecord.getType(),
-				NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY);
+		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false,
+				abstractWellKnownRecord.getType(), NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY);
 	}
 }
