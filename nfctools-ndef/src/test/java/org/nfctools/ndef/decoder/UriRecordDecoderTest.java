@@ -40,8 +40,8 @@ public class UriRecordDecoderTest {
 
 		byte[] payload = NfcUtils.convertASCIIToBin(payloadUri);
 
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false,
-				UriRecord.TYPE, NdefConstants.EMPTY_BYTE_ARRAY, payload);
+		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE,
+				NdefConstants.EMPTY_BYTE_ARRAY, payload);
 
 		UriRecord uriRecord = decoder.decodeRecord(ndefRecord, messageDecoder);
 		assertEquals("http://www.example.com", uriRecord.getUri());
@@ -52,8 +52,8 @@ public class UriRecordDecoderTest {
 
 		byte[] payload = NfcUtils.convertASCIIToBin(payloadUri);
 		payload[0] = -1;
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false,
-				UriRecord.TYPE, NdefConstants.EMPTY_BYTE_ARRAY, payload);
+		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE,
+				NdefConstants.EMPTY_BYTE_ARRAY, payload);
 
 		decoder.decodeRecord(ndefRecord, messageDecoder);
 	}
@@ -63,8 +63,8 @@ public class UriRecordDecoderTest {
 
 		byte[] payload = NfcUtils.convertASCIIToBin(payloadUri);
 		payload[0] = 36;
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false,
-				UriRecord.TYPE, NdefConstants.EMPTY_BYTE_ARRAY, payload);
+		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE,
+				NdefConstants.EMPTY_BYTE_ARRAY, payload);
 
 		decoder.decodeRecord(ndefRecord, messageDecoder);
 	}
@@ -75,8 +75,8 @@ public class UriRecordDecoderTest {
 		byte[] payload = NfcUtils.convertASCIIToBin(payloadUri);
 		payload[0] = 35;
 
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false,
-				UriRecord.TYPE, NdefConstants.EMPTY_BYTE_ARRAY, payload);
+		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE,
+				NdefConstants.EMPTY_BYTE_ARRAY, payload);
 
 		UriRecord uriRecord = decoder.decodeRecord(ndefRecord, messageDecoder);
 		assertEquals("urn:nfc:example.com", uriRecord.getUri());

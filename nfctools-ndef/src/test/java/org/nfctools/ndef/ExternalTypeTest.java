@@ -41,8 +41,8 @@ public class ExternalTypeTest {
 
 	@Test
 	public void testExternalTypeDecoder() throws Exception {
-		NdefRecord record = new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, false, "android.com:pkg".getBytes(),
-				new byte[0], "content".getBytes());
+		NdefRecord record = new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, "android.com:pkg".getBytes(), new byte[0],
+				"content".getBytes());
 
 		assertTrue(decoder.canDecode(record));
 

@@ -42,7 +42,7 @@ public class GenericControlRecordEncoder implements RecordEncoder {
 		payload[0] = myRecord.getConfigurationByte();
 		System.arraycopy(subPayload, 0, payload, 1, subPayload.length);
 
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false, GenericControlRecord.TYPE, record.getId(), payload);
+		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, GenericControlRecord.TYPE, record.getId(), payload);
 	}
 
 	private byte[] createSubPayload(NdefMessageEncoder messageEncoder, GenericControlRecord myRecord) {

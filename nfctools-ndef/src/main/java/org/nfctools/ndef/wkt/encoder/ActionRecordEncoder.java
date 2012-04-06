@@ -32,6 +32,6 @@ public class ActionRecordEncoder implements RecordEncoder {
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		byte[] payload = new byte[1];
 		payload[0] = (byte)((ActionRecord)record).getAction().getValue();
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false, ActionRecord.TYPE, record.getId(), payload);
+		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, ActionRecord.TYPE, record.getId(), payload);
 	}
 }

@@ -16,6 +16,8 @@
 package org.nfctools.ndef;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +38,67 @@ public class NdefMessageDecoder {
 	public List<Record> decodeToRecords(NdefMessage ndefMessage) {
 		List<Record> records = new ArrayList<Record>();
 
-		for (NdefRecord ndefRecord : ndefMessage.getNdefRecords()) {
-			records.add(ndefRecordDecoder.decode(ndefRecord, this));
+		NdefRecord[] ndefRecords = ndefMessage.getNdefRecords();
+		
+		iterate : 
+		for (int i = 0; i < ndefRecords.length; i++) {
+			
+			NdefRecord ndefRecord = ndefRecords[i];
+			
+			if(ndefRecord.isChunked()) {
+				// Concatenate chunked records to get the whole payload
+				
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				try {
+					bout.write(ndefRecord.getPayload());
+
+					/**
+					The value 0x06 (Unchanged) MUST be used in all middle record chunks and the terminating
+					record chunk used in chunked payloads (see section 2.3.3). It MUST NOT be used in any other
+					record. When used, the TYPE_LENGTH field MUST be zero and thus the TYPE field is omitted
+					from the NDEF record.		
+					*/
+					
+
+					do {
+						i++;
+						
+						NdefRecord next = ndefRecords[i];
+						if(next.getTnf() != NdefConstants.TNF_UNCHANGED) {
+							// no terminating chunk?
+							throw new IllegalArgumentException("Expected terminating 'unchanged' record type at " + i);
+						}							
+						
+						// check that type is zero length
+						byte[] type = ndefRecord.getType();
+						if(type != null && type.length > 0) {
+							throw new IllegalArgumentException("Expected no record type at " + i);
+						}
+						
+						// copy payload from chunk
+						bout.write(next.getPayload());
+						
+						if(!next.isChunked()) {
+							// terminating chunk
+							NdefRecord unchunkedNdefRecord = new NdefRecord(ndefRecord.getTnf(), ndefRecord.getType(), ndefRecord.getId(), bout.toByteArray());
+							
+							records.add(ndefRecordDecoder.decode(unchunkedNdefRecord, this));
+							
+							continue iterate;
+						} else {
+							// middle chunk
+						}
+					} while(i < ndefRecords.length);
+
+					// no terminating chunk
+					throw new IllegalArgumentException("Expected terminating 'unchanged' record type");
+					
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				records.add(ndefRecordDecoder.decode(ndefRecord, this));
+			}
 		}
 		return records;
 	}

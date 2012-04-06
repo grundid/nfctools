@@ -53,6 +53,6 @@ public class UnknownRecordDecoder extends AbstractRecordDecoder<UnknownRecord> {
 			throw new IllegalArgumentException("Record type expected");
 		}
 		
-		return new UnknownRecord();
+		return new UnknownRecord(ndefRecord.getPayload());
 	}
 }

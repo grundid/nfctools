@@ -32,6 +32,6 @@ public class GcDataRecordEncoder implements RecordEncoder {
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		GcDataRecord dataRecord = (GcDataRecord)record;
 		byte[] payload = messageEncoder.encode(dataRecord.getRecords());
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false, GcDataRecord.TYPE, record.getId(), payload);
+		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, GcDataRecord.TYPE, record.getId(), payload);
 	}
 }

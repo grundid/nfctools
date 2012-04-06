@@ -29,7 +29,6 @@ import org.nfctools.ndef.empty.EmptyRecord;
 import org.nfctools.ndef.ext.AndroidApplicationRecord;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.TextMimeRecord;
-import org.nfctools.ndef.unchanged.UnchangedRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
@@ -68,14 +67,13 @@ public class NdefEncodeDecodeRoundtripTest {
 	private static AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord();
 	private static HandoverSelectRecord handoverSelectRecord = new HandoverSelectRecord();
 	private static HandoverCarrierRecord handoverCarrierRecord = new HandoverCarrierRecord();
-	private static UnchangedRecord unchangedRecord = new UnchangedRecord();
 
 	private static HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord();
 
 	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
 			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
 			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
-			unchangedRecord };
+			};
 
 	@Test
 	public void testEncodeDecodeRoundtrip() {

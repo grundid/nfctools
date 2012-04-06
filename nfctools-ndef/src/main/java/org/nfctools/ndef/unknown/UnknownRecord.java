@@ -27,4 +27,17 @@ import org.nfctools.ndef.Record;
 
 public class UnknownRecord extends Record {
 
+	private byte[] payload;
+
+	public UnknownRecord(byte[] payload) {
+		this.payload = payload;
+	}
+	
+	public UnknownRecord() {
+	}
+	
+	public byte[] getPayload() {
+		return payload;
+	}
+
 }

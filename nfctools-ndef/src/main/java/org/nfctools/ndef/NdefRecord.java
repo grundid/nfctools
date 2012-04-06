@@ -39,7 +39,7 @@ public class NdefRecord {
 	 * facility can be used to carry dynamically generated content for which the payload size is
 	 * not known in advance or very large entities that don't fit into a single NDEF record.
 	 */
-	private boolean chunked;
+	private boolean chunked = false;
 
 	public NdefRecord(short tnf, boolean chunked, byte[] type, byte[] id, byte[] payload) {
 		this.tnf = tnf;
@@ -47,6 +47,9 @@ public class NdefRecord {
 		this.type = type;
 		this.id = id;
 		this.payload = payload;
+	}
+	public NdefRecord(short tnf, byte[] type, byte[] id, byte[] payload) {
+		this(tnf, false, type, id, payload);
 	}
 
 	public boolean isChunked() {

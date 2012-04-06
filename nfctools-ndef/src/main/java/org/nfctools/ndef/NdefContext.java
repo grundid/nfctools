@@ -25,7 +25,6 @@ import org.nfctools.ndef.ext.ExternalTypeDecoder;
 import org.nfctools.ndef.ext.ExternalTypeEncoder;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.mime.MimeRecordEncoder;
-import org.nfctools.ndef.unchanged.UnchangedRecordEncoder;
 import org.nfctools.ndef.unknown.UnknownRecordEncoder;
 import org.nfctools.ndef.wkt.decoder.ActionRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GcActionRecordDecoder;
@@ -104,7 +103,6 @@ public class NdefContext {
 		ndefRecordEncoder.addRecordEncoder(new ExternalTypeEncoder());
 
 		ndefRecordEncoder.addRecordEncoder(new UnknownRecordEncoder());
-		ndefRecordEncoder.addRecordEncoder(new UnchangedRecordEncoder());
 
 		// Known simple Well Known Records
 		knownRecordsByType.put(new String(AlternativeCarrierRecord.TYPE), AlternativeCarrierRecord.class);

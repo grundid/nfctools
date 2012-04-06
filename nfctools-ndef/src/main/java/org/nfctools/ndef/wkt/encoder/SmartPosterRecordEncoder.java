@@ -35,7 +35,7 @@ public class SmartPosterRecordEncoder implements RecordEncoder {
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		SmartPosterRecord myRecord = (SmartPosterRecord)record;
 		byte[] payload = createPayload(messageEncoder, myRecord);
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false, SmartPosterRecord.TYPE, record.getId(), payload);
+		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, SmartPosterRecord.TYPE, record.getId(), payload);
 	}
 
 	private byte[] createPayload(NdefMessageEncoder messageEncoder, SmartPosterRecord myRecord) {

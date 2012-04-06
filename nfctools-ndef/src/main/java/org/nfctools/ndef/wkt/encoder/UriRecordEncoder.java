@@ -40,8 +40,8 @@ public class UriRecordEncoder implements RecordEncoder {
 			int nextColon = uri.indexOf(':', 12);
 			String typeValue = uri.substring(12, nextColon);
 			String payload = uri.substring(nextColon + 1);
-			return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, false, typeValue.getBytes(),
-					record.getId(), payload.getBytes());
+			return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, typeValue.getBytes(), record.getId(),
+					payload.getBytes());
 
 		}
 		else {
@@ -50,7 +50,7 @@ public class UriRecordEncoder implements RecordEncoder {
 			byte[] payload = new byte[uriAsBytes.length + 1 - uriCopyOffset];
 			payload[0] = (byte)abbreviateIndex;
 			System.arraycopy(uriAsBytes, uriCopyOffset, payload, 1, uriAsBytes.length - uriCopyOffset);
-			return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false, UriRecord.TYPE, record.getId(), payload);
+			return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE, record.getId(), payload);
 
 		}
 

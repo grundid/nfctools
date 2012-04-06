@@ -38,8 +38,8 @@ public class NdefRecordDecoderTest {
 
 		byte[] payload = NfcUtils.convertASCIIToBin(innerSmartPoster);
 
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, false,
-				SmartPosterRecord.TYPE, NdefConstants.EMPTY_BYTE_ARRAY, payload);
+		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, SmartPosterRecord.TYPE,
+				NdefConstants.EMPTY_BYTE_ARRAY, payload);
 
 		Record record = decoder.decode(ndefRecord, NdefContext.getNdefMessageDecoder());
 		assertTrue(record instanceof SmartPosterRecord);
