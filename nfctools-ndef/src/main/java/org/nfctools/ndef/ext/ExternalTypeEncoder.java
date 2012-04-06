@@ -31,7 +31,8 @@ public class ExternalTypeEncoder implements RecordEncoder {
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		ExternalTypeRecord externalType = (ExternalTypeRecord)record;
-		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, externalType.getNamespace().getBytes(), record.getId(),
-				externalType.getContent().getBytes());
+		byte[] type = externalType.getNamespace().getBytes(NdefConstants.DEFAULT_CHARSET);
+		byte[] paylod = externalType.getContent().getBytes(NdefConstants.DEFAULT_CHARSET);
+		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, type, record.getId(), paylod);
 	}
 }
