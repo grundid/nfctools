@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package org.nfctools.mf.tlv;
 
 import java.io.IOException;
@@ -28,26 +27,40 @@ public class TypeLengthValueWriter {
 		this.out = out;
 	}
 
-	public void write(byte[] data) throws IOException {
-		if (data == null || data.length == 0) {
-			out.write(TlvConstants.NULL_TLV);
+	public void write(LockControlTlv lockControlTlv) throws IOException {
+		out.write(TlvConstants.LOCK_CONTROL_TLV);
+		writeData(lockControlTlv.toBytes());
+	}
+
+	public void write(MemoryControlTlv memoryControlTlv) throws IOException {
+		out.write(TlvConstants.MEMORY_CONTROL_TLV);
+		writeData(memoryControlTlv.toBytes());
+	}
+
+	public void write(NdefMessageTlv ndefMessageTlv) throws IOException {
+		byte[] data = ndefMessageTlv.getNdefMessage();
+		out.write(TlvConstants.NDEF_TLV);
+		writeData(data);
+	}
+
+	public void writeNullTlv() throws IOException {
+		out.write(TlvConstants.NULL_TLV);
+	}
+
+	private void writeData(byte[] data) throws IOException {
+		if (data.length <= 0xFE) {
+			out.write(data.length);
+		}
+		else if (data.length < 0xFFFE) {
+			out.write(0xFF);
+			out.write(data.length >>> 8);
+			out.write(data.length & 0xFF);
 		}
 		else {
-			out.write(TlvConstants.NDEF_TLV);
-			if (data.length <= 0xFE) {
-				out.write(data.length);
-			}
-			else if (data.length < 0xFFFE) {
-				out.write(0xFF);
-				out.write(data.length >>> 8);
-				out.write(data.length & 0xFF);
-			}
-			else {
-				throw new IOException("data too long");
-			}
-
-			out.write(data, 0, data.length);
+			throw new IOException("data too long");
 		}
+
+		out.write(data, 0, data.length);
 	}
 
 	public void close() throws IOException {

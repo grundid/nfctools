@@ -25,9 +25,19 @@ public class MfUtils {
 	public static void initTransportConfig(MfReaderWriter readerWriter, MfCard card, int sector, Key key,
 			byte[] keyValue) throws IOException {
 		TrailerBlock transportTrailer = new TrailerBlock();
-		readerWriter.writeBlock(
-				new MfAccess(card, sector, card.getTrailerBlockNumberForSector(sector), key, keyValue),
+		readerWriter.writeBlock(new MfAccess(card, sector, card.getTrailerBlockNumberForSector(sector), key, keyValue),
 				transportTrailer);
 	}
 
+	public static int getLeastSignificantNibble(byte data) {
+		return data & 0x0F;
+	}
+
+	public static int getMostSignificantNibble(byte data) {
+		return (data & 0xF0) >> 4;
+	}
+
+	public static byte encodeNibbles(int mostSignificantNibble, int leastSignificantNibble) {
+		return (byte)((mostSignificantNibble & 0x0F) << 4 | (leastSignificantNibble & 0x0F));
+	}
 }

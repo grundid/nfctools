@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-
 package org.nfctools.mf.tlv;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TlvConstants {
 
 	public static final int NULL_TLV = 0x00;
+	public static final int LOCK_CONTROL_TLV = 0x01;
+	public static final int MEMORY_CONTROL_TLV = 0x02;
 	public static final int NDEF_TLV = 0x03;
 	public static final int PROPRIETARY_TLV = 0xFD;
 	public static final int TERMINATOR_TLV = 0xFE;
+
+	public static Set<Integer> KNOWN_TLVS = new HashSet<Integer>();
+
+	static {
+		KNOWN_TLVS.add(LOCK_CONTROL_TLV);
+		KNOWN_TLVS.add(MEMORY_CONTROL_TLV);
+		KNOWN_TLVS.add(NDEF_TLV);
+	}
 
 }

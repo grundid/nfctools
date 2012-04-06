@@ -30,7 +30,7 @@ public class TlvTest {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		TypeLengthValueWriter writer = new TypeLengthValueWriter(baos);
 
-		writer.write(new byte[] { 0x01, 0x02, 0x03, 0x04 });
+		writer.write(new NdefMessageTlv(new byte[] { 0x01, 0x02, 0x03, 0x04 }));
 		writer.close();
 
 		byte[] writtenData = baos.toByteArray();
@@ -50,10 +50,10 @@ public class TlvTest {
 		TypeLengthValueReader reader = new TypeLengthValueReader(bais);
 
 		assertTrue(reader.hasNext());
-		byte[] readData = reader.next();
+		NdefMessageTlv readData = (NdefMessageTlv)reader.next();
 		assertFalse(reader.hasNext());
 
-		assertArrayEquals(expectedData, readData);
+		assertArrayEquals(expectedData, readData.getNdefMessage());
 	}
 
 	@Test
@@ -104,10 +104,10 @@ public class TlvTest {
 		TypeLengthValueReader reader = new TypeLengthValueReader(bais);
 
 		assertTrue(reader.hasNext());
-		byte[] readData = reader.next();
+		NdefMessageTlv readData = (NdefMessageTlv)reader.next();
 		assertFalse(reader.hasNext());
 
-		assertEquals(665, readData.length);
+		assertEquals(665, readData.getNdefMessage().length);
 	}
 
 	@Test
@@ -124,7 +124,7 @@ public class TlvTest {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		TypeLengthValueWriter writer = new TypeLengthValueWriter(baos);
 
-		writer.write(largeData);
+		writer.write(new NdefMessageTlv(largeData));
 		writer.close();
 
 		byte[] writtenData = baos.toByteArray();

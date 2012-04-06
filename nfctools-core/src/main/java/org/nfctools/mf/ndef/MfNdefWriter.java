@@ -28,6 +28,7 @@ import org.nfctools.mf.card.MfCard;
 import org.nfctools.mf.mad.Application;
 import org.nfctools.mf.mad.ApplicationDirectory;
 import org.nfctools.mf.mad.MadUtils;
+import org.nfctools.mf.tlv.NdefMessageTlv;
 import org.nfctools.mf.tlv.TypeLengthValueWriter;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefWriter;
@@ -134,7 +135,7 @@ public class MfNdefWriter implements NdefWriter<MfCard> {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			TypeLengthValueWriter writer = new TypeLengthValueWriter(baos);
-			writer.write(ndefMessage);
+			writer.write(new NdefMessageTlv(ndefMessage));
 			writer.close();
 
 			return baos.toByteArray();

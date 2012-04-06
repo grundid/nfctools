@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package org.nfctools.mf.tlv;
 
 import java.io.IOException;
@@ -22,18 +21,19 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class TypeLengthValueReader implements Iterator<byte[]> {
+public class TypeLengthValueReader implements Iterator<Tlv> {
 
 	private InputStream in = null;
-	private byte[] nextValue = null;
+	private Tlv nextValue = null;
 
 	public TypeLengthValueReader(InputStream in) {
 		this.in = in;
 	}
 
-	public byte[] next() {
+	@Override
+	public Tlv next() {
 		if (nextValue != null) {
-			byte[] valueToReturn = nextValue;
+			Tlv valueToReturn = nextValue;
 			nextValue = null;
 			return valueToReturn;
 		}
@@ -49,11 +49,11 @@ public class TypeLengthValueReader implements Iterator<byte[]> {
 					if (type == TlvConstants.TERMINATOR_TLV)
 						throw new NoSuchElementException();
 
-					if (type == TlvConstants.NDEF_TLV) {
-						return readNextValue();
+					if (TlvConstants.KNOWN_TLVS.contains(type)) {
+						return readNextValue(type);
 					}
 					if (type == TlvConstants.PROPRIETARY_TLV) {
-						readNextValue();
+						readNextValue(type);
 					}
 				}
 				throw new NoSuchElementException();
@@ -64,20 +64,34 @@ public class TypeLengthValueReader implements Iterator<byte[]> {
 		}
 	}
 
-	private byte[] readNextValue() throws IOException {
+	private Tlv readNextValue(int type) throws IOException {
 		int size = in.read();
 		if (size == 0xFF) {
 			size = (in.read() << 8) | in.read();
 		}
 		byte[] valueToReturn = new byte[size];
 		in.read(valueToReturn, 0, size);
-		return valueToReturn;
+
+		switch (type) {
+			case TlvConstants.NDEF_TLV:
+				return new NdefMessageTlv(valueToReturn);
+			case TlvConstants.LOCK_CONTROL_TLV:
+				return new LockControlTlv(valueToReturn);
+			case TlvConstants.MEMORY_CONTROL_TLV:
+				return new MemoryControlTlv(valueToReturn);
+			case TlvConstants.PROPRIETARY_TLV:
+				return null; // skip it
+		}
+
+		throw new RuntimeException("unkown TLV type " + type + "");
 	}
 
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean hasNext() {
 		if (nextValue != null)
 			return true;

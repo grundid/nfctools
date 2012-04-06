@@ -27,6 +27,8 @@ import org.nfctools.mf.card.MfCard;
 import org.nfctools.mf.mad.Application;
 import org.nfctools.mf.mad.ApplicationDirectory;
 import org.nfctools.mf.mad.MadUtils;
+import org.nfctools.mf.tlv.NdefMessageTlv;
+import org.nfctools.mf.tlv.Tlv;
 import org.nfctools.mf.tlv.TypeLengthValueReader;
 import org.nfctools.ndef.NdefException;
 import org.nfctools.ndef.NdefMessage;
@@ -71,11 +73,13 @@ public class MfNdefReader implements NdefReader<MfCard> {
 
 			List<Record> records = new ArrayList<Record>();
 
-			if (lengthValueReader.hasNext()) {
-				byte[] ndef = lengthValueReader.next();
-				NdefMessage ndefMessage = ndefMessageDecoder.decode(ndef);
-				for (Record record : ndefMessageDecoder.decodeToRecords(ndefMessage)) {
-					records.add(record);
+			while (lengthValueReader.hasNext()) {
+				Tlv tlv = lengthValueReader.next();
+				if (tlv instanceof NdefMessageTlv) {
+					NdefMessage ndefMessage = ndefMessageDecoder.decode(((NdefMessageTlv)tlv).getNdefMessage());
+					for (Record record : ndefMessageDecoder.decodeToRecords(ndefMessage)) {
+						records.add(record);
+					}
 				}
 			}
 			return records;
