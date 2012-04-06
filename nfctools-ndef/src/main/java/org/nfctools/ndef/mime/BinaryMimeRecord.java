@@ -50,7 +50,7 @@ public class BinaryMimeRecord extends MimeRecord {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + Arrays.hashCode(content);
 		return result;
 	}
@@ -59,15 +59,14 @@ public class BinaryMimeRecord extends MimeRecord {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BinaryMimeRecord other = (BinaryMimeRecord) obj;
+		BinaryMimeRecord other = (BinaryMimeRecord)obj;
 		if (!Arrays.equals(content, other.content))
 			return false;
 		return true;
 	}
-	
-	
+
 }

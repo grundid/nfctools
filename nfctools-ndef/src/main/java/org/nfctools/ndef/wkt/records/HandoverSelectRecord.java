@@ -16,34 +16,18 @@
 
 package org.nfctools.ndef.wkt.records;
 
-import org.nfctools.ndef.Record;
 
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
+public class HandoverSelectRecord extends AbstractWellKnownRecord {
 
-public class HandoverSelectRecord extends Record {
+	public static final byte[] TYPE = { 0x48, 0x73 }; // "Hs"
 
-	public static final byte[] TYPE =  {0x48, 0x73}; // "Hs"
-
-	@Override
-	public int hashCode() {
-		return 0;
+	public HandoverSelectRecord() {
+		super(TYPE);
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		return true;
-	}
-
 }

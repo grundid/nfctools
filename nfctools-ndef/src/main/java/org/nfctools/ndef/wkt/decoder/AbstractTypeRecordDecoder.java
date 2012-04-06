@@ -32,8 +32,4 @@ public abstract class AbstractTypeRecordDecoder<T extends Record> extends Abstra
 	public boolean canDecode(NdefRecord ndefRecord) {
 		return super.canDecode(ndefRecord) && RecordUtils.isEqualArray(ndefRecord.getType(), type);
 	}
-
-	protected void setIdOnRecord(NdefRecord ndefRecord, Record record) {
-		record.setId(ndefRecord.getId());
-	}
 }

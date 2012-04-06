@@ -21,7 +21,6 @@ import java.util.List;
 import org.nfctools.ndef.auri.AbsoluteUriRecordDecoder;
 import org.nfctools.ndef.empty.EmptyRecordDecoder;
 import org.nfctools.ndef.mime.MimeRecordDecoder;
-import org.nfctools.ndef.reserved.ReservedRecordDecoder;
 import org.nfctools.ndef.unchanged.UnchangedRecordDecoder;
 import org.nfctools.ndef.unknown.UnknownRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.RecordDecoder;
@@ -34,8 +33,7 @@ public class NdefRecordDecoder {
 	private MimeRecordDecoder mimeRecordDecoder = new MimeRecordDecoder();
 	private UnchangedRecordDecoder unchangedRecordDecoder = new UnchangedRecordDecoder();
 	private UnknownRecordDecoder unknownRecordDecoder = new UnknownRecordDecoder();
-	private ReservedRecordDecoder reservedRecordDecoder = new ReservedRecordDecoder();
-	
+
 	// pluggable decoders
 	// plug decoders which only look at the raw byte types
 	/** well-known decoder types */
@@ -47,52 +45,44 @@ public class NdefRecordDecoder {
 
 		switch (ndefRecord.getTnf()) {
 			case NdefConstants.TNF_EMPTY: {
-				if(emptyRecordDecoder.canDecode(ndefRecord)) {
-					return emptyRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
-				}
-				break;
+				return emptyRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
 			}
-			
+
 			case NdefConstants.TNF_WELL_KNOWN:
 				return handleWellKnownRecordType(ndefRecord, messageDecoder);
-				
+
 			case NdefConstants.TNF_MIME_MEDIA: {
-				if(mimeRecordDecoder.canDecode(ndefRecord)) {
+				if (mimeRecordDecoder.canDecode(ndefRecord)) {
 					return mimeRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
 				}
 				break;
 			}
-			
+
 			case NdefConstants.TNF_ABSOLUTE_URI: {
-				if(absoluteUriRecordDecoder.canDecode(ndefRecord)) {
+				if (absoluteUriRecordDecoder.canDecode(ndefRecord)) {
 					return absoluteUriRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
 				}
 				break;
 			}
-			
+
 			case NdefConstants.TNF_EXTERNAL_TYPE:
 				return handleExternalRecordType(ndefRecord, messageDecoder);
 			case NdefConstants.TNF_UNKNOWN: {
-				if(unknownRecordDecoder.canDecode(ndefRecord)) {
+				if (unknownRecordDecoder.canDecode(ndefRecord)) {
 					return unknownRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
 				}
 				break;
 			}
-			
+
 			case NdefConstants.TNF_UNCHANGED: {
-				if(unchangedRecordDecoder.canDecode(ndefRecord)) {
+				if (unchangedRecordDecoder.canDecode(ndefRecord)) {
 					return unchangedRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
 				}
 				break;
 			}
-				
+
 			case NdefConstants.TNF_RESERVED:
-			{
-				if(reservedRecordDecoder.canDecode(ndefRecord)) {
-					return reservedRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
-				}
-				break;
-			}
+
 		}
 
 		throw new IllegalArgumentException("Unsupported NDEF Type Name Format [" + ndefRecord.getTnf() + "]");
@@ -119,7 +109,7 @@ public class NdefRecordDecoder {
 	public void addWellKnownRecordDecoder(RecordDecoder<? extends Record> recordDecoder) {
 		wellKnownRecordDecoders.add(recordDecoder);
 	}
-	
+
 	public void addExternalRecordDecoder(RecordDecoder<? extends Record> recordDecoder) {
 		externalRecordDecoders.add(recordDecoder);
 	}

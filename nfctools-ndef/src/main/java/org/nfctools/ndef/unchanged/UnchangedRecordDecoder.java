@@ -24,7 +24,7 @@ import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
 public class UnchangedRecordDecoder extends AbstractRecordDecoder<UnchangedRecord> {
@@ -32,11 +32,9 @@ public class UnchangedRecordDecoder extends AbstractRecordDecoder<UnchangedRecor
 	public UnchangedRecordDecoder() {
 		super(NdefConstants.TNF_UNCHANGED);
 	}
-	
-	@Override
-	public UnchangedRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 
+	@Override
+	protected UnchangedRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		return new UnchangedRecord();
 	}
-
 }

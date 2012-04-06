@@ -25,7 +25,7 @@ import org.nfctools.ndef.wkt.encoder.RecordEncoder;
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
 public class UnknownRecordEncoder implements RecordEncoder {
@@ -37,12 +37,13 @@ public class UnknownRecordEncoder implements RecordEncoder {
 
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		if(record.getClass() != UnknownRecord.class) {
+		if (record.getClass() != UnknownRecord.class) {
 			throw new IllegalArgumentException("Unexpected Record " + record.getClass().getName());
 		}
-		
-	    return new NdefRecord(NdefConstants.TNF_UNKNOWN, NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY, NdefConstants.EMPTY_BYTE_ARRAY);
+
+		return new NdefRecord(NdefConstants.TNF_UNKNOWN, NdefConstants.EMPTY_BYTE_ARRAY, record.getId(),
+				NdefConstants.EMPTY_BYTE_ARRAY);
 
 	}
-	
+
 }

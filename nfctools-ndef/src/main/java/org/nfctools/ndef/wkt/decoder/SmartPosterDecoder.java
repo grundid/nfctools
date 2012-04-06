@@ -33,14 +33,12 @@ public class SmartPosterDecoder extends AbstractTypeRecordDecoder<SmartPosterRec
 	}
 
 	@Override
-	public SmartPosterRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-
+	protected SmartPosterRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		SmartPosterRecord smartPosterRecord = new SmartPosterRecord();
 
 		List<Record> records = messageDecoder.decodeToRecords(messageDecoder.decode(ndefRecord.getPayload()));
 
 		for (Record record : records) {
-
 			if (record instanceof UriRecord) {
 				smartPosterRecord.setUri((UriRecord)record);
 			}
@@ -51,9 +49,6 @@ public class SmartPosterDecoder extends AbstractTypeRecordDecoder<SmartPosterRec
 				smartPosterRecord.setAction((ActionRecord)record);
 			}
 		}
-
-		setIdOnRecord(ndefRecord, smartPosterRecord);
 		return smartPosterRecord;
 	}
-
 }

@@ -64,4 +64,34 @@ public class GcActionRecord extends Record {
 	public void setAction(Action action) {
 		this.action = action;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result + ((actionRecord == null) ? 0 : actionRecord.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GcActionRecord other = (GcActionRecord)obj;
+		if (action != other.action)
+			return false;
+		if (actionRecord == null) {
+			if (other.actionRecord != null)
+				return false;
+		}
+		else if (!actionRecord.equals(other.actionRecord))
+			return false;
+		return true;
+	}
+
 }

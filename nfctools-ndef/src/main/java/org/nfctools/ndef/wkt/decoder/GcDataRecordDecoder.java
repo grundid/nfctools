@@ -30,14 +30,13 @@ public class GcDataRecordDecoder extends AbstractTypeRecordDecoder<GcDataRecord>
 	}
 
 	@Override
-	public GcDataRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected GcDataRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		GcDataRecord dataRecord = new GcDataRecord();
 
 		List<Record> records = messageDecoder.decodeToRecords(ndefRecord.getPayload());
 		for (Record record : records) {
 			dataRecord.add(record);
 		}
-		setIdOnRecord(ndefRecord, dataRecord);
 		return dataRecord;
 	}
 }

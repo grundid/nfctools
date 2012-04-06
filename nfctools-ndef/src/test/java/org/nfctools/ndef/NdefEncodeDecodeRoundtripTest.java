@@ -16,7 +16,7 @@
 
 package org.nfctools.ndef;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ import org.nfctools.ndef.empty.EmptyRecord;
 import org.nfctools.ndef.ext.AndroidApplicationRecord;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.TextMimeRecord;
-import org.nfctools.ndef.reserved.ReservedRecord;
 import org.nfctools.ndef.unchanged.UnchangedRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
 import org.nfctools.ndef.wkt.records.Action;
@@ -47,7 +46,7 @@ import org.nfctools.ndef.wkt.records.UriRecord;
  * Record data binding encode/decode roundtrip test.
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
 public class NdefEncodeDecodeRoundtripTest {
@@ -56,9 +55,13 @@ public class NdefEncodeDecodeRoundtripTest {
 	private static ActionRecord actionRecord = new ActionRecord(Action.SAVE_FOR_LATER);
 	private static AndroidApplicationRecord androidApplicationRecord = new AndroidApplicationRecord("com.skjolberg.nfc");
 	private static EmptyRecord emptyRecord = new EmptyRecord();
-	private static TextMimeRecord textMimeRecord = new TextMimeRecord("text/xml; charset=utf-8", "abcd...øæå");
-	private static BinaryMimeRecord binaryMimeRecord = new BinaryMimeRecord("application/binary", "<?xml version=\"1.0\" encoding=\"utf-8\"?><manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" />".getBytes());
-	private static SmartPosterRecord smartPosterRecord = new SmartPosterRecord(new TextRecord("Title message", Charset.forName("UTF-8"), new Locale("no")), new UriRecord("http://smartposter.uri"), new ActionRecord(Action.OPEN_FOR_EDITING));
+	private static TextMimeRecord textMimeRecord = new TextMimeRecord("text/xml; charset=utf-8", "abcd...ï¿½ï¿½ï¿½");
+	private static BinaryMimeRecord binaryMimeRecord = new BinaryMimeRecord("application/binary",
+			"<?xml version=\"1.0\" encoding=\"utf-8\"?><manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" />"
+					.getBytes());
+	private static SmartPosterRecord smartPosterRecord = new SmartPosterRecord(new TextRecord("Title message",
+			Charset.forName("UTF-8"), new Locale("no")), new UriRecord("http://smartposter.uri"), new ActionRecord(
+			Action.OPEN_FOR_EDITING));
 	private static TextRecord textRecord = new TextRecord("Text message", Charset.forName("UTF-8"), new Locale("no"));
 	private static UnknownRecord unknownRecord = new UnknownRecord();
 	private static UriRecord uriRecord = new UriRecord("http://wellknown.url");
@@ -67,47 +70,32 @@ public class NdefEncodeDecodeRoundtripTest {
 	private static HandoverCarrierRecord handoverCarrierRecord = new HandoverCarrierRecord();
 	private static UnchangedRecord unchangedRecord = new UnchangedRecord();
 
-	private static ReservedRecord reservedRecord = new ReservedRecord();
 	private static HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord();
 
-	public static Record[] records = new Record[]{
-			absoluteUriRecord,
-			actionRecord,
-			androidApplicationRecord,
-			emptyRecord,
-			textMimeRecord,
-			binaryMimeRecord,
-			smartPosterRecord,
-			textRecord,
-			unknownRecord,
-			uriRecord,
-			alternativeCarrierRecord,
-			handoverSelectRecord,
-			handoverCarrierRecord,
-			handoverRequestRecord,
-			reservedRecord,
-			unchangedRecord
-	};
-	
+	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
+			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
+			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
+			unchangedRecord };
+
 	@Test
 	public void testEncodeDecodeRoundtrip() {
 
 		NdefMessageEncoder ndefMessageEncoder = NdefContext.getNdefMessageEncoder();
-			
+
 		List<Record> originalRecords = new ArrayList<Record>();
-		for(Record record : records) {
+		for (Record record : records) {
 			originalRecords.add(record);
 		}
 		byte[] ndef = ndefMessageEncoder.encode(originalRecords);
 
 		NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
 		NdefMessage decode = ndefMessageDecoder.decode(ndef);
-		
+
 		List<Record> roundTripRecordes = ndefMessageDecoder.decodeToRecords(decode);
-		
-		for(int i = 0; i < roundTripRecordes.size(); i++) {
-			assertEquals(Integer.toString(i),  originalRecords.get(i), roundTripRecordes.get(i));
+
+		for (int i = 0; i < roundTripRecordes.size(); i++) {
+			assertEquals(Integer.toString(i), originalRecords.get(i), roundTripRecordes.get(i));
 		}
-		
-	}	
+
+	}
 }

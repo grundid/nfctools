@@ -23,7 +23,7 @@ public abstract class MimeRecord extends Record {
 
 	public MimeRecord() {
 	}
-	
+
 	protected MimeRecord(String contentType) {
 		this.contentType = contentType;
 	}
@@ -41,4 +41,31 @@ public abstract class MimeRecord extends Record {
 	public boolean hasContentType() {
 		return contentType != null;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MimeRecord other = (MimeRecord)obj;
+		if (contentType == null) {
+			if (other.contentType != null)
+				return false;
+		}
+		else if (!contentType.equals(other.contentType))
+			return false;
+		return true;
+	}
+
 }

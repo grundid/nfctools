@@ -28,11 +28,8 @@ public class GcTargetRecordDecoder extends AbstractTypeRecordDecoder<GcTargetRec
 	}
 
 	@Override
-	public GcTargetRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected GcTargetRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		Record record = messageDecoder.decodeToRecord(ndefRecord.getPayload());
-		GcTargetRecord targetRecord = new GcTargetRecord(record);
-		setIdOnRecord(ndefRecord, targetRecord);
-		return targetRecord;
+		return new GcTargetRecord(record);
 	}
-
 }

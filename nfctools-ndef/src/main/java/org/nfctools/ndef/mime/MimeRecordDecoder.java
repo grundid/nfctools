@@ -27,16 +27,14 @@ public class MimeRecordDecoder extends AbstractRecordDecoder<MimeRecord> {
 	}
 
 	@Override
-	public MimeRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected MimeRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		String contentType = new String(ndefRecord.getType(), NdefConstants.DEFAULT_CHARSET); // http://www.ietf.org/rfc/rfc2046.txt
 
-		MimeRecord mimeRecord = null;
 		if (contentType.startsWith("text/")) {
-			mimeRecord = new TextMimeRecord(contentType, ndefRecord.getPayload());
-		} else {
-			mimeRecord = new BinaryMimeRecord(contentType, ndefRecord.getPayload());
+			return new TextMimeRecord(contentType, ndefRecord.getPayload());
 		}
-		setIdOnRecord(ndefRecord, mimeRecord);
-		return mimeRecord;
+		else {
+			return new BinaryMimeRecord(contentType, ndefRecord.getPayload());
+		}
 	}
 }

@@ -106,4 +106,47 @@ public class GenericControlRecord extends Record {
 		return data != null;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result + configurationByte;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GenericControlRecord other = (GenericControlRecord)obj;
+		if (action == null) {
+			if (other.action != null)
+				return false;
+		}
+		else if (!action.equals(other.action))
+			return false;
+		if (configurationByte != other.configurationByte)
+			return false;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		}
+		else if (!data.equals(other.data))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		}
+		else if (!target.equals(other.target))
+			return false;
+		return true;
+	}
+
 }

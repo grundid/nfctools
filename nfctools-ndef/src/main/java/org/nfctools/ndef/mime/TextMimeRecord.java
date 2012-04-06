@@ -26,32 +26,33 @@ public class TextMimeRecord extends MimeRecord {
 
 	public TextMimeRecord(String contentType, String content) {
 		super(contentType);
-		
+
 		this.charset = extractContentTypeCharset();
-		
+
 		this.content = content;
 	}
 
 	public TextMimeRecord(String contentType, byte[] content) {
 		super(contentType);
-		
+
 		this.charset = extractContentTypeCharset();
-		
+
 		this.content = new String(content, charset);
 	}
 
 	public Charset extractContentTypeCharset() {
 		int index = contentType.indexOf(';');
-		
-		if(index != -1) {
+
+		if (index != -1) {
 			// check for charset=
 			int charsetIndex = contentType.indexOf("charset=", index);
-			if(charsetIndex != -1) {
+			if (charsetIndex != -1) {
 				int charsetEndIndex = contentType.indexOf(';', charsetIndex + 8);
-				
-				if(charsetEndIndex == -1) {
+
+				if (charsetEndIndex == -1) {
 					return Charset.forName(contentType.substring(charsetIndex + 8));
-				} else {
+				}
+				else {
 					return Charset.forName(contentType.substring(charsetIndex + 8, charsetEndIndex).trim());
 				}
 			}
@@ -88,7 +89,7 @@ public class TextMimeRecord extends MimeRecord {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((charset == null) ? 0 : charset.hashCode());
 		result = prime * result + ((content == null) ? 0 : content.hashCode());
 		return result;
@@ -98,24 +99,24 @@ public class TextMimeRecord extends MimeRecord {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TextMimeRecord other = (TextMimeRecord) obj;
+		TextMimeRecord other = (TextMimeRecord)obj;
 		if (charset == null) {
 			if (other.charset != null)
 				return false;
-		} else if (!charset.equals(other.charset))
+		}
+		else if (!charset.equals(other.charset))
 			return false;
 		if (content == null) {
 			if (other.content != null)
 				return false;
-		} else if (!content.equals(other.content))
+		}
+		else if (!content.equals(other.content))
 			return false;
 		return true;
 	}
 
-
-	
 }

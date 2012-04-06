@@ -24,7 +24,7 @@ import org.nfctools.ndef.Record;
  * Absolute URI Record
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
 public class AbsoluteUriRecord extends Record {
@@ -38,11 +38,6 @@ public class AbsoluteUriRecord extends Record {
 	public AbsoluteUriRecord() {
 	}
 
-	/**
-	 * @model
-	 * 
-	 */
-	
 	public String getUri() {
 		return uri;
 	}
@@ -52,14 +47,18 @@ public class AbsoluteUriRecord extends Record {
 		return "Absolute Uri: [" + uri + "]";
 	}
 
-	public boolean hasURI() {
+	public boolean hasUri() {
 		return uri != null;
+	}
+
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
 		return result;
 	}
@@ -68,22 +67,18 @@ public class AbsoluteUriRecord extends Record {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AbsoluteUriRecord other = (AbsoluteUriRecord) obj;
+		AbsoluteUriRecord other = (AbsoluteUriRecord)obj;
 		if (uri == null) {
 			if (other.uri != null)
 				return false;
-		} else if (!uri.equals(other.uri))
+		}
+		else if (!uri.equals(other.uri))
 			return false;
 		return true;
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
-	
-	
 }

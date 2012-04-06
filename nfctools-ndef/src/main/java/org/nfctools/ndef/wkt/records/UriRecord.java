@@ -44,15 +44,19 @@ public class UriRecord extends Record {
 	public String toString() {
 		return "Uri: [" + uri + "]";
 	}
-	
+
 	public void setUri(String uri) {
 		this.uri = uri;
+	}
+
+	public boolean hasUri() {
+		return uri != null;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
 		return result;
 	}
@@ -61,22 +65,18 @@ public class UriRecord extends Record {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UriRecord other = (UriRecord) obj;
+		UriRecord other = (UriRecord)obj;
 		if (uri == null) {
 			if (other.uri != null)
 				return false;
-		} else if (!uri.equals(other.uri))
+		}
+		else if (!uri.equals(other.uri))
 			return false;
 		return true;
 	}
 
-	public boolean hasURI() {
-		return uri != null;
-	}
-	
-	
 }

@@ -32,9 +32,8 @@ public class TextRecordDecoder extends AbstractTypeRecordDecoder<TextRecord> {
 		super(NdefConstants.TNF_WELL_KNOWN, TextRecord.TYPE);
 	}
 
-	// TODO ignore BOM for UTF-16 (BE) 	FE FF
 	@Override
-	public TextRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected TextRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(ndefRecord.getPayload());
 
 		int status = bais.read();
@@ -46,10 +45,7 @@ public class TextRecordDecoder extends AbstractTypeRecordDecoder<TextRecord> {
 
 		try {
 			String text = new String(textData, textEncoding.name());
-
-			TextRecord textRecord = new TextRecord(text, textEncoding, new Locale(languageCode));
-			setIdOnRecord(ndefRecord, textRecord);
-			return textRecord;
+			return new TextRecord(text, textEncoding, new Locale(languageCode));
 		}
 		catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);

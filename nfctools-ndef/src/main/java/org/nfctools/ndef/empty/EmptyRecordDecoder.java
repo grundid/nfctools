@@ -24,7 +24,7 @@ import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
 public class EmptyRecordDecoder extends AbstractRecordDecoder<EmptyRecord> {
@@ -32,10 +32,9 @@ public class EmptyRecordDecoder extends AbstractRecordDecoder<EmptyRecord> {
 	public EmptyRecordDecoder() {
 		super(NdefConstants.TNF_EMPTY);
 	}
-	
-	@Override
-	public EmptyRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 
+	@Override
+	protected EmptyRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		return new EmptyRecord();
 	}
 

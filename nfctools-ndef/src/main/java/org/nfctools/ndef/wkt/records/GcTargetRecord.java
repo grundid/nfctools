@@ -31,13 +31,14 @@ public class GcTargetRecord extends Record {
 	}
 
 	public void setTargetIdentifier(Record targetIdentifier) {
-		if(targetIdentifier != null) {
+		if (targetIdentifier != null) {
 			if ((targetIdentifier instanceof UriRecord) || (targetIdentifier instanceof TextRecord))
 				this.targetIdentifier = targetIdentifier;
 			else
 				throw new IllegalArgumentException(targetIdentifier.getClass().getName()
 						+ " not supported as target identifier");
-		} else {
+		}
+		else {
 			this.targetIdentifier = null;
 		}
 	}
@@ -54,4 +55,31 @@ public class GcTargetRecord extends Record {
 	public boolean hasTargetIdentifier() {
 		return targetIdentifier != null;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((targetIdentifier == null) ? 0 : targetIdentifier.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GcTargetRecord other = (GcTargetRecord)obj;
+		if (targetIdentifier == null) {
+			if (other.targetIdentifier != null)
+				return false;
+		}
+		else if (!targetIdentifier.equals(other.targetIdentifier))
+			return false;
+		return true;
+	}
+
 }

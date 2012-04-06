@@ -30,19 +30,16 @@ public class UriRecordDecoder extends AbstractTypeRecordDecoder<UriRecord> {
 	}
 
 	@Override
-	public UriRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-
+	protected UriRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		String prefix = "";
 		if (ndefRecord.getPayload()[0] >= UriRecord.abbreviableUris.length || ndefRecord.getPayload()[0] < 0) {
 			throw new IllegalArgumentException("Unkown abbreviation index " + ndefRecord.getPayload()[0]);
-		} else {
+		}
+		else {
 			prefix = UriRecord.abbreviableUris[ndefRecord.getPayload()[0]];
 		}
-		String uri = new String(ndefRecord.getPayload(), 1, ndefRecord.getPayload().length - 1, UriRecord.DEFAULT_URI_CHARSET);
-		UriRecord uriRecord = new UriRecord(prefix + uri);
-		setIdOnRecord(ndefRecord, uriRecord);
-		return uriRecord;
-
+		String uri = new String(ndefRecord.getPayload(), 1, ndefRecord.getPayload().length - 1,
+				UriRecord.DEFAULT_URI_CHARSET);
+		return new UriRecord(prefix + uri);
 	}
-
 }

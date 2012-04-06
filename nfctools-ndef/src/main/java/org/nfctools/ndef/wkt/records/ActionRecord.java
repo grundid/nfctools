@@ -43,10 +43,14 @@ public class ActionRecord extends Record {
 		this.action = action;
 	}
 
+	public boolean hasAction() {
+		return action != null;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((action == null) ? 0 : action.hashCode());
 		return result;
 	}
@@ -55,19 +59,14 @@ public class ActionRecord extends Record {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ActionRecord other = (ActionRecord) obj;
+		ActionRecord other = (ActionRecord)obj;
 		if (action != other.action)
 			return false;
 		return true;
 	}
-
-	public boolean hasAction() {
-		return action != null;
-	}
-	
 
 }

@@ -25,7 +25,7 @@ import org.nfctools.ndef.wkt.records.UriRecord;
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 public class AbsoluteUriRecordDecoder extends AbstractTypeRecordDecoder<AbsoluteUriRecord> {
 
@@ -34,11 +34,8 @@ public class AbsoluteUriRecordDecoder extends AbstractTypeRecordDecoder<Absolute
 	}
 
 	@Override
-	public AbsoluteUriRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-
-        String uri = new String(ndefRecord.getPayload(), NdefConstants.DEFAULT_CHARSET);
-
+	protected AbsoluteUriRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+		String uri = new String(ndefRecord.getPayload(), NdefConstants.DEFAULT_CHARSET);
 		return new AbsoluteUriRecord(uri);
 	}
-
 }

@@ -34,7 +34,7 @@ public class GenericControlRecordDecoder extends AbstractTypeRecordDecoder<Gener
 	}
 
 	@Override
-	public GenericControlRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected GenericControlRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		byte configurationByte = ndefRecord.getPayload()[0];
 
 		NdefMessage payloadNdefMessage = messageDecoder.decode(ndefRecord.getPayload(), 1,
@@ -62,8 +62,6 @@ public class GenericControlRecordDecoder extends AbstractTypeRecordDecoder<Gener
 		GenericControlRecord gcr = new GenericControlRecord(target, configurationByte);
 		gcr.setAction(action);
 		gcr.setData(data);
-
-		setIdOnRecord(ndefRecord, gcr);
 		return gcr;
 	}
 }

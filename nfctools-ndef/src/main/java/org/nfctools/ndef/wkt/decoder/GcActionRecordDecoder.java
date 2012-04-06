@@ -29,7 +29,7 @@ public class GcActionRecordDecoder extends AbstractTypeRecordDecoder<GcActionRec
 	}
 
 	@Override
-	public GcActionRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected GcActionRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		byte actionFlag = ndefRecord.getPayload()[0];
 
 		GcActionRecord actionRecord = null;
@@ -44,9 +44,6 @@ public class GcActionRecordDecoder extends AbstractTypeRecordDecoder<GcActionRec
 					ndefRecord.getPayload().length - 1);
 			actionRecord = new GcActionRecord(record);
 		}
-
-		setIdOnRecord(ndefRecord, actionRecord);
 		return actionRecord;
 	}
-
 }

@@ -30,7 +30,7 @@ public class SmartPosterRecord extends Record {
 		this.uri = uri;
 		this.action = action;
 	}
-	
+
 	public SmartPosterRecord() {
 	}
 
@@ -63,10 +63,22 @@ public class SmartPosterRecord extends Record {
 		return "SmartPoster: [" + getTitle() + ", " + getUri() + ", " + getAction() + "]";
 	}
 
+	public boolean hasTitle() {
+		return title != null;
+	}
+
+	public boolean hasUri() {
+		return uri != null;
+	}
+
+	public boolean hasAction() {
+		return action != null;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((action == null) ? 0 : action.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
@@ -77,40 +89,30 @@ public class SmartPosterRecord extends Record {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SmartPosterRecord other = (SmartPosterRecord) obj;
+		SmartPosterRecord other = (SmartPosterRecord)obj;
 		if (action == null) {
 			if (other.action != null)
 				return false;
-		} else if (!action.equals(other.action))
+		}
+		else if (!action.equals(other.action))
 			return false;
 		if (title == null) {
 			if (other.title != null)
 				return false;
-		} else if (!title.equals(other.title))
+		}
+		else if (!title.equals(other.title))
 			return false;
 		if (uri == null) {
 			if (other.uri != null)
 				return false;
-		} else if (!uri.equals(other.uri))
+		}
+		else if (!uri.equals(other.uri))
 			return false;
 		return true;
 	}
 
-	public boolean hasTitle() {
-		return title != null;
-	}
-
-	public boolean hasURI() {
-		return uri != null;
-	}
-
-	public boolean hasAction() {
-		return action != null;
-	}
-	
-	
 }

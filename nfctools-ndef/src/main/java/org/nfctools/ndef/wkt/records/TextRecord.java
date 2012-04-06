@@ -96,44 +96,6 @@ public class TextRecord extends Record {
 		this.locale = locale;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((encoding == null) ? 0 : encoding.hashCode());
-		result = prime * result + ((locale == null) ? 0 : locale.hashCode());
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TextRecord other = (TextRecord) obj;
-		if (encoding == null) {
-			if (other.encoding != null)
-				return false;
-		} else if (!encoding.equals(other.encoding))
-			return false;
-		if (locale == null) {
-			if (other.locale != null)
-				return false;
-		} else if (!locale.equals(other.locale))
-			return false;
-		if (text == null) {
-			if (other.text != null)
-				return false;
-		} else if (!text.equals(other.text))
-			return false;
-		return true;
-	}
-
 	public boolean hasText() {
 		return text != null;
 	}
@@ -145,6 +107,44 @@ public class TextRecord extends Record {
 	public boolean hasEncoding() {
 		return encoding != null;
 	}
-	
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((encoding == null) ? 0 : encoding.hashCode());
+		result = prime * result + ((locale == null) ? 0 : locale.hashCode());
+		result = prime * result + ((text == null) ? 0 : text.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TextRecord other = (TextRecord)obj;
+		if (encoding == null) {
+			if (other.encoding != null)
+				return false;
+		}
+		else if (!encoding.equals(other.encoding))
+			return false;
+		if (locale == null) {
+			if (other.locale != null)
+				return false;
+		}
+		else if (!locale.equals(other.locale))
+			return false;
+		if (text == null) {
+			if (other.text != null)
+				return false;
+		}
+		else if (!text.equals(other.text))
+			return false;
+		return true;
+	}
 }
