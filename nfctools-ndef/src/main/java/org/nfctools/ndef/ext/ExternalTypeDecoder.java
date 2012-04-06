@@ -15,6 +15,9 @@
  */
 package org.nfctools.ndef.ext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
@@ -22,12 +25,41 @@ import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 
 public class ExternalTypeDecoder extends AbstractRecordDecoder<ExternalTypeRecord> {
 
+	private static final Map<String, Class<? extends ExternalTypeRecord>> knownExternalTypesByNamespace = new HashMap<String, Class<? extends ExternalTypeRecord>>();
+
+	static {
+		knownExternalTypesByNamespace.put(AndroidApplicationRecord.TYPE, AndroidApplicationRecord.class);
+	}
+
 	public ExternalTypeDecoder() {
 		super(NdefConstants.TNF_EXTERNAL_TYPE);
 	}
 
 	@Override
 	public ExternalTypeRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		return new ExternalTypeRecord(new String(ndefRecord.getType()), new String(ndefRecord.getPayload()));
+		String namespace = new String(ndefRecord.getType(), NdefConstants.DEFAULT_CHARSET);
+		String content = new String(ndefRecord.getPayload(), NdefConstants.DEFAULT_CHARSET);
+		ExternalTypeRecord record = null;
+		if (knownExternalTypesByNamespace.containsKey(namespace)) {
+			record = createKnownExternalType(namespace, content);
+		}
+		else
+			record = new ExternalTypeRecord(namespace, content);
+		record.setId(ndefRecord.getId());
+		return record;
+	}
+
+	private ExternalTypeRecord createKnownExternalType(String namespace, String content) {
+
+		try {
+			Class<? extends ExternalTypeRecord> recordClass = knownExternalTypesByNamespace.get(namespace);
+			ExternalTypeRecord record = recordClass.newInstance();
+			record.setContent(content);
+			record.setNamespace(namespace);
+			return record;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

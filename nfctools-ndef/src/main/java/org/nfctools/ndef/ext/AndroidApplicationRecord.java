@@ -16,72 +16,36 @@
 
 package org.nfctools.ndef.ext;
 
-import org.nfctools.ndef.Record;
-
 /**
  * Android Application Record.
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
-public class AndroidApplicationRecord extends Record {
-
-    /**
-     * An RTD indicating an Android Application Record.
-     */
-    public static final byte[] TYPE = "android.com:pkg".getBytes();
-
-	private String packageName;
+public class AndroidApplicationRecord extends ExternalTypeRecord {
 
 	/**
-	 * @model
-	 * 
+	 * An RTD indicating an Android Application Record.
 	 */
-
-	public String getPackageName() {
-		return packageName;
-	}
-
-	public void setPackageName(String packageName) {
-		this.packageName = packageName;
-	}
+	public static final String TYPE = "android.com:pkg";
 
 	public AndroidApplicationRecord(String packageName) {
-		this.packageName = packageName;
+		setNamespace(TYPE);
+		setContent(packageName);
 	}
 
 	public AndroidApplicationRecord() {
 	}
 
+	public String getPackageName() {
+		return getContent();
+	}
+
+	public void setPackageName(String packageName) {
+		setContent(packageName);
+	}
+
 	public boolean hasPackageName() {
-		return packageName != null;
+		return hasContent();
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((packageName == null) ? 0 : packageName.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AndroidApplicationRecord other = (AndroidApplicationRecord) obj;
-		if (packageName == null) {
-			if (other.packageName != null)
-				return false;
-		} else if (!packageName.equals(other.packageName))
-			return false;
-		return true;
-	}
-	
-	
 }

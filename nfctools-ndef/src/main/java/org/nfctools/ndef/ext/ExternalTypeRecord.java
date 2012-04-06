@@ -54,9 +54,42 @@ public class ExternalTypeRecord extends Record {
 	public boolean hasNamespace() {
 		return namespace != null;
 	}
-	
+
 	public boolean hasContent() {
 		return content != null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ExternalTypeRecord other = (ExternalTypeRecord)obj;
+		if (content == null) {
+			if (other.content != null)
+				return false;
+		}
+		else if (!content.equals(other.content))
+			return false;
+		if (namespace == null) {
+			if (other.namespace != null)
+				return false;
+		}
+		else if (!namespace.equals(other.namespace))
+			return false;
+		return true;
 	}
 
 }

@@ -17,8 +17,6 @@ package org.nfctools.ndef;
 
 import org.nfctools.ndef.auri.AbsoluteUriRecordEncoder;
 import org.nfctools.ndef.empty.EmptyRecordEncoder;
-import org.nfctools.ndef.ext.AndroidApplicationRecordDecoder;
-import org.nfctools.ndef.ext.AndroidApplicationRecordEncoder;
 import org.nfctools.ndef.ext.ExternalTypeDecoder;
 import org.nfctools.ndef.ext.ExternalTypeEncoder;
 import org.nfctools.ndef.mime.MimeRecordEncoder;
@@ -72,14 +70,13 @@ public class NdefContext {
 		ndefRecordDecoder.addWellKnownRecordDecoder(new GcTargetRecordDecoder());
 		ndefRecordDecoder.addWellKnownRecordDecoder(new GcActionRecordDecoder());
 		ndefRecordDecoder.addWellKnownRecordDecoder(new GcDataRecordDecoder());
-		
+
 		ndefRecordDecoder.addWellKnownRecordDecoder(new AlternativeCarrierRecordDecoder());
 		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverCarrierRecordDecoder());
 		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverRequestRecordDecoder());
 		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverSelectRecordDecoder());
 
 		// external type decoders
-		ndefRecordDecoder.addExternalRecordDecoder(new AndroidApplicationRecordDecoder());
 		ndefRecordDecoder.addExternalRecordDecoder(new ExternalTypeDecoder()); // catch all external type
 
 		// encoders
@@ -103,14 +100,12 @@ public class NdefContext {
 		// other decoders
 		ndefRecordEncoder.addRecordEncoder(new MimeRecordEncoder());
 		ndefRecordEncoder.addRecordEncoder(new AbsoluteUriRecordEncoder());
-		
-		ndefRecordEncoder.addRecordEncoder(new AndroidApplicationRecordEncoder());
+
 		ndefRecordEncoder.addRecordEncoder(new ExternalTypeEncoder()); // catch all external type
-		
+
 		ndefRecordEncoder.addRecordEncoder(new UnknownRecordEncoder());
 		ndefRecordEncoder.addRecordEncoder(new UnchangedRecordEncoder());
 		ndefRecordEncoder.addRecordEncoder(new ReservedRecordEncoder());
-
 
 	}
 
