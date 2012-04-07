@@ -50,7 +50,7 @@ public class UnknownRecordDecoder extends AbstractRecordDecoder<UnknownRecord> {
 		// check that type is zero length
 		byte[] type = ndefRecord.getType();
 		if(type != null && type.length > 0) {
-			throw new IllegalArgumentException("Record type expected");
+			throw new IllegalArgumentException("Record type not expected");
 		}
 		
 		return new UnknownRecord(ndefRecord.getPayload());
