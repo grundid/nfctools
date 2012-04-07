@@ -40,4 +40,8 @@ public class UnknownRecord extends Record {
 		return payload;
 	}
 
+	public void setPayload(byte[] payload) {
+		this.payload = payload;
+	}
+
 }
