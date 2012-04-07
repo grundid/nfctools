@@ -45,10 +45,10 @@ import org.nfctools.ndef.wkt.encoder.SmartPosterRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;
 import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
-import org.nfctools.ndef.wkt.records.AlternativeCarrierRecord;
-import org.nfctools.ndef.wkt.records.HandoverCarrierRecord;
-import org.nfctools.ndef.wkt.records.HandoverRequestRecord;
-import org.nfctools.ndef.wkt.records.HandoverSelectRecord;
+import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**
  * Simple entry class for getting the different encoders and decoders.

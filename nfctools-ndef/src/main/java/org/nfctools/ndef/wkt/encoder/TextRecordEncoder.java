@@ -39,21 +39,21 @@ public class TextRecordEncoder implements RecordEncoder {
 
 		Locale locale = textRecord.getLocale();
 
-		byte[] lanuageData = (locale.getLanguage() + (locale.getCountry() == null || locale.getCountry().length() == 0 ? ""
+		byte[] languageData = (locale.getLanguage() + (locale.getCountry() == null || locale.getCountry().length() == 0 ? ""
 				: ("-" + locale.getCountry()))).getBytes();
 
-		if (lanuageData.length > TextRecord.LANGUAGE_CODE_MASK)
+		if (languageData.length > TextRecord.LANGUAGE_CODE_MASK)
 			throw new IllegalArgumentException("language code length longer than 2^5. this is not supported.");
 
 		Charset encoding = textRecord.getEncoding();
 
 		byte[] textData = getTextAsBytes(textRecord, encoding);
-		byte[] payload = new byte[1 + lanuageData.length + textData.length];
+		byte[] payload = new byte[1 + languageData.length + textData.length];
 
-		byte status = (byte)(lanuageData.length | (TextRecord.UTF16.equals(encoding) ? 0x80 : 0x00));
+		byte status = (byte)(languageData.length | (TextRecord.UTF16.equals(encoding) ? 0x80 : 0x00));
 		payload[0] = status;
-		System.arraycopy(lanuageData, 0, payload, 1, lanuageData.length);
-		System.arraycopy(textData, 0, payload, 1 + lanuageData.length, textData.length);
+		System.arraycopy(languageData, 0, payload, 1, languageData.length);
+		System.arraycopy(textData, 0, payload, 1 + languageData.length, textData.length);
 
 		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, TextRecord.TYPE, record.getId(), payload);
 	}

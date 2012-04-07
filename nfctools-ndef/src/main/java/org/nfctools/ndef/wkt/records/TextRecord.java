@@ -89,6 +89,9 @@ public class TextRecord extends Record {
 	}
 
 	public void setEncoding(Charset encoding) {
+		if (!encoding.equals(UTF8) && !encoding.equals(UTF16))
+			throw new IllegalArgumentException("unsupported encoding. only utf8 and utf16 are allowed.");
+
 		this.encoding = encoding;
 	}
 

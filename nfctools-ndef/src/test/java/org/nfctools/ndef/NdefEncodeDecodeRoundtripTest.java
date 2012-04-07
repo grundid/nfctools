@@ -32,13 +32,13 @@ import org.nfctools.ndef.mime.TextMimeRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
-import org.nfctools.ndef.wkt.records.AlternativeCarrierRecord;
-import org.nfctools.ndef.wkt.records.HandoverCarrierRecord;
-import org.nfctools.ndef.wkt.records.HandoverRequestRecord;
-import org.nfctools.ndef.wkt.records.HandoverSelectRecord;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
+import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**
  * 
