@@ -16,13 +16,9 @@
 package org.nfctools.ndef;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-// TODO decode Chunked messages
 public class NdefMessageDecoder {
 
 	private NdefRecordDecoder ndefRecordDecoder;
@@ -46,24 +42,22 @@ public class NdefMessageDecoder {
 			NdefRecord ndefRecord = ndefRecords[i];
 			
 			if(ndefRecord.isChunked()) {
-				// Concatenate chunked records to get the whole payload
-				
-				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				try {
-					bout.write(ndefRecord.getPayload());
+					// Concatenate chunked records to get the whole payload
 
+					int payloadSize = ndefRecord.getPayloadSize();
+				
 					/**
 					The value 0x06 (Unchanged) MUST be used in all middle record chunks and the terminating
 					record chunk used in chunked payloads (see section 2.3.3). It MUST NOT be used in any other
 					record. When used, the TYPE_LENGTH field MUST be zero and thus the TYPE field is omitted
 					from the NDEF record.		
 					*/
-					
 
+					int k = i;
 					do {
-						i++;
+						k++;
 						
-						NdefRecord next = ndefRecords[i];
+						NdefRecord next = ndefRecords[k];
 						if(next.getTnf() != NdefConstants.TNF_UNCHANGED) {
 							// no terminating chunk?
 							throw new IllegalArgumentException("Expected terminating 'unchanged' record type at " + i);
@@ -75,15 +69,31 @@ public class NdefMessageDecoder {
 							throw new IllegalArgumentException("Expected no record type at " + i);
 						}
 						
-						// copy payload from chunk
-						bout.write(next.getPayload());
+						payloadSize += next.getPayloadSize();
 						
 						if(!next.isChunked()) {
 							// terminating chunk
-							NdefRecord unchunkedNdefRecord = new NdefRecord(ndefRecord.getTnf(), ndefRecord.getType(), ndefRecord.getId(), bout.toByteArray());
+							
+							// concatenate chunked payloads into a single payload
+							byte[] payload = new byte[payloadSize];
+							
+							int offset = 0;
+							for(int p = i; p <= k; p++) {
+								byte[] chunkPayload = ndefRecords[p].getPayload();
+								
+								System.arraycopy(chunkPayload, 0, payload, offset, chunkPayload.length);
+								
+								offset += chunkPayload.length;
+							}
+							
+							// finally create unchunked record, copy tnf, type and id from first record
+							NdefRecord unchunkedNdefRecord = new NdefRecord(ndefRecord.getTnf(), ndefRecord.getType(), ndefRecord.getId(), payload);
 							
 							records.add(ndefRecordDecoder.decode(unchunkedNdefRecord, this));
-							
+
+							// skip chunked packets
+							i = k;
+							// continue on to next record
 							continue iterate;
 						} else {
 							// middle chunk
@@ -92,10 +102,6 @@ public class NdefMessageDecoder {
 
 					// no terminating chunk
 					throw new IllegalArgumentException("Expected terminating 'unchanged' record type");
-					
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
 			} else {
 				records.add(ndefRecordDecoder.decode(ndefRecord, this));
 			}

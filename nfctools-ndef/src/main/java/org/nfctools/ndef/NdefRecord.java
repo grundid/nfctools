@@ -71,5 +71,9 @@ public class NdefRecord {
 	public byte[] getPayload() {
 		return payload;
 	}
+	
+	public int getPayloadSize() {
+		return payload.length;
+	}
 
 }
