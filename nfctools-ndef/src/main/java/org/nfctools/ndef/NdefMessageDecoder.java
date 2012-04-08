@@ -171,4 +171,9 @@ public class NdefMessageDecoder {
 			return (int)(buffer[0] << 24) + (int)(buffer[1] << 16) + (int)(buffer[2] << 8) + (int)(buffer[3] & 0xff);
 		}
 	}
+
+	public List<Record> decodeToRecords(byte[] payload, int offset, int length) {
+		return decodeToRecords(decode(payload, offset, length));
+	}
+
 }

@@ -53,16 +53,43 @@ public class AlternativeCarrierRecord extends AbstractWellKnownRecord {
 		public byte getValue() {
 			return value;
 		}
+		
+		public static CarrierPowerState toCarrierPowerState(byte value) {
+			
+			for(CarrierPowerState state : values()) {
+				if(state.value == value) {
+					return state;
+				}
+			}
+			
+			throw new IllegalArgumentException("Unknown carrier power state " + value);
+		}
 	}
 	
 	private CarrierPowerState carrierPowerState;
 
 	private String carrierDataReference;
 	
-	private List<String> auxiliaryDataReference = new ArrayList<String>();
+	private List<String> auxiliaryDataReferences;
 
 	public AlternativeCarrierRecord() {
-		super(TYPE);
+		this(new ArrayList<String>());
+	}
+
+	public AlternativeCarrierRecord(List<String> auxiliaryDataReferences) {
+		this.auxiliaryDataReferences = auxiliaryDataReferences;
+	}
+
+	
+	public AlternativeCarrierRecord(CarrierPowerState carrierPowerState, String carrierDataReference) {
+		this(carrierPowerState, carrierDataReference, new ArrayList<String>());
+	}		
+	
+	public AlternativeCarrierRecord(CarrierPowerState carrierPowerState, String carrierDataReference, List<String> auxiliaryDataReferences) {
+		this(auxiliaryDataReferences);
+		
+		this.carrierPowerState = carrierPowerState;
+		this.carrierDataReference = carrierDataReference;
 	}
 
 	public CarrierPowerState getCarrierPowerState() {
@@ -81,12 +108,16 @@ public class AlternativeCarrierRecord extends AbstractWellKnownRecord {
 		this.carrierDataReference = carrierDataReference;
 	}
 
-	public List<String> getAuxiliaryDataReference() {
-		return auxiliaryDataReference;
+	public List<String> getAuxiliaryDataReferences() {
+		return auxiliaryDataReferences;
 	}
 
-	public void setAuxiliaryDataReference(List<String> auxiliaryDataReference) {
-		this.auxiliaryDataReference = auxiliaryDataReference;
+	public void setAuxiliaryDataReferences(List<String> auxiliaryDataReference) {
+		this.auxiliaryDataReferences = auxiliaryDataReference;
+	}
+
+	public void addAuxiliaryDataReference(String string) {
+		this.auxiliaryDataReferences.add(string);
 	}
 	
 	

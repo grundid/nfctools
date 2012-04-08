@@ -46,12 +46,18 @@ public class ErrorRecord extends AbstractWellKnownRecord {
 			return value;
 		}
 		
-	}
-	public ErrorRecord() {
-		super(TYPE);
+		public static ErrorReason toErrorReason(byte errorReason) {
+			if(errorReason == TemporaryMemoryConstraints.value) {
+				return TemporaryMemoryConstraints;
+			} else if(errorReason == PermanenteMemoryConstraints.value) {
+				return PermanenteMemoryConstraints;
+			} else if(errorReason == CarrierSpecificConstraints.value) {
+				return CarrierSpecificConstraints;
+			}
+			throw new IllegalArgumentException("Unexpected error reason code " + errorReason);
+		}
 	}
 
-	/** This 16-bit field contains an integer number that SHALL be randomly generated before sending a Handover Request Message */
 	private ErrorReason errorReason;
 
 	/** A sequence of octets providing additional information about the conditions that caused the handover 
@@ -60,7 +66,7 @@ public class ErrorRecord extends AbstractWellKnownRecord {
 	 * determined by the number of octets in the payload of the Error Record minus 1.
 	 */
 	
-	private long errorData;
+	private Number errorData;
 
 	public ErrorReason getErrorReason() {
 		return errorReason;
@@ -70,11 +76,11 @@ public class ErrorRecord extends AbstractWellKnownRecord {
 		this.errorReason = errorReason;
 	}
 
-	public long getErrorData() {
+	public Number getErrorData() {
 		return errorData;
 	}
 
-	public void setErrorData(long errorData) {
+	public void setErrorData(Number errorData) {
 		this.errorData = errorData;
 	}
 

@@ -19,7 +19,7 @@ import java.nio.charset.Charset;
 
 import org.nfctools.ndef.Record;
 
-public class UriRecord extends Record {
+public class UriRecord extends AbstractWellKnownRecord {
 
 	public static final byte[] TYPE = { 'U' };
 	public static final Charset DEFAULT_URI_CHARSET = Charset.forName("UTF-8");

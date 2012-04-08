@@ -47,12 +47,17 @@ public class HandoverRequestRecord extends AbstractWellKnownRecord {
 	private byte majorVersion = 0x01;
 	
 	/**
-	 * This 4-bit field equals the minor version number of the Connection
-	 * Handover specification and SHALL be set to 0x0 by an implementation that conforms to this
-	 * specification. When an NDEF parser reads a different value, it MAY assume backward
-	 * compatibility.
+	 * This 4-bit field equals the minor version number of the Connection Handover specification 
+	 * and SHALL be set to 0x2 by an implementation that conforms to this specification. 
+	 * When an NDEF parser reads a different value, it MAY assume backward compatibility.
 	*/
-	private byte minorVersion = 0x00;
+	
+	private byte minorVersion = 0x02;
+	
+	/** This record contains a 16-bit random number that is used in the collision resolution 
+	 * procedure defined in section 2.7. Only a single Collision Resolution Record SHALL be 
+	 * allowed in a Handover Request Message
+	 */
 	
 	private CollisionResolutionRecord collisionResolution;
 	
@@ -61,10 +66,6 @@ public class HandoverRequestRecord extends AbstractWellKnownRecord {
 	* Selector device. 
 	*/
 	private List<AlternativeCarrierRecord> alternativeCarriers = new ArrayList<AlternativeCarrierRecord>();
-
-	public HandoverRequestRecord() {
-		super(TYPE);
-	}
 
 	public byte getMajorVersion() {
 		return majorVersion;
@@ -97,6 +98,18 @@ public class HandoverRequestRecord extends AbstractWellKnownRecord {
 
 	public void setCollisionResolution(CollisionResolutionRecord collisionResolution) {
 		this.collisionResolution = collisionResolution;
+	}
+
+	public boolean hasAlternativeCarriers() {
+		return !alternativeCarriers.isEmpty();
+	}
+
+	public void add(AlternativeCarrierRecord alternativeCarrierRecord) {
+		this.alternativeCarriers.add(alternativeCarrierRecord);
+	}
+
+	public boolean hasCollisionResolution() {
+		return this.collisionResolution != null;
 	}
 	
 	

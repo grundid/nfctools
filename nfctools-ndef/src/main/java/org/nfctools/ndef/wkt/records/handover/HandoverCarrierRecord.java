@@ -16,6 +16,11 @@
 
 package org.nfctools.ndef.wkt.records.handover;
 
+import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.Record;
+import org.nfctools.ndef.auri.AbsoluteUriRecord;
+import org.nfctools.ndef.ext.ExternalTypeRecord;
+import org.nfctools.ndef.mime.MimeRecord;
 import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
 
 /**
@@ -38,7 +43,7 @@ public class HandoverCarrierRecord extends AbstractWellKnownRecord {
 	/** This is a 3-bit field that indicates the structure of the value of the CARRIER_TYPE field. */
 	public static enum CarrierTypeFormat {
 		
-		WellKnown((byte)0x01), Media((byte)0x02), AbsoluteURI((byte)0x03), External((byte)0x04);
+		WellKnown(NdefConstants.TNF_WELL_KNOWN), Media(NdefConstants.TNF_MIME_MEDIA), AbsoluteURI(NdefConstants.TNF_ABSOLUTE_URI), External(NdefConstants.TNF_EXTERNAL_TYPE);
 		
 		private CarrierTypeFormat(byte value) {
 			this.value = value;
@@ -50,6 +55,14 @@ public class HandoverCarrierRecord extends AbstractWellKnownRecord {
 			return value;
 		}
 		
+		public static CarrierTypeFormat toCarrierTypeFormat(byte value) {
+			for(CarrierTypeFormat carrierTypeFormat : values()) {
+				if(carrierTypeFormat.value == value) {
+					return carrierTypeFormat;
+				}
+			}
+			throw new IllegalArgumentException("Unknown carrier type format " + value);
+		}
 	}
 	
 	private CarrierTypeFormat carrierTypeFormat;
@@ -64,9 +77,60 @@ public class HandoverCarrierRecord extends AbstractWellKnownRecord {
 	* alternative carrier enquiry. The syntax and semantics of this data are determined by the
 	* CARRIER_TYPE field.
 	*/
-	private Object carrierData;
+	private byte[] carrierData;
 	
-	public HandoverCarrierRecord() {
-		super(TYPE);
+	public HandoverCarrierRecord(CarrierTypeFormat carrierTypeFormat, ExternalTypeRecord carrierType, byte[] carrierData) {
+		this.carrierTypeFormat = carrierTypeFormat;
+		this.carrierType = carrierType;
+		this.carrierData = carrierData;
 	}
+
+	public HandoverCarrierRecord(CarrierTypeFormat carrierTypeFormat, AbstractWellKnownRecord carrierType, byte[] carrierData) {
+		this.carrierTypeFormat = carrierTypeFormat;
+		this.carrierType = carrierType;
+		this.carrierData = carrierData;
+	}
+
+	public HandoverCarrierRecord() {
+	}
+
+	public HandoverCarrierRecord(CarrierTypeFormat carrierTypeFormat, String carrierType, byte[] carrierData) {
+		this.carrierTypeFormat = carrierTypeFormat;
+		this.carrierType = carrierType;
+		this.carrierData = carrierData;
+	}
+
+	public CarrierTypeFormat getCarrierTypeFormat() {
+		return carrierTypeFormat;
+	}
+
+	public void setCarrierTypeFormat(CarrierTypeFormat carrierTypeFormat) {
+		this.carrierTypeFormat = carrierTypeFormat;
+	}
+
+	public Object getCarrierType() {
+		return carrierType;
+	}
+
+	public void setCarrierType(Object carrierType) {
+		this.carrierType = carrierType;
+	}
+
+	public byte[] getCarrierData() {
+		return carrierData;
+	}
+
+	public void setCarrierData(byte[] carrierData) {
+		this.carrierData = carrierData;
+	}
+
+	public boolean hasCarrierData() {
+		return carrierData != null;
+	}
+
+	public int getCarrierDataSize() {
+		return carrierData.length;
+	}
+	
+	
 }

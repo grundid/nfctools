@@ -15,18 +15,14 @@ public class CollisionResolutionRecord extends AbstractWellKnownRecord {
 
 	public static final byte[] TYPE = {0x63, 0x72 }; // "cr"
 
-	public CollisionResolutionRecord() {
-		super(TYPE);
-	}
-
 	/** This 16-bit field contains an integer number that SHALL be randomly generated before sending a Handover Request Message */
-	private int randomNumber;
+	private short randomNumber;
 
-	public int getRandomNumber() {
+	public short getRandomNumber() {
 		return randomNumber;
 	}
 
-	public void setRandomNumber(int randomNumber) {
+	public void setRandomNumber(short randomNumber) {
 		this.randomNumber = randomNumber;
 	}
 	

@@ -64,12 +64,27 @@ public class HandoverSelectRecord extends AbstractWellKnownRecord {
 	* Requester device. The order of the Alternative Carrier Records gives an implicit preference
 	* ranking that the Handover Requester SHOULD obey.
 	*/
-	private List<AlternativeCarrierRecord> alternativeCarriers = new ArrayList<AlternativeCarrierRecord>();
+	private List<AlternativeCarrierRecord> alternativeCarriers;
 
 	private ErrorRecord error;
-	
+
 	public HandoverSelectRecord() {
-		super(TYPE);
+		alternativeCarriers = new ArrayList<AlternativeCarrierRecord>();
+	}
+	
+	public HandoverSelectRecord(byte majorVersion, byte minorVersion) {
+		this(majorVersion, minorVersion, new ArrayList<AlternativeCarrierRecord>());
+	}
+
+	public HandoverSelectRecord(byte majorVersion, byte minorVersion, List<AlternativeCarrierRecord> alternativeCarriers) {
+		this(majorVersion, minorVersion, alternativeCarriers, null);
+	}
+
+	public HandoverSelectRecord(byte majorVersion, byte minorVersion, List<AlternativeCarrierRecord> alternativeCarriers, ErrorRecord error) {
+		this.majorVersion = majorVersion;
+		this.minorVersion = minorVersion;
+		this.alternativeCarriers = alternativeCarriers;
+		this.error = error;
 	}
 
 	public byte getMajorVersion() {
@@ -103,6 +118,18 @@ public class HandoverSelectRecord extends AbstractWellKnownRecord {
 
 	public void setError(ErrorRecord error) {
 		this.error = error;
+	}
+
+	public boolean hasError() {
+		return error != null;
+	}
+
+	public boolean hasAlternativeCarriers() {
+		return !alternativeCarriers.isEmpty();
+	}
+
+	public void add(AlternativeCarrierRecord record) {
+		this.alternativeCarriers.add(record);
 	}
 
 	

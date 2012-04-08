@@ -36,6 +36,7 @@ import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPowerState;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
@@ -62,9 +63,9 @@ public class NdefEncodeDecodeRoundtripTest {
 			Charset.forName("UTF-8"), new Locale("no")), new UriRecord("http://smartposter.uri"), new ActionRecord(
 			Action.OPEN_FOR_EDITING));
 	private static TextRecord textRecord = new TextRecord("Text message", Charset.forName("UTF-8"), new Locale("no"));
-	private static UnknownRecord unknownRecord = new UnknownRecord();
+	private static UnknownRecord unknownRecord = new UnknownRecord(new byte[]{0x00, 0x01, 0x02, 0x03});
 	private static UriRecord uriRecord = new UriRecord("http://wellknown.url");
-	private static AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord();
+	private static AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord(CarrierPowerState.Active, "http://blabla");
 	private static HandoverSelectRecord handoverSelectRecord = new HandoverSelectRecord();
 	private static HandoverCarrierRecord handoverCarrierRecord = new HandoverCarrierRecord();
 
@@ -80,20 +81,15 @@ public class NdefEncodeDecodeRoundtripTest {
 
 		NdefMessageEncoder ndefMessageEncoder = NdefContext.getNdefMessageEncoder();
 
-		List<Record> originalRecords = new ArrayList<Record>();
-		for (Record record : records) {
-			originalRecords.add(record);
-		}
-		byte[] ndef = ndefMessageEncoder.encode(originalRecords);
-
 		NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
-		NdefMessage decode = ndefMessageDecoder.decode(ndef);
 
-		List<Record> roundTripRecordes = ndefMessageDecoder.decodeToRecords(decode);
+		for (Record record : records) {
+			System.out.println(record.getClass().getSimpleName());
+			byte[] ndef = ndefMessageEncoder.encodeSingle(record);
 
-		for (int i = 0; i < roundTripRecordes.size(); i++) {
-			assertEquals(Integer.toString(i), originalRecords.get(i), roundTripRecordes.get(i));
+			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
+
+			assertEquals(record.getClass().getName(),record, decodedRecord);
 		}
-
 	}
 }

@@ -17,7 +17,7 @@ package org.nfctools.ndef.wkt.records;
 
 import org.nfctools.ndef.Record;
 
-public class SmartPosterRecord extends Record {
+public class SmartPosterRecord extends AbstractWellKnownRecord {
 
 	public static final byte[] TYPE = { 'S', 'p' };
 

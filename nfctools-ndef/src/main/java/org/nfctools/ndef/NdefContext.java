@@ -31,19 +31,29 @@ import org.nfctools.ndef.wkt.decoder.GcActionRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GcDataRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GcTargetRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GenericControlRecordDecoder;
-import org.nfctools.ndef.wkt.decoder.GenericWellKnownRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.SmartPosterDecoder;
 import org.nfctools.ndef.wkt.decoder.TextRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.UriRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.AlternativeCarrierRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.CollisionResolutionRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.ErrorRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverCarrierRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverRequestRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverSelectRecordDecoder;
 import org.nfctools.ndef.wkt.encoder.ActionRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcActionRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcDataRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcTargetRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GenericControlRecordEncoder;
-import org.nfctools.ndef.wkt.encoder.GenericWellKnownRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.SmartPosterRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.AlternativeCarrierRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.CollisionResolutionRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.ErrorRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverCarrierRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverRequestRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverSelectRecordEncoder;
 import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
@@ -76,7 +86,13 @@ public class NdefContext {
 		ndefRecordDecoder.addWellKnownRecordDecoder(new GcActionRecordDecoder());
 		ndefRecordDecoder.addWellKnownRecordDecoder(new GcDataRecordDecoder());
 
-		ndefRecordDecoder.addWellKnownRecordDecoder(new GenericWellKnownRecordDecoder());
+		// handover
+		ndefRecordDecoder.addWellKnownRecordDecoder(new AlternativeCarrierRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverCarrierRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverRequestRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverSelectRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new ErrorRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new CollisionResolutionRecordDecoder());
 
 		// external type decoders
 		ndefRecordDecoder.addExternalRecordDecoder(new ExternalTypeDecoder()); // catch all external type
@@ -94,7 +110,13 @@ public class NdefContext {
 		ndefRecordEncoder.addRecordEncoder(new GcActionRecordEncoder());
 		ndefRecordEncoder.addRecordEncoder(new GcDataRecordEncoder());
 
-		ndefRecordEncoder.addRecordEncoder(new GenericWellKnownRecordEncoder());
+		// handover
+		ndefRecordEncoder.addRecordEncoder(new AlternativeCarrierRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new HandoverCarrierRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new HandoverRequestRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new HandoverSelectRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new ErrorRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new CollisionResolutionRecordEncoder());
 
 		// other decoders
 		ndefRecordEncoder.addRecordEncoder(new MimeRecordEncoder());
