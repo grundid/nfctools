@@ -37,7 +37,11 @@ import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPowerState;
+import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
+import org.nfctools.ndef.wkt.records.handover.ErrorRecord;
+import org.nfctools.ndef.wkt.records.handover.ErrorRecord.ErrorReason;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord.CarrierTypeFormat;
 import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
@@ -65,14 +69,19 @@ public class NdefEncodeDecodeRoundtripTest {
 	private static TextRecord textRecord = new TextRecord("Text message", Charset.forName("UTF-8"), new Locale("no"));
 	private static UnknownRecord unknownRecord = new UnknownRecord(new byte[]{0x00, 0x01, 0x02, 0x03});
 	private static UriRecord uriRecord = new UriRecord("http://wellknown.url");
+	
+	private static CollisionResolutionRecord collisionResolutionRecord = new CollisionResolutionRecord((short)123);
+	private static ErrorRecord errorRecord = new ErrorRecord(ErrorReason.PermanenteMemoryConstraints, new Long(321L));
+	
 	private static AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord(CarrierPowerState.Active, "http://blabla");
 	private static HandoverSelectRecord handoverSelectRecord = new HandoverSelectRecord();
-	private static HandoverCarrierRecord handoverCarrierRecord = new HandoverCarrierRecord();
+	private static HandoverCarrierRecord handoverCarrierRecord = new HandoverCarrierRecord(CarrierTypeFormat.AbsoluteURI, "http://absolute.url", new byte[]{0x00, 0x01, 0x02, 0x03});
 
-	private static HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord();
+	private static HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord(new CollisionResolutionRecord((short)321));
 
 	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
 			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
+			collisionResolutionRecord, errorRecord,
 			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
 			};
 

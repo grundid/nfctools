@@ -22,7 +22,7 @@ import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.wkt.decoder.AbstractTypeRecordDecoder;
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord.CarrierTypeFormat;
 
@@ -59,7 +59,7 @@ public class HandoverCarrierRecordDecoder extends AbstractTypeRecordDecoder<Hand
 			
 			Record record = messageDecoder.decodeToRecord(carrierType);
 			
-			if(record instanceof AbstractWellKnownRecord) {
+			if(record instanceof WellKnownRecord) {
 				handoverCarrierRecord.setCarrierType(record);
 			} else {
 				throw new IllegalArgumentException("Expected well-known type carrier type");

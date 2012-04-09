@@ -54,7 +54,7 @@ import org.nfctools.ndef.wkt.encoder.handover.ErrorRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.handover.HandoverCarrierRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.handover.HandoverRequestRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.handover.HandoverSelectRecordEncoder;
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
@@ -71,7 +71,7 @@ public class NdefContext {
 	private static NdefMessageEncoder ndefMessageEncoder = new NdefMessageEncoder(ndefRecordEncoder);
 	private static NdefMessageDecoder ndefMessageDecoder = new NdefMessageDecoder(ndefRecordDecoder);
 
-	private static final Map<String, Class<? extends AbstractWellKnownRecord>> knownRecordsByType = new HashMap<String, Class<? extends AbstractWellKnownRecord>>();
+	private static final Map<String, Class<? extends WellKnownRecord>> knownRecordsByType = new HashMap<String, Class<? extends WellKnownRecord>>();
 	private static final Map<String, Class<? extends ExternalTypeRecord>> knownExternalTypesByNamespace = new HashMap<String, Class<? extends ExternalTypeRecord>>();
 
 	static {
@@ -152,7 +152,7 @@ public class NdefContext {
 		return ndefMessageEncoder;
 	}
 
-	public static Map<String, Class<? extends AbstractWellKnownRecord>> getKnownRecordsByType() {
+	public static Map<String, Class<? extends WellKnownRecord>> getKnownRecordsByType() {
 		return knownRecordsByType;
 	}
 

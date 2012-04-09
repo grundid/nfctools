@@ -17,7 +17,7 @@ package org.nfctools.ndef.wkt.records;
 
 import org.nfctools.ndef.Record;
 
-public class GcTargetRecord extends AbstractWellKnownRecord {
+public class GcTargetRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 't' };
 

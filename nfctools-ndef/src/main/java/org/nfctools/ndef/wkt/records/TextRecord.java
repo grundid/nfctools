@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import org.nfctools.ndef.Record;
 
-public class TextRecord extends AbstractWellKnownRecord {
+public class TextRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 'T' };
 	public static final byte LANGUAGE_CODE_MASK = 0x1F;

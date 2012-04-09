@@ -19,7 +19,7 @@ package org.nfctools.ndef.wkt.records.handover;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 
 /**
@@ -37,7 +37,7 @@ import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
  * 
  */
 
-public class HandoverSelectRecord extends AbstractWellKnownRecord {
+public class HandoverSelectRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 0x48, 0x73 }; // "Hs"
 
@@ -130,6 +130,46 @@ public class HandoverSelectRecord extends AbstractWellKnownRecord {
 
 	public void add(AlternativeCarrierRecord record) {
 		this.alternativeCarriers.add(record);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((alternativeCarriers == null) ? 0 : alternativeCarriers
+						.hashCode());
+		result = prime * result + ((error == null) ? 0 : error.hashCode());
+		result = prime * result + majorVersion;
+		result = prime * result + minorVersion;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HandoverSelectRecord other = (HandoverSelectRecord) obj;
+		if (alternativeCarriers == null) {
+			if (other.alternativeCarriers != null)
+				return false;
+		} else if (!alternativeCarriers.equals(other.alternativeCarriers))
+			return false;
+		if (error == null) {
+			if (other.error != null)
+				return false;
+		} else if (!error.equals(other.error))
+			return false;
+		if (majorVersion != other.majorVersion)
+			return false;
+		if (minorVersion != other.minorVersion)
+			return false;
+		return true;
 	}
 
 	

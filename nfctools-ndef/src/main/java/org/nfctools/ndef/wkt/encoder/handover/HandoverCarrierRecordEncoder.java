@@ -25,7 +25,7 @@ import org.nfctools.ndef.Record;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.mime.MimeRecord;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord.CarrierTypeFormat;
 
@@ -62,8 +62,8 @@ public class HandoverCarrierRecordEncoder implements RecordEncoder {
 		switch(carrierTypeFormat) {
 			case WellKnown : {
 				// NFC Forum well-known type [NFC RTD]
-				if(carrierType instanceof AbstractWellKnownRecord) {
-					AbstractWellKnownRecord abstractWellKnownRecord = (AbstractWellKnownRecord)carrierType;
+				if(carrierType instanceof WellKnownRecord) {
+					WellKnownRecord abstractWellKnownRecord = (WellKnownRecord)carrierType;
 					
 					encoded = messageEncoder.encodeSingle(abstractWellKnownRecord);
 					

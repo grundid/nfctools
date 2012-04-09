@@ -16,12 +16,14 @@
 
 package org.nfctools.ndef.wkt.records.handover;
 
+import java.util.Arrays;
+
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.auri.AbsoluteUriRecord;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.mime.MimeRecord;
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**
  * 
@@ -36,7 +38,7 @@ import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
  * 
  */
 
-public class HandoverCarrierRecord extends AbstractWellKnownRecord {
+public class HandoverCarrierRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 0x48, 0x63 }; // "Hc"
 
@@ -85,7 +87,7 @@ public class HandoverCarrierRecord extends AbstractWellKnownRecord {
 		this.carrierData = carrierData;
 	}
 
-	public HandoverCarrierRecord(CarrierTypeFormat carrierTypeFormat, AbstractWellKnownRecord carrierType, byte[] carrierData) {
+	public HandoverCarrierRecord(CarrierTypeFormat carrierTypeFormat, WellKnownRecord carrierType, byte[] carrierData) {
 		this.carrierTypeFormat = carrierTypeFormat;
 		this.carrierType = carrierType;
 		this.carrierData = carrierData;
@@ -130,6 +132,41 @@ public class HandoverCarrierRecord extends AbstractWellKnownRecord {
 
 	public int getCarrierDataSize() {
 		return carrierData.length;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(carrierData);
+		result = prime * result
+				+ ((carrierType == null) ? 0 : carrierType.hashCode());
+		result = prime
+				* result
+				+ ((carrierTypeFormat == null) ? 0 : carrierTypeFormat
+						.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HandoverCarrierRecord other = (HandoverCarrierRecord) obj;
+		if (!Arrays.equals(carrierData, other.carrierData))
+			return false;
+		if (carrierType == null) {
+			if (other.carrierType != null)
+				return false;
+		} else if (!carrierType.equals(other.carrierType))
+			return false;
+		if (carrierTypeFormat != other.carrierTypeFormat)
+			return false;
+		return true;
 	}
 	
 	

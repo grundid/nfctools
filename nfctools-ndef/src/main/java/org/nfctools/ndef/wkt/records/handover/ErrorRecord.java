@@ -1,6 +1,6 @@
 package org.nfctools.ndef.wkt.records.handover;
 
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**
  * 
@@ -11,7 +11,7 @@ import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
  *
  */
 
-public class ErrorRecord extends AbstractWellKnownRecord {
+public class ErrorRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = {0x65, 0x72, 0x72}; // "err"
 
@@ -68,6 +68,14 @@ public class ErrorRecord extends AbstractWellKnownRecord {
 	
 	private Number errorData;
 
+	public ErrorRecord() {
+	}
+
+	public ErrorRecord(ErrorReason errorReason, Number errorData) {
+		this.errorReason = errorReason;
+		this.errorData = errorData;
+	}
+
 	public ErrorReason getErrorReason() {
 		return errorReason;
 	}
@@ -82,6 +90,36 @@ public class ErrorRecord extends AbstractWellKnownRecord {
 
 	public void setErrorData(Number errorData) {
 		this.errorData = errorData;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((errorData == null) ? 0 : errorData.hashCode());
+		result = prime * result
+				+ ((errorReason == null) ? 0 : errorReason.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ErrorRecord other = (ErrorRecord) obj;
+		if (errorData == null) {
+			if (other.errorData != null)
+				return false;
+		} else if (!errorData.equals(other.errorData))
+			return false;
+		if (errorReason != other.errorReason)
+			return false;
+		return true;
 	}
 
 

@@ -19,7 +19,7 @@ package org.nfctools.ndef.wkt.records.handover;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 
 /**
@@ -36,7 +36,7 @@ import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
  * 
  */
 
-public class AlternativeCarrierRecord extends AbstractWellKnownRecord {
+public class AlternativeCarrierRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 0x61, 0x63 }; // "ac"
 
@@ -118,6 +118,50 @@ public class AlternativeCarrierRecord extends AbstractWellKnownRecord {
 
 	public void addAuxiliaryDataReference(String string) {
 		this.auxiliaryDataReferences.add(string);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((auxiliaryDataReferences == null) ? 0
+						: auxiliaryDataReferences.hashCode());
+		result = prime
+				* result
+				+ ((carrierDataReference == null) ? 0 : carrierDataReference
+						.hashCode());
+		result = prime
+				* result
+				+ ((carrierPowerState == null) ? 0 : carrierPowerState
+						.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AlternativeCarrierRecord other = (AlternativeCarrierRecord) obj;
+		if (auxiliaryDataReferences == null) {
+			if (other.auxiliaryDataReferences != null)
+				return false;
+		} else if (!auxiliaryDataReferences
+				.equals(other.auxiliaryDataReferences))
+			return false;
+		if (carrierDataReference == null) {
+			if (other.carrierDataReference != null)
+				return false;
+		} else if (!carrierDataReference.equals(other.carrierDataReference))
+			return false;
+		if (carrierPowerState != other.carrierPowerState)
+			return false;
+		return true;
 	}
 	
 	

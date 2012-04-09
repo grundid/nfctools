@@ -19,7 +19,7 @@ package org.nfctools.ndef.wkt.records.handover;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 
 /**
@@ -35,7 +35,7 @@ import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
  * 
  */
 
-public class HandoverRequestRecord extends AbstractWellKnownRecord {
+public class HandoverRequestRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 0x48, 0x72 }; // "Hr"
 
@@ -65,7 +65,27 @@ public class HandoverRequestRecord extends AbstractWellKnownRecord {
 	* the Handover Requester would be able to utilize for further communication with the Handover
 	* Selector device. 
 	*/
-	private List<AlternativeCarrierRecord> alternativeCarriers = new ArrayList<AlternativeCarrierRecord>();
+	private List<AlternativeCarrierRecord> alternativeCarriers;
+
+
+	public HandoverRequestRecord() {
+		alternativeCarriers = new ArrayList<AlternativeCarrierRecord>();
+	}
+
+	public HandoverRequestRecord(CollisionResolutionRecord collisionResolution) {
+		this(collisionResolution, new ArrayList<AlternativeCarrierRecord>());
+	}
+
+	public HandoverRequestRecord(CollisionResolutionRecord collisionResolution, List<AlternativeCarrierRecord> alternativeCarriers) {
+		this.collisionResolution = collisionResolution;
+		this.alternativeCarriers = alternativeCarriers;
+	}
+	
+	public HandoverRequestRecord(byte majorVersion, byte minorVersion, CollisionResolutionRecord collisionResolution, List<AlternativeCarrierRecord> alternativeCarriers) {
+		this(collisionResolution, alternativeCarriers);
+		this.majorVersion = majorVersion;
+		this.minorVersion = minorVersion;
+	}
 
 	public byte getMajorVersion() {
 		return majorVersion;
@@ -110,6 +130,49 @@ public class HandoverRequestRecord extends AbstractWellKnownRecord {
 
 	public boolean hasCollisionResolution() {
 		return this.collisionResolution != null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((alternativeCarriers == null) ? 0 : alternativeCarriers
+						.hashCode());
+		result = prime
+				* result
+				+ ((collisionResolution == null) ? 0 : collisionResolution
+						.hashCode());
+		result = prime * result + majorVersion;
+		result = prime * result + minorVersion;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HandoverRequestRecord other = (HandoverRequestRecord) obj;
+		if (alternativeCarriers == null) {
+			if (other.alternativeCarriers != null)
+				return false;
+		} else if (!alternativeCarriers.equals(other.alternativeCarriers))
+			return false;
+		if (collisionResolution == null) {
+			if (other.collisionResolution != null)
+				return false;
+		} else if (!collisionResolution.equals(other.collisionResolution))
+			return false;
+		if (majorVersion != other.majorVersion)
+			return false;
+		if (minorVersion != other.minorVersion)
+			return false;
+		return true;
 	}
 	
 	
