@@ -55,22 +55,19 @@ public class HandoverRequestRecordEncoder implements RecordEncoder {
 		}
 		
 		// implementation note: write alternative carriers and and collision resolution together
-		if(handoverRequestRecord.hasAlternativeCarriers()) {
-
-			List<Record> records = new ArrayList<Record>();
-			
-			// a collision resolution record
-			records.add(handoverRequestRecord.getCollisionResolution());
-			
-			// n alternative carrier records
-			records.addAll(handoverRequestRecord.getAlternativeCarriers());
-			
-			messageEncoder.encode(records, payload);
-		} else {
-			// a collision resolution record
-			messageEncoder.encodeSingle(handoverRequestRecord.getCollisionResolution(), payload);
+		if(!handoverRequestRecord.hasAlternativeCarriers()) {
+			// At least a single alternative carrier MUST be specified by the Handover Requester.
+			throw new IllegalArgumentException("At least one alternative carrier expected");
 		}
+		List<Record> records = new ArrayList<Record>();
 		
+		// a collision resolution record
+		records.add(handoverRequestRecord.getCollisionResolution());
+		
+		// n alternative carrier records
+		records.addAll(handoverRequestRecord.getAlternativeCarriers());
+		
+		messageEncoder.encode(records, payload);
 
 		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, HandoverRequestRecord.TYPE, record.getId(), payload.toByteArray());
 	}

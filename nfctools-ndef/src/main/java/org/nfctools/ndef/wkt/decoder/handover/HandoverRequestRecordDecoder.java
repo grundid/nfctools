@@ -56,7 +56,7 @@ public class HandoverRequestRecordDecoder extends AbstractTypeRecordDecoder<Hand
 		List<Record> records = messageDecoder.decodeToRecords(payload, 1, payload.length - 1);
 
 		if(records.isEmpty()) {
-			throw new IllegalArgumentException("Expected collision resolution record");
+			throw new IllegalArgumentException("Expected collision resolution record and at least one alternative carrier");
 		}
 		Record firstRecord = records.get(0);
 		
@@ -64,6 +64,10 @@ public class HandoverRequestRecordDecoder extends AbstractTypeRecordDecoder<Hand
 			handoverRequestRecord.setCollisionResolution((CollisionResolutionRecord)firstRecord);
 		} else {
 			throw new IllegalArgumentException("Expected collision resolution record");
+		}
+
+		if(records.size() < 2) {
+			throw new IllegalArgumentException("Expected at least one alternative carrier");
 		}
 		
 		for(int i = 1; i < records.size(); i++) {

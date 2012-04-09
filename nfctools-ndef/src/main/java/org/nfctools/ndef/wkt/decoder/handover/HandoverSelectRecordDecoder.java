@@ -52,8 +52,11 @@ public class HandoverSelectRecordDecoder extends AbstractTypeRecordDecoder<Hando
 		handoverSelectRecord.setMinorVersion(minorVersion);
 		handoverSelectRecord.setMajorVersion(majorVersion);
 		
+		// The Handover Selector MAY acknowledge zero, one, or more of the proposed alternative carriers at its own discretion.
 		List<Record> records = messageDecoder.decodeToRecords(payload, 1, payload.length - 1);
 		
+		// Only Alternative Carrier Records and Error Records have a defined meaning in the payload of a Handover Select Record.
+		// However, an implementation SHALL NOT raise an error if it encounters other record types, but SHOULD silently ignore them.
 		for(int i = 0; i < records.size(); i++) {
 			Record record = records.get(i);
 			
