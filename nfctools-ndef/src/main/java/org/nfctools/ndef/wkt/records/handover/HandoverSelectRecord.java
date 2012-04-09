@@ -52,12 +52,12 @@ public class HandoverSelectRecord extends WellKnownRecord {
 	private byte majorVersion = 0x01;
 	
 	/**
-	 This 4-bit field equals the minor version number of the Connection
-	* Handover specification and SHALL be set to 0x0 by an implementation that conforms to this
-	* specification. When an NDEF parser reads a different value, it MAY assume backward
-	* compatibility.
+	* This 4-bit field equals the minor version number of the Connection Handover specification and 
+	* SHALL be set to 0x2 by an implementation that conforms to this specification. 
+	* When an NDEF parser reads a different value, it MAY assume backward compatibility.
 	*/
-	private byte minorVersion = 0x00;
+	
+	private byte minorVersion = 0x02;
 	
 	/** Each record specifies a single alternative carrier that
 	* the Handover Selector would be able to utilize for further communication with the Handover
