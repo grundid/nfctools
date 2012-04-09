@@ -44,4 +44,8 @@ public class UnknownRecord extends Record {
 		this.payload = payload;
 	}
 
+	public boolean hasPayload() {
+		return payload != null;
+	}
+
 }

@@ -41,7 +41,7 @@ public class CollisionResolutionRecordDecoder extends AbstractTypeRecordDecoder<
 
 		byte[] payload = ndefRecord.getPayload();
 		
-		collisionResolutionRecord.setRandomNumber( (short) ( (payload[0] << 8 | payload[1]) & 0xFFFF));
+		collisionResolutionRecord.setRandomNumber( ( ((payload[0] << 8) | payload[1]) & 0xFFFF));
 		
 		return collisionResolutionRecord;
 	}

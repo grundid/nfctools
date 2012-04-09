@@ -138,6 +138,14 @@ public class ErrorRecord extends WellKnownRecord {
 		return true;
 	}
 
+	public boolean hasErrorReason() {
+		return errorReason != null;
+	}
+
+	public boolean hasErrorData() {
+		return errorData != null;
+	}
+
 
 	
 }

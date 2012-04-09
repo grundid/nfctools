@@ -41,7 +41,7 @@ public class CollisionResolutionRecordEncoder implements RecordEncoder {
 		
 		CollisionResolutionRecord collisionResolutionRecord = (CollisionResolutionRecord)record;
 
-		short randomNumber = collisionResolutionRecord.getRandomNumber();
+		int randomNumber = collisionResolutionRecord.getRandomNumber();
 		
 		byte[] payload = new byte[]{(byte) ((randomNumber >> 8) & 0xFF), (byte)(randomNumber & 0xFF)}; // msb, lsb
 		

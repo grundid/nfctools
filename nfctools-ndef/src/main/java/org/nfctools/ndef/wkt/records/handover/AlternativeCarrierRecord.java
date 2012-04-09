@@ -163,6 +163,22 @@ public class AlternativeCarrierRecord extends WellKnownRecord {
 			return false;
 		return true;
 	}
+
+	public boolean hasCarrierPowerState() {
+		return carrierPowerState != null;
+	}
+
+	public String getAuxiliaryDataReferenceAt(int index) {
+		return auxiliaryDataReferences.get(index);
+	}
+
+	public void setAuxiliaryDataReferenceAt(int index, String reference) {
+		auxiliaryDataReferences.set(index, reference);
+	}
+
+	public boolean hasCarrierDataReference() {
+		return carrierDataReference != null;
+	}
 	
 	
 }

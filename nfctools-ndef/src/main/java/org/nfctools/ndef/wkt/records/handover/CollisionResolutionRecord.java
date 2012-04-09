@@ -32,20 +32,20 @@ public class CollisionResolutionRecord extends WellKnownRecord {
 	public static final byte[] TYPE = {0x63, 0x72 }; // "cr"
 
 	/** This 16-bit field contains an integer number that SHALL be randomly generated before sending a Handover Request Message */
-	private short randomNumber;
+	private int randomNumber;
 
 	public CollisionResolutionRecord() {
 	}
 
-	public CollisionResolutionRecord(short randomNumber) {
+	public CollisionResolutionRecord(int randomNumber) {
 		this.randomNumber = randomNumber;
 	}	
 	
-	public short getRandomNumber() {
+	public int getRandomNumber() {
 		return randomNumber;
 	}
 
-	public void setRandomNumber(short randomNumber) {
+	public void setRandomNumber(int randomNumber) {
 		this.randomNumber = randomNumber;
 	}
 

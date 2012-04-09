@@ -51,13 +51,13 @@ public class HandoverRequestRecordEncoder implements RecordEncoder {
 		payload.write((handoverRequestRecord.getMajorVersion() << 4) | handoverRequestRecord.getMinorVersion());
 		
 		if(!handoverRequestRecord.hasCollisionResolution()) {
-			throw new IllegalArgumentException("Collision resolution expected");
+			throw new IllegalArgumentException("Expected collision resolution");
 		}
 		
 		// implementation note: write alternative carriers and and collision resolution together
 		if(!handoverRequestRecord.hasAlternativeCarriers()) {
 			// At least a single alternative carrier MUST be specified by the Handover Requester.
-			throw new IllegalArgumentException("At least one alternative carrier expected");
+			throw new IllegalArgumentException("Expected at least one alternative carrier");
 		}
 		List<Record> records = new ArrayList<Record>();
 		

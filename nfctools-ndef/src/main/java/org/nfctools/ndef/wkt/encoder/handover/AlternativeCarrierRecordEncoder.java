@@ -50,18 +50,18 @@ public class AlternativeCarrierRecordEncoder implements RecordEncoder {
 		// cps
 		CarrierPowerState carrierPowerState = alternativeCarrierRecord.getCarrierPowerState();
 		if(carrierPowerState == null) {
-			throw new IllegalArgumentException("No carrier power state");
+			throw new IllegalArgumentException("Expected carrier power state");
 		}
 		bout.write(carrierPowerState.getValue() & 0x7); // 3 lsb
 
 		// carrier data reference: 1
 		String carrierDataReference = alternativeCarrierRecord.getCarrierDataReference();
 		if(carrierDataReference == null) {
-			throw new IllegalArgumentException("No carrier data reference");
+			throw new IllegalArgumentException("Expected carrier data reference");
 		}
 		byte[] carrierDataReferenceChar = carrierDataReference.getBytes(NdefConstants.DEFAULT_CHARSET);
 		if(carrierDataReferenceChar.length > 255) {
-			throw new IllegalArgumentException("Carrier data reference '" + carrierDataReference + "' exceeds 255 bytes");
+			throw new IllegalArgumentException("Expected carrier data reference '" + carrierDataReference + "' <= 255 bytes");
 		}
 		// carrier data reference length (1)
 		bout.write(carrierDataReferenceChar.length);
@@ -79,7 +79,7 @@ public class AlternativeCarrierRecordEncoder implements RecordEncoder {
 			// carrier data reference length (1)
 			
 			if(auxiliaryDataReferenceChar.length > 255) {
-				throw new IllegalArgumentException("Auxiliary data reference '" + auxiliaryDataReference + "' exceeds 255 bytes");
+				throw new IllegalArgumentException("Expected auxiliary data reference '" + auxiliaryDataReference + "' <= 255 bytes");
 			}
 
 			bout.write(auxiliaryDataReferenceChar.length);

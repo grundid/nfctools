@@ -34,6 +34,9 @@ public class UriRecord extends WellKnownRecord {
 		this.uri = uri;
 	}
 
+	public UriRecord() {
+	}
+
 	public String getUri() {
 		return uri;
 	}

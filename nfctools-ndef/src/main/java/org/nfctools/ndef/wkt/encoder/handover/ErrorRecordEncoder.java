@@ -42,6 +42,14 @@ public class ErrorRecordEncoder implements RecordEncoder {
 		
 		ErrorRecord errorRecord = (ErrorRecord)record;
 
+		if(!errorRecord.hasErrorReason()) {
+			throw new IllegalArgumentException("Expected error reason");
+		}
+
+		if(!errorRecord.hasErrorData()) {
+			throw new IllegalArgumentException("Expected error data");
+		}
+
 		ErrorReason errorReason = errorRecord.getErrorReason();
 		
 		byte[] payload; 

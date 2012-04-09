@@ -29,8 +29,8 @@ public class ActionRecordDecoder extends AbstractTypeRecordDecoder<ActionRecord>
 
 	@Override
 	protected ActionRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		int actionId = ndefRecord.getPayload()[0];
-		Action action = Action.getActionByValue(actionId);
+		Action action = Action.getActionByValue(ndefRecord.getPayload()[0]);
+		
 		return new ActionRecord(action);
 	}
 }
