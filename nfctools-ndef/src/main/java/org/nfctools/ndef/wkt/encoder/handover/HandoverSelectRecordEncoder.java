@@ -25,7 +25,6 @@ import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
-import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**

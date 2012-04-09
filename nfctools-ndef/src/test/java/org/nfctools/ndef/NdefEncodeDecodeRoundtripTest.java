@@ -16,11 +16,9 @@
 
 package org.nfctools.ndef;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.junit.Test;

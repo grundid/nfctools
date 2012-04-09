@@ -23,7 +23,6 @@ import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
-import org.nfctools.ndef.mime.MimeRecord;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;

@@ -18,8 +18,6 @@ package org.nfctools.ndef.wkt.records;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
-import org.nfctools.ndef.Record;
-
 public class TextRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 'T' };

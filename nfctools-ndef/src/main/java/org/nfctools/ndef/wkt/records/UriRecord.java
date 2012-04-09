@@ -17,8 +17,6 @@ package org.nfctools.ndef.wkt.records;
 
 import java.nio.charset.Charset;
 
-import org.nfctools.ndef.Record;
-
 public class UriRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 'U' };

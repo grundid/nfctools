@@ -19,10 +19,7 @@ package org.nfctools.ndef.wkt.records.handover;
 import java.util.Arrays;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.Record;
-import org.nfctools.ndef.auri.AbsoluteUriRecord;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
-import org.nfctools.ndef.mime.MimeRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**

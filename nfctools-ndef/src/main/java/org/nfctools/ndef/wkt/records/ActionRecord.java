@@ -15,7 +15,6 @@
  */
 package org.nfctools.ndef.wkt.records;
 
-import org.nfctools.ndef.Record;
 
 public class ActionRecord extends WellKnownRecord {
 
