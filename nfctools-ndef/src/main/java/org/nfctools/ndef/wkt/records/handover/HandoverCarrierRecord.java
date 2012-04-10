@@ -169,6 +169,10 @@ public class HandoverCarrierRecord extends WellKnownRecord {
 	public boolean hasCarrierTypeFormat() {
 		return carrierTypeFormat != null;
 	}
+
+	public boolean hasCarrierType() {
+		return carrierType != null;
+	}
 	
 	
 }
