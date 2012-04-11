@@ -172,12 +172,20 @@ public class AlternativeCarrierRecord extends WellKnownRecord {
 		return auxiliaryDataReferences.get(index);
 	}
 
-	public void setAuxiliaryDataReferenceAt(int index, String reference) {
+	public void setAuxiliaryDataReference(int index, String reference) {
 		auxiliaryDataReferences.set(index, reference);
 	}
 
 	public boolean hasCarrierDataReference() {
 		return carrierDataReference != null;
+	}
+
+	public void insertAuxiliaryDataReference(String reference, int index) {
+		auxiliaryDataReferences.add(index, reference);
+	}
+
+	public void removeAuxiliaryDataReference(int index) {
+		auxiliaryDataReferences.remove(index);
 	}
 	
 	
