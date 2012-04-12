@@ -19,9 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.ext.ExternalTypeDecoder;
 import org.nfctools.ndef.ext.ExternalTypeEncoder;
+import org.nfctools.ndef.ext.ExternalTypeRecord;
 
 public class ExternalTypeTest {
 

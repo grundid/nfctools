@@ -18,9 +18,7 @@ package org.nfctools.ndef.wkt.records;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
-import org.nfctools.ndef.Record;
-
-public class TextRecord extends Record {
+public class TextRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 'T' };
 	public static final byte LANGUAGE_CODE_MASK = 0x1F;
@@ -89,6 +87,9 @@ public class TextRecord extends Record {
 	}
 
 	public void setEncoding(Charset encoding) {
+		if (!encoding.equals(UTF8) && !encoding.equals(UTF16))
+			throw new IllegalArgumentException("unsupported encoding. only utf8 and utf16 are allowed.");
+
 		this.encoding = encoding;
 	}
 

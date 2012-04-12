@@ -16,11 +16,9 @@
 
 package org.nfctools.ndef;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.junit.Test;
@@ -29,17 +27,21 @@ import org.nfctools.ndef.empty.EmptyRecord;
 import org.nfctools.ndef.ext.AndroidApplicationRecord;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.TextMimeRecord;
-import org.nfctools.ndef.unchanged.UnchangedRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
-import org.nfctools.ndef.wkt.records.AlternativeCarrierRecord;
-import org.nfctools.ndef.wkt.records.HandoverCarrierRecord;
-import org.nfctools.ndef.wkt.records.HandoverRequestRecord;
-import org.nfctools.ndef.wkt.records.HandoverSelectRecord;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
+import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPowerState;
+import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
+import org.nfctools.ndef.wkt.records.handover.ErrorRecord;
+import org.nfctools.ndef.wkt.records.handover.ErrorRecord.ErrorReason;
+import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord.CarrierTypeFormat;
+import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**
  * 
@@ -63,39 +65,56 @@ public class NdefEncodeDecodeRoundtripTest {
 			Charset.forName("UTF-8"), new Locale("no")), new UriRecord("http://smartposter.uri"), new ActionRecord(
 			Action.OPEN_FOR_EDITING));
 	private static TextRecord textRecord = new TextRecord("Text message", Charset.forName("UTF-8"), new Locale("no"));
-	private static UnknownRecord unknownRecord = new UnknownRecord();
+	private static UnknownRecord unknownRecord = new UnknownRecord(new byte[]{0x00, 0x01, 0x02, 0x03});
 	private static UriRecord uriRecord = new UriRecord("http://wellknown.url");
-	private static AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord();
+	
+	private static CollisionResolutionRecord collisionResolutionRecord = new CollisionResolutionRecord((short)123);
+	private static ErrorRecord errorRecord = new ErrorRecord(ErrorReason.PermanenteMemoryConstraints, new Long(321L));
+	
+	private static AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord(CarrierPowerState.Active, "http://blabla");
 	private static HandoverSelectRecord handoverSelectRecord = new HandoverSelectRecord();
-	private static HandoverCarrierRecord handoverCarrierRecord = new HandoverCarrierRecord();
-	private static UnchangedRecord unchangedRecord = new UnchangedRecord();
+	private static HandoverCarrierRecord handoverCarrierRecord = new HandoverCarrierRecord(CarrierTypeFormat.AbsoluteURI, "http://absolute.url", new byte[]{0x00, 0x01, 0x02, 0x03});
 
-	private static HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord();
+	private static HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord(new CollisionResolutionRecord((short)321));
 
 	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
 			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
+			collisionResolutionRecord, errorRecord,
 			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
-			unchangedRecord };
+			};
+
+	static {
+		// handover request record requires at least on alternative carrier record
+		AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord(CarrierPowerState.Active, "z");
+		alternativeCarrierRecord.addAuxiliaryDataReference("a");
+		alternativeCarrierRecord.addAuxiliaryDataReference("b");
+		handoverRequestRecord.add(alternativeCarrierRecord);
+		
+		alternativeCarrierRecord = new AlternativeCarrierRecord(CarrierPowerState.Active, "y");
+		alternativeCarrierRecord.addAuxiliaryDataReference("c");
+		alternativeCarrierRecord.addAuxiliaryDataReference("d");
+
+		handoverRequestRecord.add(alternativeCarrierRecord);
+
+		handoverSelectRecord.add(alternativeCarrierRecord);
+		handoverSelectRecord.setError(new ErrorRecord(ErrorReason.PermanenteMemoryConstraints, new Long(1L)));
+	}
 
 	@Test
 	public void testEncodeDecodeRoundtrip() {
 
 		NdefMessageEncoder ndefMessageEncoder = NdefContext.getNdefMessageEncoder();
 
-		List<Record> originalRecords = new ArrayList<Record>();
-		for (Record record : records) {
-			originalRecords.add(record);
-		}
-		byte[] ndef = ndefMessageEncoder.encode(originalRecords);
-
 		NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
-		NdefMessage decode = ndefMessageDecoder.decode(ndef);
 
-		List<Record> roundTripRecordes = ndefMessageDecoder.decodeToRecords(decode);
+		for (Record record : records) {
+			byte[] ndef = ndefMessageEncoder.encodeSingle(record);
 
-		for (int i = 0; i < roundTripRecordes.size(); i++) {
-			assertEquals(Integer.toString(i), originalRecords.get(i), roundTripRecordes.get(i));
+			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
+
+			if(!record.equals(decodedRecord)) {
+				fail(record.getClass().getName());
+			}
 		}
-
 	}
 }

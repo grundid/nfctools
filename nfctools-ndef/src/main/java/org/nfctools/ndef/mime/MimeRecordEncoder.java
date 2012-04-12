@@ -33,6 +33,6 @@ public class MimeRecordEncoder implements RecordEncoder {
 		MimeRecord mimeRecord = (MimeRecord)record;
 
 		return new NdefRecord(NdefConstants.TNF_MIME_MEDIA, mimeRecord.getContentType().getBytes(
-				NdefConstants.DEFAULT_CHARSET), record.getId(), mimeRecord.getContentAsBytes());
+						NdefConstants.DEFAULT_CHARSET), record.getId(), mimeRecord.getContentAsBytes());
 	}
 }

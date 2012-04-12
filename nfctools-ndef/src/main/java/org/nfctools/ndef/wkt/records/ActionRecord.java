@@ -15,9 +15,8 @@
  */
 package org.nfctools.ndef.wkt.records;
 
-import org.nfctools.ndef.Record;
 
-public class ActionRecord extends Record {
+public class ActionRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 'a', 'c', 't' };
 

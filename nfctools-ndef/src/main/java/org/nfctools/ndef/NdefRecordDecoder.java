@@ -21,7 +21,6 @@ import java.util.List;
 import org.nfctools.ndef.auri.AbsoluteUriRecordDecoder;
 import org.nfctools.ndef.empty.EmptyRecordDecoder;
 import org.nfctools.ndef.mime.MimeRecordDecoder;
-import org.nfctools.ndef.unchanged.UnchangedRecordDecoder;
 import org.nfctools.ndef.unknown.UnknownRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.RecordDecoder;
 
@@ -31,7 +30,6 @@ public class NdefRecordDecoder {
 	private EmptyRecordDecoder emptyRecordDecoder = new EmptyRecordDecoder();
 	private AbsoluteUriRecordDecoder absoluteUriRecordDecoder = new AbsoluteUriRecordDecoder();
 	private MimeRecordDecoder mimeRecordDecoder = new MimeRecordDecoder();
-	private UnchangedRecordDecoder unchangedRecordDecoder = new UnchangedRecordDecoder();
 	private UnknownRecordDecoder unknownRecordDecoder = new UnknownRecordDecoder();
 
 	// pluggable decoders
@@ -42,7 +40,11 @@ public class NdefRecordDecoder {
 	private List<RecordDecoder<? extends Record>> externalRecordDecoders = new ArrayList<RecordDecoder<? extends Record>>();
 
 	public Record decode(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-
+		
+		if(ndefRecord.isChunked()) {
+			throw new IllegalArgumentException("Cannot decode chunked record");
+		}
+		
 		switch (ndefRecord.getTnf()) {
 			case NdefConstants.TNF_EMPTY: {
 				return emptyRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
@@ -74,13 +76,7 @@ public class NdefRecordDecoder {
 				break;
 			}
 
-			case NdefConstants.TNF_UNCHANGED: {
-				if (unchangedRecordDecoder.canDecode(ndefRecord)) {
-					return unchangedRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
-				}
-				break;
-			}
-
+			case NdefConstants.TNF_UNCHANGED:
 			case NdefConstants.TNF_RESERVED:
 
 		}

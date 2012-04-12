@@ -25,31 +25,40 @@ import org.nfctools.ndef.ext.ExternalTypeDecoder;
 import org.nfctools.ndef.ext.ExternalTypeEncoder;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.mime.MimeRecordEncoder;
-import org.nfctools.ndef.unchanged.UnchangedRecordEncoder;
 import org.nfctools.ndef.unknown.UnknownRecordEncoder;
 import org.nfctools.ndef.wkt.decoder.ActionRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GcActionRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GcDataRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GcTargetRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GenericControlRecordDecoder;
-import org.nfctools.ndef.wkt.decoder.GenericWellKnownRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.SmartPosterDecoder;
 import org.nfctools.ndef.wkt.decoder.TextRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.UriRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.AlternativeCarrierRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.CollisionResolutionRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.ErrorRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverCarrierRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverRequestRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverSelectRecordDecoder;
 import org.nfctools.ndef.wkt.encoder.ActionRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcActionRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcDataRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcTargetRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GenericControlRecordEncoder;
-import org.nfctools.ndef.wkt.encoder.GenericWellKnownRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.SmartPosterRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;
-import org.nfctools.ndef.wkt.records.AbstractWellKnownRecord;
-import org.nfctools.ndef.wkt.records.AlternativeCarrierRecord;
-import org.nfctools.ndef.wkt.records.HandoverCarrierRecord;
-import org.nfctools.ndef.wkt.records.HandoverRequestRecord;
-import org.nfctools.ndef.wkt.records.HandoverSelectRecord;
+import org.nfctools.ndef.wkt.encoder.handover.AlternativeCarrierRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.CollisionResolutionRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.ErrorRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverCarrierRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverRequestRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverSelectRecordEncoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
+import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**
  * Simple entry class for getting the different encoders and decoders.
@@ -62,7 +71,7 @@ public class NdefContext {
 	private static NdefMessageEncoder ndefMessageEncoder = new NdefMessageEncoder(ndefRecordEncoder);
 	private static NdefMessageDecoder ndefMessageDecoder = new NdefMessageDecoder(ndefRecordDecoder);
 
-	private static final Map<String, Class<? extends AbstractWellKnownRecord>> knownRecordsByType = new HashMap<String, Class<? extends AbstractWellKnownRecord>>();
+	private static final Map<String, Class<? extends WellKnownRecord>> knownRecordsByType = new HashMap<String, Class<? extends WellKnownRecord>>();
 	private static final Map<String, Class<? extends ExternalTypeRecord>> knownExternalTypesByNamespace = new HashMap<String, Class<? extends ExternalTypeRecord>>();
 
 	static {
@@ -77,7 +86,13 @@ public class NdefContext {
 		ndefRecordDecoder.addWellKnownRecordDecoder(new GcActionRecordDecoder());
 		ndefRecordDecoder.addWellKnownRecordDecoder(new GcDataRecordDecoder());
 
-		ndefRecordDecoder.addWellKnownRecordDecoder(new GenericWellKnownRecordDecoder());
+		// handover
+		ndefRecordDecoder.addWellKnownRecordDecoder(new AlternativeCarrierRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverCarrierRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverRequestRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverSelectRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new ErrorRecordDecoder());
+		ndefRecordDecoder.addWellKnownRecordDecoder(new CollisionResolutionRecordDecoder());
 
 		// external type decoders
 		ndefRecordDecoder.addExternalRecordDecoder(new ExternalTypeDecoder()); // catch all external type
@@ -95,7 +110,13 @@ public class NdefContext {
 		ndefRecordEncoder.addRecordEncoder(new GcActionRecordEncoder());
 		ndefRecordEncoder.addRecordEncoder(new GcDataRecordEncoder());
 
-		ndefRecordEncoder.addRecordEncoder(new GenericWellKnownRecordEncoder());
+		// handover
+		ndefRecordEncoder.addRecordEncoder(new AlternativeCarrierRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new HandoverCarrierRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new HandoverRequestRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new HandoverSelectRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new ErrorRecordEncoder());
+		ndefRecordEncoder.addRecordEncoder(new CollisionResolutionRecordEncoder());
 
 		// other decoders
 		ndefRecordEncoder.addRecordEncoder(new MimeRecordEncoder());
@@ -104,7 +125,6 @@ public class NdefContext {
 		ndefRecordEncoder.addRecordEncoder(new ExternalTypeEncoder());
 
 		ndefRecordEncoder.addRecordEncoder(new UnknownRecordEncoder());
-		ndefRecordEncoder.addRecordEncoder(new UnchangedRecordEncoder());
 
 		// Known simple Well Known Records
 		knownRecordsByType.put(new String(AlternativeCarrierRecord.TYPE), AlternativeCarrierRecord.class);
@@ -132,7 +152,7 @@ public class NdefContext {
 		return ndefMessageEncoder;
 	}
 
-	public static Map<String, Class<? extends AbstractWellKnownRecord>> getKnownRecordsByType() {
+	public static Map<String, Class<? extends WellKnownRecord>> getKnownRecordsByType() {
 		return knownRecordsByType;
 	}
 

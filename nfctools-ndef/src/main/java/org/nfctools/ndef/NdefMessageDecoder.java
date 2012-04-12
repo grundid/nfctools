@@ -19,8 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
-// TODO decode Chunked messages
 public class NdefMessageDecoder {
 
 	private NdefRecordDecoder ndefRecordDecoder;
@@ -36,8 +34,77 @@ public class NdefMessageDecoder {
 	public List<Record> decodeToRecords(NdefMessage ndefMessage) {
 		List<Record> records = new ArrayList<Record>();
 
-		for (NdefRecord ndefRecord : ndefMessage.getNdefRecords()) {
-			records.add(ndefRecordDecoder.decode(ndefRecord, this));
+		NdefRecord[] ndefRecords = ndefMessage.getNdefRecords();
+		
+		iterate : 
+		for (int i = 0; i < ndefRecords.length; i++) {
+			
+			NdefRecord ndefRecord = ndefRecords[i];
+			
+			if(ndefRecord.isChunked()) {
+					// Concatenate chunked records to get the whole payload
+
+					int payloadSize = ndefRecord.getPayloadSize();
+				
+					/**
+					The value 0x06 (Unchanged) MUST be used in all middle record chunks and the terminating
+					record chunk used in chunked payloads (see section 2.3.3). It MUST NOT be used in any other
+					record. When used, the TYPE_LENGTH field MUST be zero and thus the TYPE field is omitted
+					from the NDEF record.		
+					*/
+
+					int k = i;
+					do {
+						k++;
+						
+						NdefRecord next = ndefRecords[k];
+						if(next.getTnf() != NdefConstants.TNF_UNCHANGED) {
+							// no terminating chunk?
+							throw new IllegalArgumentException("Expected terminating 'unchanged' record type at " + i);
+						}							
+						
+						// check that type is zero length
+						byte[] type = ndefRecord.getType();
+						if(type != null && type.length > 0) {
+							throw new IllegalArgumentException("Expected no record type at " + i);
+						}
+						
+						payloadSize += next.getPayloadSize();
+						
+						if(!next.isChunked()) {
+							// terminating chunk
+							
+							// concatenate chunked payloads into a single payload
+							byte[] payload = new byte[payloadSize];
+							
+							int offset = 0;
+							for(int p = i; p <= k; p++) {
+								byte[] chunkPayload = ndefRecords[p].getPayload();
+								
+								System.arraycopy(chunkPayload, 0, payload, offset, chunkPayload.length);
+								
+								offset += chunkPayload.length;
+							}
+							
+							// finally create unchunked record, copy tnf, type and id from first record
+							NdefRecord unchunkedNdefRecord = new NdefRecord(ndefRecord.getTnf(), ndefRecord.getType(), ndefRecord.getId(), payload);
+							
+							records.add(ndefRecordDecoder.decode(unchunkedNdefRecord, this));
+
+							// skip chunked packets
+							i = k;
+							// continue on to next record
+							continue iterate;
+						} else {
+							// middle chunk
+						}
+					} while(i < ndefRecords.length);
+
+					// no terminating chunk
+					throw new IllegalArgumentException("Expected terminating 'unchanged' record type");
+			} else {
+				records.add(ndefRecordDecoder.decode(ndefRecord, this));
+			}
 		}
 		return records;
 	}
@@ -72,7 +139,8 @@ public class NdefMessageDecoder {
 			int typeLength = bais.read();
 			int payloadLength = getPayloadLength((header & NdefConstants.SR) != 0, bais);
 			int idLength = getIdLength((header & NdefConstants.IL) != 0, bais);
-
+			boolean chunked = (header & NdefConstants.CF) != 0;
+					
 			byte[] type = RecordUtils.getBytesFromStream(typeLength, bais);
 			byte[] id = RecordUtils.getBytesFromStream(idLength, bais);
 			byte[] payload = RecordUtils.getBytesFromStream(payloadLength, bais);
@@ -83,7 +151,7 @@ public class NdefMessageDecoder {
 			if (bais.available() == 0 && (header & NdefConstants.ME) == 0)
 				throw new IllegalArgumentException("no Message End record at the end of array");
 
-			records.add(new NdefRecord(tnf, type, id, payload));
+			records.add(new NdefRecord(tnf, chunked, type, id, payload));
 		}
 		return new NdefMessage(records.toArray(new NdefRecord[0]));
 	}
@@ -103,4 +171,9 @@ public class NdefMessageDecoder {
 			return (int)(buffer[0] << 24) + (int)(buffer[1] << 16) + (int)(buffer[2] << 8) + (int)(buffer[3] & 0xff);
 		}
 	}
+
+	public List<Record> decodeToRecords(byte[] payload, int offset, int length) {
+		return decodeToRecords(decode(payload, offset, length));
+	}
+
 }

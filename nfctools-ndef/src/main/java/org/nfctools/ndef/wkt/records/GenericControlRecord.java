@@ -15,9 +15,8 @@
  */
 package org.nfctools.ndef.wkt.records;
 
-import org.nfctools.ndef.Record;
 
-public class GenericControlRecord extends Record {
+public class GenericControlRecord extends WellKnownRecord {
 
 	public static final byte[] TYPE = { 'G', 'c' };
 
