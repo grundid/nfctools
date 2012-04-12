@@ -31,11 +31,11 @@ public class ActionRecordEncoder implements RecordEncoder {
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		
-		ActionRecord actionRecord = new ActionRecord();
+		ActionRecord actionRecord = (ActionRecord)record;
 		if(!actionRecord.hasAction()) {
 			throw new IllegalArgumentException("Expected action");
 		}
-		byte[] payload = new byte[]{(byte) actionRecord.getAction().getValue()};
+		byte[] payload = new byte[]{actionRecord.getAction().getValue()};
 		
 		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, ActionRecord.TYPE, record.getId(), payload);
 	}

@@ -67,7 +67,7 @@ public class ErrorRecordDecoder extends AbstractTypeRecordDecoder<ErrorRecord> {
 			 *  be determined by the total length of the NDEF message, including all header information.
 			 */
 			
-			number = new Long(((long) (payload[1] << 24 | payload[2] << 16 | payload[3] << 8 | payload[4])) & 0xFFFFFFFFL);
+			number = new Long(((long)(payload[1] & 0xFF) << 24) + ((payload[2] & 0xFF) << 16) + ((payload[3] & 0xFF) <<  8) + ((payload[4] & 0xFF) <<  0));
 
 			break;
 		}

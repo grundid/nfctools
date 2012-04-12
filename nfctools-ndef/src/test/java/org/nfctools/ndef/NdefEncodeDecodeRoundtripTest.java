@@ -16,7 +16,7 @@
 
 package org.nfctools.ndef;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.nio.charset.Charset;
 import java.util.Locale;
@@ -83,6 +83,23 @@ public class NdefEncodeDecodeRoundtripTest {
 			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
 			};
 
+	static {
+		// handover request record requires at least on alternative carrier record
+		AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord(CarrierPowerState.Active, "z");
+		alternativeCarrierRecord.addAuxiliaryDataReference("a");
+		alternativeCarrierRecord.addAuxiliaryDataReference("b");
+		handoverRequestRecord.add(alternativeCarrierRecord);
+		
+		alternativeCarrierRecord = new AlternativeCarrierRecord(CarrierPowerState.Active, "y");
+		alternativeCarrierRecord.addAuxiliaryDataReference("c");
+		alternativeCarrierRecord.addAuxiliaryDataReference("d");
+
+		handoverRequestRecord.add(alternativeCarrierRecord);
+
+		handoverSelectRecord.add(alternativeCarrierRecord);
+		handoverSelectRecord.setError(new ErrorRecord(ErrorReason.PermanenteMemoryConstraints, new Long(1L)));
+	}
+
 	@Test
 	public void testEncodeDecodeRoundtrip() {
 
@@ -91,12 +108,13 @@ public class NdefEncodeDecodeRoundtripTest {
 		NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
 
 		for (Record record : records) {
-			System.out.println(record.getClass().getSimpleName());
 			byte[] ndef = ndefMessageEncoder.encodeSingle(record);
 
 			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
 
-			assertEquals(record.getClass().getName(),record, decodedRecord);
+			if(!record.equals(decodedRecord)) {
+				fail(record.getClass().getName());
+			}
 		}
 	}
 }
