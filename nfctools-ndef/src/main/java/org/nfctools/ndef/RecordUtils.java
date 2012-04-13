@@ -15,7 +15,8 @@
  */
 package org.nfctools.ndef;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
@@ -80,9 +81,14 @@ public class RecordUtils {
 		return true;
 	}
 
-	public static byte[] getBytesFromStream(int length, ByteArrayInputStream bais) {
-		byte[] bytes = new byte[length];
-		bais.read(bytes, 0, bytes.length);
-		return bytes;
+	public static byte[] getBytesFromStream(int length, InputStream bais) {
+		try {
+			byte[] bytes = new byte[length];
+			bais.read(bytes, 0, bytes.length);
+			return bytes;
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
