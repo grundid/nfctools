@@ -31,6 +31,12 @@ import org.nfctools.ndef.wkt.decoder.GenericControlRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.SmartPosterRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.TextRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.UriRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.AlternativeCarrierRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.CollisionResolutionRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.ErrorRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverCarrierRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverRequestRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.handover.HandoverSelectRecordDecoder;
 import org.nfctools.ndef.wkt.encoder.ActionRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcActionRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcDataRecordEncoder;
@@ -39,6 +45,12 @@ import org.nfctools.ndef.wkt.encoder.GenericControlRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.SmartPosterRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.AlternativeCarrierRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.CollisionResolutionRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.ErrorRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverCarrierRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverRequestRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.handover.HandoverSelectRecordEncoder;
 import org.nfctools.ndef.wkt.records.ActionRecord;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
 import org.nfctools.ndef.wkt.records.GcDataRecord;
@@ -48,6 +60,12 @@ import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
+import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
+import org.nfctools.ndef.wkt.records.handover.ErrorRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
+import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**
  * Simple entry class for getting the different encoders and decoders.
@@ -78,16 +96,18 @@ public class NdefContext {
 		registerWellKnownRecord(new RecordType("a"), GcActionRecord.class, new GcActionRecordEncoder(),
 				new GcActionRecordDecoder());
 
-		//
-		//		// handover
-		//		ndefRecordEncoder.addRecordEncoder(new AlternativeCarrierRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new HandoverCarrierRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new HandoverRequestRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new HandoverSelectRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new ErrorRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new CollisionResolutionRecordEncoder());
-
-		// other decoders
+		registerWellKnownRecord(new RecordType("ac"), AlternativeCarrierRecord.class,
+				new AlternativeCarrierRecordEncoder(), new AlternativeCarrierRecordDecoder());
+		registerWellKnownRecord(new RecordType("Hc"), HandoverCarrierRecord.class, new HandoverCarrierRecordEncoder(),
+				new HandoverCarrierRecordDecoder());
+		registerWellKnownRecord(new RecordType("Hr"), HandoverRequestRecord.class, new HandoverRequestRecordEncoder(),
+				new HandoverRequestRecordDecoder());
+		registerWellKnownRecord(new RecordType("Hs"), HandoverSelectRecord.class, new HandoverSelectRecordEncoder(),
+				new HandoverSelectRecordDecoder());
+		registerWellKnownRecord(new RecordType("err"), ErrorRecord.class, new ErrorRecordEncoder(),
+				new ErrorRecordDecoder());
+		registerWellKnownRecord(new RecordType("cr"), CollisionResolutionRecord.class,
+				new CollisionResolutionRecordEncoder(), new CollisionResolutionRecordDecoder());
 
 		// Known External Type Records
 		knownExternalTypesByNamespace.put(AndroidApplicationRecord.TYPE, AndroidApplicationRecord.class);

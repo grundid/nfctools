@@ -16,33 +16,26 @@
 
 package org.nfctools.ndef.wkt.decoder.handover;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.wkt.decoder.AbstractTypeRecordDecoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
 
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class CollisionResolutionRecordDecoder extends AbstractTypeRecordDecoder<CollisionResolutionRecord> {
-
-	public CollisionResolutionRecordDecoder() {
-		super(NdefConstants.TNF_WELL_KNOWN, CollisionResolutionRecord.TYPE);
-	}
+public class CollisionResolutionRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	protected CollisionResolutionRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		
-		CollisionResolutionRecord collisionResolutionRecord =  new CollisionResolutionRecord();
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 
-		byte[] payload = ndefRecord.getPayload();
-		
-		collisionResolutionRecord.setRandomNumber( ( ((payload[0] << 8) | payload[1]) & 0xFFFF));
-		
+		CollisionResolutionRecord collisionResolutionRecord = new CollisionResolutionRecord();
+
+		collisionResolutionRecord.setRandomNumber((((payload[0] << 8) | payload[1]) & 0xFFFF));
+
 		return collisionResolutionRecord;
 	}
 

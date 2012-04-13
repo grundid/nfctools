@@ -21,76 +21,72 @@ import java.util.List;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
-import org.nfctools.ndef.wkt.encoder.RecordEncoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPowerState;
 
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class AlternativeCarrierRecordEncoder implements RecordEncoder {
+public class AlternativeCarrierRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof AlternativeCarrierRecord;
-	}
+	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		
-		AlternativeCarrierRecord alternativeCarrierRecord = (AlternativeCarrierRecord)record;
+		AlternativeCarrierRecord alternativeCarrierRecord = (AlternativeCarrierRecord)wellKnownRecord;
 
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		
+
 		// cps
 		CarrierPowerState carrierPowerState = alternativeCarrierRecord.getCarrierPowerState();
-		if(carrierPowerState == null) {
+		if (carrierPowerState == null) {
 			throw new IllegalArgumentException("Expected carrier power state");
 		}
 		bout.write(carrierPowerState.getValue() & 0x7); // 3 lsb
 
 		// carrier data reference: 1
 		String carrierDataReference = alternativeCarrierRecord.getCarrierDataReference();
-		if(carrierDataReference == null) {
+		if (carrierDataReference == null) {
 			throw new IllegalArgumentException("Expected carrier data reference");
 		}
 		byte[] carrierDataReferenceChar = carrierDataReference.getBytes(NdefConstants.DEFAULT_CHARSET);
-		if(carrierDataReferenceChar.length > 255) {
-			throw new IllegalArgumentException("Expected carrier data reference '" + carrierDataReference + "' <= 255 bytes");
+		if (carrierDataReferenceChar.length > 255) {
+			throw new IllegalArgumentException("Expected carrier data reference '" + carrierDataReference
+					+ "' <= 255 bytes");
 		}
 		// carrier data reference length (1)
 		bout.write(carrierDataReferenceChar.length);
 		// carrier data reference char
 		bout.write(carrierDataReferenceChar, 0, carrierDataReferenceChar.length);
-		
+
 		// auxiliary data
 		List<String> auxiliaryDataReferences = alternativeCarrierRecord.getAuxiliaryDataReferences();
 		// auxiliary data reference count
 		bout.write(auxiliaryDataReferences.size());
-		
-		for(String auxiliaryDataReference : auxiliaryDataReferences) {
+
+		for (String auxiliaryDataReference : auxiliaryDataReferences) {
 
 			byte[] auxiliaryDataReferenceChar = auxiliaryDataReference.getBytes(NdefConstants.DEFAULT_CHARSET);
 			// carrier data reference length (1)
-			
-			if(auxiliaryDataReferenceChar.length > 255) {
-				throw new IllegalArgumentException("Expected auxiliary data reference '" + auxiliaryDataReference + "' <= 255 bytes");
+
+			if (auxiliaryDataReferenceChar.length > 255) {
+				throw new IllegalArgumentException("Expected auxiliary data reference '" + auxiliaryDataReference
+						+ "' <= 255 bytes");
 			}
 
 			bout.write(auxiliaryDataReferenceChar.length);
 			// carrier data reference char
 			bout.write(auxiliaryDataReferenceChar, 0, auxiliaryDataReferenceChar.length);
 		}
-		
+
 		// reserved future use
 		bout.write(0);
-				
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, AlternativeCarrierRecord.TYPE, record.getId(), bout.toByteArray());
+
+		return bout.toByteArray();
 	}
 
 }

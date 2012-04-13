@@ -16,81 +16,75 @@
 
 package org.nfctools.ndef.wkt.decoder.handover;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.wkt.decoder.AbstractTypeRecordDecoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.ErrorRecord;
 import org.nfctools.ndef.wkt.records.handover.ErrorRecord.ErrorReason;
 
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class ErrorRecordDecoder extends AbstractTypeRecordDecoder<ErrorRecord> {
-
-	public ErrorRecordDecoder() {
-		super(NdefConstants.TNF_WELL_KNOWN, ErrorRecord.TYPE);
-	}
+public class ErrorRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	protected ErrorRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 		ErrorRecord errorRecord = new ErrorRecord();
-		
-		byte[] payload = ndefRecord.getPayload();
-		
+
 		ErrorReason errorReason = ErrorReason.toErrorReason(payload[0]);
-		
+
 		errorRecord.setErrorReason(errorReason);
-		
+
 		Number number;
-		switch(errorReason) {
-		case TemporaryMemoryConstraints : {
-			/**
-			 * An 8-bit unsigned integer that expresses the minimum number of milliseconds after which a 
-			 * Handover Request Message with the same number of octets might be processed successfully. 
-			 * The number of milliseconds SHALL be determined by the time interval between the sending of 
-			 * the error indication and the subsequent receipt of a Handover Request Message by the Handover Selector.			
-			*/
-			
-			number = new Short((short)(payload[1] & 0xFFFF));
-			
-			break;
-		}
-		case PermanenteMemoryConstraints : {
-			
-			/**
-			 * A 32-bit unsigned integer, encoded with the most significant byte first, that indicates the 
-			 * maximum number of octets of an acceptable Handover Select Message. The number of octets SHALL
-			 *  be determined by the total length of the NDEF message, including all header information.
-			 */
-			
-			number = new Long(((long)(payload[1] & 0xFF) << 24) + ((payload[2] & 0xFF) << 16) + ((payload[3] & 0xFF) <<  8) + ((payload[4] & 0xFF) <<  0));
+		switch (errorReason) {
+			case TemporaryMemoryConstraints: {
+				/**
+				 * An 8-bit unsigned integer that expresses the minimum number of milliseconds after which a Handover
+				 * Request Message with the same number of octets might be processed successfully. The number of
+				 * milliseconds SHALL be determined by the time interval between the sending of the error indication and
+				 * the subsequent receipt of a Handover Request Message by the Handover Selector.
+				 */
 
-			break;
-		}
-		case CarrierSpecificConstraints : {
-			
-			/**
-			 * An 8-bit unsigned integer that expresses the minimum number of milliseconds after which a 
-			 * Handover Request Message might be processed successfully. The number of milliseconds SHALL 
-			 * be determined by the time interval between the sending of the error indication and the 
-			 * subsequent receipt of a Handover Request Message by the Handover Selector.
-			 */
-			
-			number = new Short((short)(payload[1] & 0xFFFF));
+				number = new Short((short)(payload[1] & 0xFFFF));
 
-			break;
-		}
+				break;
+			}
+			case PermanenteMemoryConstraints: {
+
+				/**
+				 * A 32-bit unsigned integer, encoded with the most significant byte first, that indicates the maximum
+				 * number of octets of an acceptable Handover Select Message. The number of octets SHALL be determined
+				 * by the total length of the NDEF message, including all header information.
+				 */
+
+				number = new Long(((long)(payload[1] & 0xFF) << 24) + ((payload[2] & 0xFF) << 16)
+						+ ((payload[3] & 0xFF) << 8) + ((payload[4] & 0xFF) << 0));
+
+				break;
+			}
+			case CarrierSpecificConstraints: {
+
+				/**
+				 * An 8-bit unsigned integer that expresses the minimum number of milliseconds after which a Handover
+				 * Request Message might be processed successfully. The number of milliseconds SHALL be determined by
+				 * the time interval between the sending of the error indication and the subsequent receipt of a
+				 * Handover Request Message by the Handover Selector.
+				 */
+
+				number = new Short((short)(payload[1] & 0xFFFF));
+
+				break;
+			}
 			default: {
 				throw new RuntimeException();
 			}
 		}
 
 		errorRecord.setErrorData(number);
-		
+
 		return errorRecord;
 	}
 

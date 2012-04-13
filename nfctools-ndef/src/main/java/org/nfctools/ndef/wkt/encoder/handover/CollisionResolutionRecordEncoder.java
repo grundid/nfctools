@@ -16,36 +16,29 @@
 
 package org.nfctools.ndef.wkt.encoder.handover;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
-import org.nfctools.ndef.wkt.encoder.RecordEncoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
 
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class CollisionResolutionRecordEncoder implements RecordEncoder {
+public class CollisionResolutionRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof CollisionResolutionRecord;
-	}
+	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		
-		CollisionResolutionRecord collisionResolutionRecord = (CollisionResolutionRecord)record;
+		CollisionResolutionRecord collisionResolutionRecord = (CollisionResolutionRecord)wellKnownRecord;
 
 		int randomNumber = collisionResolutionRecord.getRandomNumber();
-		
-		byte[] payload = new byte[]{(byte) ((randomNumber >> 8) & 0xFF), (byte)(randomNumber & 0xFF)}; // msb, lsb
-		
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, CollisionResolutionRecord.TYPE, record.getId(), payload);
+
+		byte[] payload = new byte[] { (byte)((randomNumber >> 8) & 0xFF), (byte)(randomNumber & 0xFF) }; // msb, lsb
+
+		return payload;
 	}
 
 }
