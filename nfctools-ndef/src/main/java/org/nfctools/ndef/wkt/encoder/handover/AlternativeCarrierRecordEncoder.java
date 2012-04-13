@@ -35,7 +35,7 @@ import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPo
 public class AlternativeCarrierRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
 		AlternativeCarrierRecord alternativeCarrierRecord = (AlternativeCarrierRecord)wellKnownRecord;
 

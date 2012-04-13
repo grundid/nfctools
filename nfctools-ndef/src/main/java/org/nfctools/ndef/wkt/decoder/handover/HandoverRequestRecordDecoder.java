@@ -51,22 +51,20 @@ public class HandoverRequestRecordDecoder implements WellKnownRecordPayloadDecod
 			throw new IllegalArgumentException(
 					"Expected collision resolution record and at least one alternative carrier");
 		}
-		Record firstRecord = records.get(0);
 
-		if (firstRecord instanceof CollisionResolutionRecord) {
-			handoverRequestRecord.setCollisionResolution((CollisionResolutionRecord)firstRecord);
-		}
-		else {
-			throw new IllegalArgumentException("Expected collision resolution record");
+		for (int i = 0; i < records.size(); i++) {
+			Record record = records.get(i);
+			if (record instanceof CollisionResolutionRecord) {
+				handoverRequestRecord.setCollisionResolution((CollisionResolutionRecord)record);
+			}
+			else if (record instanceof AlternativeCarrierRecord)
+				handoverRequestRecord.add((AlternativeCarrierRecord)records.get(i));
+			// An implementation SHALL silently ignore and SHALL NOT raise an error 
+			// if it encounters other unknown record types.
 		}
 
-		if (records.size() < 2) {
+		if (handoverRequestRecord.getAlternativeCarriers().size() == 0)
 			throw new IllegalArgumentException("Expected at least one alternative carrier");
-		}
-
-		for (int i = 1; i < records.size(); i++) {
-			handoverRequestRecord.add((AlternativeCarrierRecord)records.get(i));
-		}
 
 		return handoverRequestRecord;
 	}

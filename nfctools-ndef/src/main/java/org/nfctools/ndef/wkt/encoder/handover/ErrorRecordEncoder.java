@@ -31,7 +31,7 @@ import org.nfctools.ndef.wkt.records.handover.ErrorRecord.ErrorReason;
 public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
 		ErrorRecord errorRecord = (ErrorRecord)wellKnownRecord;
 

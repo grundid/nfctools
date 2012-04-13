@@ -22,7 +22,7 @@ public class WellKnownRecordEncoder implements RecordEncoder {
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		WellKnownRecordConfig config = knownRecordTypes.get(record.getClass());
-		byte[] payload = config.getPayloadEncoder().encodeRecordPayload((WellKnownRecord)record, messageEncoder);
+		byte[] payload = config.getPayloadEncoder().encodePayload((WellKnownRecord)record, messageEncoder);
 		byte[] type = config.getRecordType().getType();
 		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, type, record.getId(), payload);
 	}

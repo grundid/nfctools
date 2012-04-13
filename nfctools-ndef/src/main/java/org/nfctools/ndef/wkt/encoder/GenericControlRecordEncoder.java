@@ -26,7 +26,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class GenericControlRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 		GenericControlRecord myRecord = (GenericControlRecord)wellKnownRecord;
 
 		byte[] subPayload = createSubPayload(messageEncoder, myRecord);

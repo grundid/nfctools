@@ -30,7 +30,7 @@ import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
 public class CollisionResolutionRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
 		CollisionResolutionRecord collisionResolutionRecord = (CollisionResolutionRecord)wellKnownRecord;
 

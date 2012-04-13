@@ -27,7 +27,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class TextRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
 		TextRecord textRecord = (TextRecord)wellKnownRecord;
 

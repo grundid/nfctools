@@ -31,7 +31,7 @@ public class UriRecordEncoderTest {
 	@Test
 	public void testEncode() throws Exception {
 		UriRecord record = new UriRecord("http://www.example.com");
-		byte[] payload = encoder.encodeRecordPayload(record, messageEncoder);
+		byte[] payload = encoder.encodePayload(record, messageEncoder);
 		assertEquals(1, payload[0]);
 		assertEquals('e', payload[1]);
 	}
@@ -39,7 +39,7 @@ public class UriRecordEncoderTest {
 	@Test
 	public void testEncodeLastKnownAbbreviation() throws Exception {
 		UriRecord record = new UriRecord("urn:nfc:blabla");
-		byte[] payload = encoder.encodeRecordPayload(record, messageEncoder);
+		byte[] payload = encoder.encodePayload(record, messageEncoder);
 		assertEquals(35, payload[0]);
 		assertEquals('b', payload[1]);
 	}
@@ -47,7 +47,7 @@ public class UriRecordEncoderTest {
 	@Test
 	public void testEncodeNoAbbreviation() throws Exception {
 		UriRecord record = new UriRecord("sms:+1234567890?body=Hi");
-		byte[] payload = encoder.encodeRecordPayload(record, messageEncoder);
+		byte[] payload = encoder.encodePayload(record, messageEncoder);
 		assertEquals(0, payload[0]);
 		assertEquals('s', payload[1]);
 	}

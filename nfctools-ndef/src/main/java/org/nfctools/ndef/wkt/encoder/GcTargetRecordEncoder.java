@@ -23,7 +23,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class GcTargetRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 		GcTargetRecord gcTargetRecord = (GcTargetRecord)wellKnownRecord;
 		if (!gcTargetRecord.hasTargetIdentifier()) {
 			throw new IllegalArgumentException(wellKnownRecord.getClass().getSimpleName()

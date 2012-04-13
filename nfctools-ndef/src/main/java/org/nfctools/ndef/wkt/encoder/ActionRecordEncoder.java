@@ -23,7 +23,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class ActionRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 		ActionRecord record = (ActionRecord)wellKnownRecord;
 		if (!record.hasAction()) {
 			throw new IllegalArgumentException("Expected action");

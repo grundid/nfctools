@@ -56,10 +56,10 @@ public class AlternativeCarrierRecordDecoder implements WellKnownRecordPayloadDe
 			index += 1 + auxiliaryDataReferenceLength;
 		}
 
-		if (index + 1 != payload.length) {
-
-			throw new IllegalArgumentException("Expected reserved end byte");
-		}
+		//		if (index + 1 != payload.length) {
+		//
+		//			throw new IllegalArgumentException("Expected reserved end byte");
+		//		}
 
 		return alternativeCarrierRecord;
 	}

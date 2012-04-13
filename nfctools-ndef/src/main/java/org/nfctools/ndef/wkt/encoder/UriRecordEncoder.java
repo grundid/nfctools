@@ -25,7 +25,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class UriRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 		UriRecord uriRecord = (UriRecord)wellKnownRecord;
 		String uri = uriRecord.getUri();
 		byte[] uriAsBytes = getUriAsBytes(uri);

@@ -35,7 +35,7 @@ import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
 public class HandoverRequestRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
 		HandoverRequestRecord handoverRequestRecord = (HandoverRequestRecord)wellKnownRecord;
 

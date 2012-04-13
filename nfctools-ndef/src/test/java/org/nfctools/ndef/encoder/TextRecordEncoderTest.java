@@ -36,28 +36,28 @@ public class TextRecordEncoderTest {
 	@Test
 	public void testCreateTextRecordUtf8German() throws Exception {
 		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf8"), Locale.GERMAN);
-		byte[] bytes = encoder.encodeRecordPayload(textRecord, messageEncoder);
+		byte[] bytes = encoder.encodePayload(textRecord, messageEncoder);
 		assertEquals("02646554657374C3B6C3A4C3BCC39FC396C384C39C3F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf16German() throws Exception {
 		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf-16be"), Locale.GERMAN);
-		byte[] bytes = encoder.encodeRecordPayload(textRecord, messageEncoder);
+		byte[] bytes = encoder.encodePayload(textRecord, messageEncoder);
 		assertEquals("826465005400650073007400F600E400FC00DF00D600C400DC003F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf8English() throws Exception {
 		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf8"), Locale.ENGLISH);
-		byte[] bytes = encoder.encodeRecordPayload(textRecord, messageEncoder);
+		byte[] bytes = encoder.encodePayload(textRecord, messageEncoder);
 		assertEquals("02656E54657374C3B6C3A4C3BCC39FC396C384C39C3F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf16English() throws Exception {
 		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf-16be"), Locale.ENGLISH);
-		byte[] bytes = encoder.encodeRecordPayload(textRecord, messageEncoder);
+		byte[] bytes = encoder.encodePayload(textRecord, messageEncoder);
 		assertEquals("82656E005400650073007400F600E400FC00DF00D600C400DC003F", NfcUtils.convertBinToASCII(bytes));
 	}
 }

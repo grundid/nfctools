@@ -5,5 +5,5 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 public interface WellKnownRecordPayloadEncoder {
 
-	byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder);
+	byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder);
 }
