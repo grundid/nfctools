@@ -19,8 +19,6 @@ import org.nfctools.ndef.Record;
 
 public class GcTargetRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 't' };
-
 	private Record targetIdentifier;
 
 	public GcTargetRecord(Record targetIdentifier) {

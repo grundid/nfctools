@@ -18,56 +18,50 @@ package org.nfctools.ndef.wkt.decoder.handover;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.wkt.decoder.AbstractTypeRecordDecoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPowerState;
 
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class AlternativeCarrierRecordDecoder extends AbstractTypeRecordDecoder<AlternativeCarrierRecord> {
-
-	public AlternativeCarrierRecordDecoder() {
-		super(NdefConstants.TNF_WELL_KNOWN, AlternativeCarrierRecord.TYPE);
-	}
+public class AlternativeCarrierRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	protected AlternativeCarrierRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 		AlternativeCarrierRecord alternativeCarrierRecord = new AlternativeCarrierRecord();
-		
-		byte[] payload = ndefRecord.getPayload();
-		
+
 		// cps
 		alternativeCarrierRecord.setCarrierPowerState(CarrierPowerState.toCarrierPowerState(payload[0]));
 
 		// carrier data reference
 		short carrierDataReferenceLength = (short)payload[1];
-		alternativeCarrierRecord.setCarrierDataReference(new String(payload, 2, carrierDataReferenceLength, NdefConstants.DEFAULT_CHARSET));
+		alternativeCarrierRecord.setCarrierDataReference(new String(payload, 2, carrierDataReferenceLength,
+				NdefConstants.DEFAULT_CHARSET));
 
 		// auxiliary data reference
 		short auxiliaryDataReferenceCount = (short)payload[2 + carrierDataReferenceLength];
-		
+
 		int index = 2 + carrierDataReferenceLength + 1;
-		for(int i = 0; i < auxiliaryDataReferenceCount; i++) {
+		for (int i = 0; i < auxiliaryDataReferenceCount; i++) {
 			short auxiliaryDataReferenceLength = (short)payload[index];
-			
-			alternativeCarrierRecord.addAuxiliaryDataReference(new String(payload, index + 1, auxiliaryDataReferenceLength, NdefConstants.DEFAULT_CHARSET));
-			
+
+			alternativeCarrierRecord.addAuxiliaryDataReference(new String(payload, index + 1,
+					auxiliaryDataReferenceLength, NdefConstants.DEFAULT_CHARSET));
+
 			index += 1 + auxiliaryDataReferenceLength;
 		}
-		
-		if(index + 1 != payload.length) {
-			
-			throw new IllegalArgumentException("Expected reserved end byte");
-		}
-		
+
+		//		if (index + 1 != payload.length) {
+		//
+		//			throw new IllegalArgumentException("Expected reserved end byte");
+		//		}
+
 		return alternativeCarrierRecord;
 	}
-	
 
 }

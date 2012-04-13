@@ -21,17 +21,14 @@ import java.util.List;
 
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-
 /**
  * 
- * The Handover Select Record identifies the alternative carriers that the Handover Selector device
- * selected from the list provided within the previous Handover Request Message. The Handover
- * Selector MAY acknowledge zero, one, or more of the proposed alternative carriers at its own
- * discretion. 
+ * The Handover Select Record identifies the alternative carriers that the Handover Selector device selected from the
+ * list provided within the previous Handover Request Message. The Handover Selector MAY acknowledge zero, one, or more
+ * of the proposed alternative carriers at its own discretion.
  * 
- * Only Alternative Carrier Records have a defined meaning in the payload of a Handover Select
- * Record. However, an implementation SHALL NOT raise an error if it encounters other record
- * types, but SHOULD silently ignore them.
+ * Only Alternative Carrier Records have a defined meaning in the payload of a Handover Select Record. However, an
+ * implementation SHALL NOT raise an error if it encounters other record types, but SHOULD silently ignore them.
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
@@ -39,31 +36,28 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 public class HandoverSelectRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 0x48, 0x73 }; // "Hs"
-
 	/**
-	 * This 4-bit field equals the major version number of the Connection
-	 * Handover specification and SHALL be set to 0x1 by an implementation that conforms to this
-	 * specification. When an NDEF parser reads a different value, it SHALL NOT assume backward
-	 * compatibility.
+	 * This 4-bit field equals the major version number of the Connection Handover specification and SHALL be set to 0x1
+	 * by an implementation that conforms to this specification. When an NDEF parser reads a different value, it SHALL
+	 * NOT assume backward compatibility.
 	 * 
 	 */
-	
+
 	private byte majorVersion = 0x01;
-	
+
 	/**
-	* This 4-bit field equals the minor version number of the Connection Handover specification and 
-	* SHALL be set to 0x2 by an implementation that conforms to this specification. 
-	* When an NDEF parser reads a different value, it MAY assume backward compatibility.
-	*/
-	
+	 * This 4-bit field equals the minor version number of the Connection Handover specification and SHALL be set to 0x2
+	 * by an implementation that conforms to this specification. When an NDEF parser reads a different value, it MAY
+	 * assume backward compatibility.
+	 */
+
 	private byte minorVersion = 0x02;
-	
-	/** Each record specifies a single alternative carrier that
-	* the Handover Selector would be able to utilize for further communication with the Handover
-	* Requester device. The order of the Alternative Carrier Records gives an implicit preference
-	* ranking that the Handover Requester SHOULD obey.
-	*/
+
+	/**
+	 * Each record specifies a single alternative carrier that the Handover Selector would be able to utilize for
+	 * further communication with the Handover Requester device. The order of the Alternative Carrier Records gives an
+	 * implicit preference ranking that the Handover Requester SHOULD obey.
+	 */
 	private List<AlternativeCarrierRecord> alternativeCarriers;
 
 	private ErrorRecord error;
@@ -71,7 +65,7 @@ public class HandoverSelectRecord extends WellKnownRecord {
 	public HandoverSelectRecord() {
 		alternativeCarriers = new ArrayList<AlternativeCarrierRecord>();
 	}
-	
+
 	public HandoverSelectRecord(byte majorVersion, byte minorVersion) {
 		this(majorVersion, minorVersion, new ArrayList<AlternativeCarrierRecord>());
 	}
@@ -80,7 +74,8 @@ public class HandoverSelectRecord extends WellKnownRecord {
 		this(majorVersion, minorVersion, alternativeCarriers, null);
 	}
 
-	public HandoverSelectRecord(byte majorVersion, byte minorVersion, List<AlternativeCarrierRecord> alternativeCarriers, ErrorRecord error) {
+	public HandoverSelectRecord(byte majorVersion, byte minorVersion,
+			List<AlternativeCarrierRecord> alternativeCarriers, ErrorRecord error) {
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
 		this.alternativeCarriers = alternativeCarriers;
@@ -107,8 +102,7 @@ public class HandoverSelectRecord extends WellKnownRecord {
 		return alternativeCarriers;
 	}
 
-	public void setAlternativeCarriers(
-			List<AlternativeCarrierRecord> alternativeCarriers) {
+	public void setAlternativeCarriers(List<AlternativeCarrierRecord> alternativeCarriers) {
 		this.alternativeCarriers = alternativeCarriers;
 	}
 
@@ -136,10 +130,7 @@ public class HandoverSelectRecord extends WellKnownRecord {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((alternativeCarriers == null) ? 0 : alternativeCarriers
-						.hashCode());
+		result = prime * result + ((alternativeCarriers == null) ? 0 : alternativeCarriers.hashCode());
 		result = prime * result + ((error == null) ? 0 : error.hashCode());
 		result = prime * result + majorVersion;
 		result = prime * result + minorVersion;
@@ -154,16 +145,18 @@ public class HandoverSelectRecord extends WellKnownRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HandoverSelectRecord other = (HandoverSelectRecord) obj;
+		HandoverSelectRecord other = (HandoverSelectRecord)obj;
 		if (alternativeCarriers == null) {
 			if (other.alternativeCarriers != null)
 				return false;
-		} else if (!alternativeCarriers.equals(other.alternativeCarriers))
+		}
+		else if (!alternativeCarriers.equals(other.alternativeCarriers))
 			return false;
 		if (error == null) {
 			if (other.error != null)
 				return false;
-		} else if (!error.equals(other.error))
+		}
+		else if (!error.equals(other.error))
 			return false;
 		if (majorVersion != other.majorVersion)
 			return false;
@@ -171,7 +164,5 @@ public class HandoverSelectRecord extends WellKnownRecord {
 			return false;
 		return true;
 	}
-
-	
 
 }

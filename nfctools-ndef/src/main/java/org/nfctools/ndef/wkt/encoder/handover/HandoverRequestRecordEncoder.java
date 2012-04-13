@@ -20,56 +20,50 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
-import org.nfctools.ndef.wkt.encoder.RecordEncoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
 
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class HandoverRequestRecordEncoder implements RecordEncoder {
+public class HandoverRequestRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof HandoverRequestRecord;
-	}
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		
-		HandoverRequestRecord handoverRequestRecord = (HandoverRequestRecord)record;
-		
+		HandoverRequestRecord handoverRequestRecord = (HandoverRequestRecord)wellKnownRecord;
+
 		ByteArrayOutputStream payload = new ByteArrayOutputStream();
-		
+
 		// major version, minor version
 		payload.write((handoverRequestRecord.getMajorVersion() << 4) | handoverRequestRecord.getMinorVersion());
-		
-		if(!handoverRequestRecord.hasCollisionResolution()) {
+
+		if (!handoverRequestRecord.hasCollisionResolution()) {
 			throw new IllegalArgumentException("Expected collision resolution");
 		}
-		
+
 		// implementation note: write alternative carriers and and collision resolution together
-		if(!handoverRequestRecord.hasAlternativeCarriers()) {
+		if (!handoverRequestRecord.hasAlternativeCarriers()) {
 			// At least a single alternative carrier MUST be specified by the Handover Requester.
 			throw new IllegalArgumentException("Expected at least one alternative carrier");
 		}
 		List<Record> records = new ArrayList<Record>();
-		
+
 		// a collision resolution record
 		records.add(handoverRequestRecord.getCollisionResolution());
-		
+
 		// n alternative carrier records
 		records.addAll(handoverRequestRecord.getAlternativeCarriers());
-		
+
 		messageEncoder.encode(records, payload);
 
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, HandoverRequestRecord.TYPE, record.getId(), payload.toByteArray());
+		return payload.toByteArray();
 	}
 
 }

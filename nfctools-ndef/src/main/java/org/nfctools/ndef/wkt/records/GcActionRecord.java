@@ -19,7 +19,6 @@ import org.nfctools.ndef.Record;
 
 public class GcActionRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 'a' };
 	public static final byte NUMERIC_CODE = 0x01;
 
 	private Action action;

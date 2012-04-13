@@ -15,23 +15,17 @@
  */
 package org.nfctools.ndef.wkt.encoder;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GcDataRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class GcDataRecordEncoder implements RecordEncoder {
-
-	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof GcDataRecord;
-	}
+public class GcDataRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		GcDataRecord dataRecord = (GcDataRecord)record;
-		byte[] payload = messageEncoder.encode(dataRecord.getRecords());
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, GcDataRecord.TYPE, record.getId(), payload);
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+		GcDataRecord dataRecord = (GcDataRecord)wellKnownRecord;
+		return messageEncoder.encode(dataRecord.getRecords());
+
 	}
 }

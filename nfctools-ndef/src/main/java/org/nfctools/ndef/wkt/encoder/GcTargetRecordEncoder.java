@@ -15,26 +15,20 @@
  */
 package org.nfctools.ndef.wkt.encoder;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GcTargetRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class GcTargetRecordEncoder implements RecordEncoder {
-
-	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof GcTargetRecord;
-	}
+public class GcTargetRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		GcTargetRecord gcTargetRecord = (GcTargetRecord)record;
-		if(!gcTargetRecord.hasTargetIdentifier()) {
-			throw new IllegalArgumentException(record.getClass().getSimpleName() + " must have target identifier");
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+		GcTargetRecord gcTargetRecord = (GcTargetRecord)wellKnownRecord;
+		if (!gcTargetRecord.hasTargetIdentifier()) {
+			throw new IllegalArgumentException(wellKnownRecord.getClass().getSimpleName()
+					+ " must have target identifier");
 		}
-		byte[] payload = messageEncoder.encodeSingle(gcTargetRecord.getTargetIdentifier());
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, GcTargetRecord.TYPE, record.getId(), payload);
+		return messageEncoder.encodeSingle(gcTargetRecord.getTargetIdentifier());
 	}
 }

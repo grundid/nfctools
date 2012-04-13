@@ -21,15 +21,15 @@ import java.util.List;
 
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-
 /**
- * The Handover Request Record identifies a list of possible alternative carriers that the Handover Requester 
- * device would be able to use for further communication with the Handover Selector. At least a single 
- * alternative carrier MUST be specified by the Handover Requester. If multiple alternative carriers are specified, 
- * the Handover Selector SHOULD process the records in order and acknowledge the first appropriate match, if any.
+ * The Handover Request Record identifies a list of possible alternative carriers that the Handover Requester device
+ * would be able to use for further communication with the Handover Selector. At least a single alternative carrier MUST
+ * be specified by the Handover Requester. If multiple alternative carriers are specified, the Handover Selector SHOULD
+ * process the records in order and acknowledge the first appropriate match, if any.
  * 
- * Only Alternative Carrier Records or Collision Resolution Records have a defined meaning in the payload of a Handover Request Record. 
- * However, an implementation SHALL silently ignore and SHALL NOT raise an error if it encounters other unknown record types.
+ * Only Alternative Carrier Records or Collision Resolution Records have a defined meaning in the payload of a Handover
+ * Request Record. However, an implementation SHALL silently ignore and SHALL NOT raise an error if it encounters other
+ * unknown record types.
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
@@ -37,36 +37,33 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 public class HandoverRequestRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 0x48, 0x72 }; // "Hr"
-
-	/** This 4-bit field equals the major version number of the Connection
-	 * Handover specification and SHALL be set to 0x1 by an implementation that conforms to this
-	 * specification. When an NDEF parser reads a different value, it SHALL NOT assume backward
-	 * compatibility.
+	/**
+	 * This 4-bit field equals the major version number of the Connection Handover specification and SHALL be set to 0x1
+	 * by an implementation that conforms to this specification. When an NDEF parser reads a different value, it SHALL
+	 * NOT assume backward compatibility.
 	 */
 	private byte majorVersion = 0x01;
-	
-	/**
-	 * This 4-bit field equals the minor version number of the Connection Handover specification 
-	 * and SHALL be set to 0x2 by an implementation that conforms to this specification. 
-	 * When an NDEF parser reads a different value, it MAY assume backward compatibility.
-	*/
-	
-	private byte minorVersion = 0x02;
-	
-	/** This record contains a 16-bit random number that is used in the collision resolution 
-	 * procedure defined in section 2.7. Only a single Collision Resolution Record SHALL be 
-	 * allowed in a Handover Request Message
-	 */
-	
-	private CollisionResolutionRecord collisionResolution;
-	
-	/** Each record specifies a single alternative carrier that
-	* the Handover Requester would be able to utilize for further communication with the Handover
-	* Selector device. 
-	*/
-	private List<AlternativeCarrierRecord> alternativeCarriers;
 
+	/**
+	 * This 4-bit field equals the minor version number of the Connection Handover specification and SHALL be set to 0x2
+	 * by an implementation that conforms to this specification. When an NDEF parser reads a different value, it MAY
+	 * assume backward compatibility.
+	 */
+
+	private byte minorVersion = 0x02;
+
+	/**
+	 * This record contains a 16-bit random number that is used in the collision resolution procedure defined in section
+	 * 2.7. Only a single Collision Resolution Record SHALL be allowed in a Handover Request Message
+	 */
+
+	private CollisionResolutionRecord collisionResolution;
+
+	/**
+	 * Each record specifies a single alternative carrier that the Handover Requester would be able to utilize for
+	 * further communication with the Handover Selector device.
+	 */
+	private List<AlternativeCarrierRecord> alternativeCarriers;
 
 	public HandoverRequestRecord() {
 		alternativeCarriers = new ArrayList<AlternativeCarrierRecord>();
@@ -76,12 +73,14 @@ public class HandoverRequestRecord extends WellKnownRecord {
 		this(collisionResolution, new ArrayList<AlternativeCarrierRecord>());
 	}
 
-	public HandoverRequestRecord(CollisionResolutionRecord collisionResolution, List<AlternativeCarrierRecord> alternativeCarriers) {
+	public HandoverRequestRecord(CollisionResolutionRecord collisionResolution,
+			List<AlternativeCarrierRecord> alternativeCarriers) {
 		this.collisionResolution = collisionResolution;
 		this.alternativeCarriers = alternativeCarriers;
 	}
-	
-	public HandoverRequestRecord(byte majorVersion, byte minorVersion, CollisionResolutionRecord collisionResolution, List<AlternativeCarrierRecord> alternativeCarriers) {
+
+	public HandoverRequestRecord(byte majorVersion, byte minorVersion, CollisionResolutionRecord collisionResolution,
+			List<AlternativeCarrierRecord> alternativeCarriers) {
 		this(collisionResolution, alternativeCarriers);
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
@@ -107,8 +106,7 @@ public class HandoverRequestRecord extends WellKnownRecord {
 		return alternativeCarriers;
 	}
 
-	public void setAlternativeCarriers(
-			List<AlternativeCarrierRecord> alternativeCarriers) {
+	public void setAlternativeCarriers(List<AlternativeCarrierRecord> alternativeCarriers) {
 		this.alternativeCarriers = alternativeCarriers;
 	}
 
@@ -136,14 +134,8 @@ public class HandoverRequestRecord extends WellKnownRecord {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((alternativeCarriers == null) ? 0 : alternativeCarriers
-						.hashCode());
-		result = prime
-				* result
-				+ ((collisionResolution == null) ? 0 : collisionResolution
-						.hashCode());
+		result = prime * result + ((alternativeCarriers == null) ? 0 : alternativeCarriers.hashCode());
+		result = prime * result + ((collisionResolution == null) ? 0 : collisionResolution.hashCode());
 		result = prime * result + majorVersion;
 		result = prime * result + minorVersion;
 		return result;
@@ -157,16 +149,18 @@ public class HandoverRequestRecord extends WellKnownRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HandoverRequestRecord other = (HandoverRequestRecord) obj;
+		HandoverRequestRecord other = (HandoverRequestRecord)obj;
 		if (alternativeCarriers == null) {
 			if (other.alternativeCarriers != null)
 				return false;
-		} else if (!alternativeCarriers.equals(other.alternativeCarriers))
+		}
+		else if (!alternativeCarriers.equals(other.alternativeCarriers))
 			return false;
 		if (collisionResolution == null) {
 			if (other.collisionResolution != null)
 				return false;
-		} else if (!collisionResolution.equals(other.collisionResolution))
+		}
+		else if (!collisionResolution.equals(other.collisionResolution))
 			return false;
 		if (majorVersion != other.majorVersion)
 			return false;
@@ -174,8 +168,5 @@ public class HandoverRequestRecord extends WellKnownRecord {
 			return false;
 		return true;
 	}
-	
-	
-	
-	
+
 }

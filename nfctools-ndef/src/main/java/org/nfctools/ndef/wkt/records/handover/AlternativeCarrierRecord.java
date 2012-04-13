@@ -21,16 +21,16 @@ import java.util.List;
 
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-
 /**
  * 
  * 
- * The record references are established using the URI-based Payload Identification mechanism described in the NDEF specification [NDEF]. 
- * The URI reference values SHALL be encoded as relative URIs with the virtual base defined as "urn:nfc:handover:".
- * The message generator is responsible for the uniqueness of the payload identifiers encoded into the ID field of the NDEF record header. 
- * While identifiers can be strings of length up to 255 characters, it is RECOMMENDED that short, possibly single character, strings are used. 
- * However, the generator SHALL NOT use the tilde character ("~", hexadecimal 7E) at the first string position and a 
- * compliant parser SHALL ignore strings starting with a tilde character.
+ * The record references are established using the URI-based Payload Identification mechanism described in the NDEF
+ * specification [NDEF]. The URI reference values SHALL be encoded as relative URIs with the virtual base defined as
+ * "urn:nfc:handover:". The message generator is responsible for the uniqueness of the payload identifiers encoded into
+ * the ID field of the NDEF record header. While identifiers can be strings of length up to 255 characters, it is
+ * RECOMMENDED that short, possibly single character, strings are used. However, the generator SHALL NOT use the tilde
+ * character ("~", hexadecimal 7E) at the first string position and a compliant parser SHALL ignore strings starting
+ * with a tilde character.
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
@@ -38,38 +38,36 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 public class AlternativeCarrierRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 0x61, 0x63 }; // "ac"
-
 	public static enum CarrierPowerState {
-		
+
 		Inactive((byte)0x00), Active((byte)0x01), Activating((byte)0x02), Unknown((byte)0x03);
-		
+
 		private CarrierPowerState(byte value) {
 			this.value = value;
 		}
-		
+
 		private byte value;
-		
+
 		public byte getValue() {
 			return value;
 		}
-		
+
 		public static CarrierPowerState toCarrierPowerState(byte value) {
-			
-			for(CarrierPowerState state : values()) {
-				if(state.value == value) {
+
+			for (CarrierPowerState state : values()) {
+				if (state.value == value) {
 					return state;
 				}
 			}
-			
+
 			throw new IllegalArgumentException("Unknown carrier power state " + value);
 		}
 	}
-	
+
 	private CarrierPowerState carrierPowerState;
 
 	private String carrierDataReference;
-	
+
 	private List<String> auxiliaryDataReferences;
 
 	public AlternativeCarrierRecord() {
@@ -80,14 +78,14 @@ public class AlternativeCarrierRecord extends WellKnownRecord {
 		this.auxiliaryDataReferences = auxiliaryDataReferences;
 	}
 
-	
 	public AlternativeCarrierRecord(CarrierPowerState carrierPowerState, String carrierDataReference) {
 		this(carrierPowerState, carrierDataReference, new ArrayList<String>());
-	}		
-	
-	public AlternativeCarrierRecord(CarrierPowerState carrierPowerState, String carrierDataReference, List<String> auxiliaryDataReferences) {
+	}
+
+	public AlternativeCarrierRecord(CarrierPowerState carrierPowerState, String carrierDataReference,
+			List<String> auxiliaryDataReferences) {
 		this(auxiliaryDataReferences);
-		
+
 		this.carrierPowerState = carrierPowerState;
 		this.carrierDataReference = carrierDataReference;
 	}
@@ -124,18 +122,9 @@ public class AlternativeCarrierRecord extends WellKnownRecord {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((auxiliaryDataReferences == null) ? 0
-						: auxiliaryDataReferences.hashCode());
-		result = prime
-				* result
-				+ ((carrierDataReference == null) ? 0 : carrierDataReference
-						.hashCode());
-		result = prime
-				* result
-				+ ((carrierPowerState == null) ? 0 : carrierPowerState
-						.hashCode());
+		result = prime * result + ((auxiliaryDataReferences == null) ? 0 : auxiliaryDataReferences.hashCode());
+		result = prime * result + ((carrierDataReference == null) ? 0 : carrierDataReference.hashCode());
+		result = prime * result + ((carrierPowerState == null) ? 0 : carrierPowerState.hashCode());
 		return result;
 	}
 
@@ -147,17 +136,18 @@ public class AlternativeCarrierRecord extends WellKnownRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AlternativeCarrierRecord other = (AlternativeCarrierRecord) obj;
+		AlternativeCarrierRecord other = (AlternativeCarrierRecord)obj;
 		if (auxiliaryDataReferences == null) {
 			if (other.auxiliaryDataReferences != null)
 				return false;
-		} else if (!auxiliaryDataReferences
-				.equals(other.auxiliaryDataReferences))
+		}
+		else if (!auxiliaryDataReferences.equals(other.auxiliaryDataReferences))
 			return false;
 		if (carrierDataReference == null) {
 			if (other.carrierDataReference != null)
 				return false;
-		} else if (!carrierDataReference.equals(other.carrierDataReference))
+		}
+		else if (!carrierDataReference.equals(other.carrierDataReference))
 			return false;
 		if (carrierPowerState != other.carrierPowerState)
 			return false;
@@ -187,6 +177,5 @@ public class AlternativeCarrierRecord extends WellKnownRecord {
 	public void removeAuxiliaryDataReference(int index) {
 		auxiliaryDataReferences.remove(index);
 	}
-	
-	
+
 }

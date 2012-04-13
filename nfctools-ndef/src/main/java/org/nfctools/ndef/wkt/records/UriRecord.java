@@ -19,7 +19,6 @@ import java.nio.charset.Charset;
 
 public class UriRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 'U' };
 	public static final Charset DEFAULT_URI_CHARSET = Charset.forName("UTF-8");
 
 	public static final String[] abbreviableUris = { "", "http://www.", "https://www.", "http://", "https://", "tel:",

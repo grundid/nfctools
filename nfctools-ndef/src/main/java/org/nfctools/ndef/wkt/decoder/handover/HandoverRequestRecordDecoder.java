@@ -18,11 +18,10 @@ package org.nfctools.ndef.wkt.decoder.handover;
 
 import java.util.List;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
-import org.nfctools.ndef.wkt.decoder.AbstractTypeRecordDecoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
@@ -30,49 +29,42 @@ import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class HandoverRequestRecordDecoder extends AbstractTypeRecordDecoder<HandoverRequestRecord> {
+public class HandoverRequestRecordDecoder implements WellKnownRecordPayloadDecoder {
 
-	public HandoverRequestRecordDecoder() {
-		super(NdefConstants.TNF_WELL_KNOWN, HandoverRequestRecord.TYPE);
-	}
-	
 	@Override
-	protected HandoverRequestRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 
 		HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord();
-		
-		
-		byte[] payload = ndefRecord.getPayload();
-		
+
 		byte minorVersion = (byte)(payload[0] & 0x0F);
 		byte majorVersion = (byte)((payload[0] >> 4) & 0x0F);
-		
+
 		handoverRequestRecord.setMinorVersion(minorVersion);
 		handoverRequestRecord.setMajorVersion(majorVersion);
 
 		List<Record> records = messageDecoder.decodeToRecords(payload, 1, payload.length - 1);
 
-		if(records.isEmpty()) {
-			throw new IllegalArgumentException("Expected collision resolution record and at least one alternative carrier");
-		}
-		Record firstRecord = records.get(0);
-		
-		if(firstRecord instanceof CollisionResolutionRecord) {
-			handoverRequestRecord.setCollisionResolution((CollisionResolutionRecord)firstRecord);
-		} else {
-			throw new IllegalArgumentException("Expected collision resolution record");
+		if (records.isEmpty()) {
+			throw new IllegalArgumentException(
+					"Expected collision resolution record and at least one alternative carrier");
 		}
 
-		if(records.size() < 2) {
+		for (int i = 0; i < records.size(); i++) {
+			Record record = records.get(i);
+			if (record instanceof CollisionResolutionRecord) {
+				handoverRequestRecord.setCollisionResolution((CollisionResolutionRecord)record);
+			}
+			else if (record instanceof AlternativeCarrierRecord)
+				handoverRequestRecord.add((AlternativeCarrierRecord)records.get(i));
+			// An implementation SHALL silently ignore and SHALL NOT raise an error 
+			// if it encounters other unknown record types.
+		}
+
+		if (handoverRequestRecord.getAlternativeCarriers().size() == 0)
 			throw new IllegalArgumentException("Expected at least one alternative carrier");
-		}
-		
-		for(int i = 1; i < records.size(); i++) {
-			handoverRequestRecord.add((AlternativeCarrierRecord)records.get(i));
-		}
 
 		return handoverRequestRecord;
 	}

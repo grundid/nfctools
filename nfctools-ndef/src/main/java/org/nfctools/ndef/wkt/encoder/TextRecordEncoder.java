@@ -19,23 +19,17 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class TextRecordEncoder implements RecordEncoder {
-
-	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof TextRecord;
-	}
+public class TextRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-		TextRecord textRecord = (TextRecord)record;
+		TextRecord textRecord = (TextRecord)wellKnownRecord;
 
 		Locale locale = textRecord.getLocale();
 
@@ -55,7 +49,7 @@ public class TextRecordEncoder implements RecordEncoder {
 		System.arraycopy(languageData, 0, payload, 1, languageData.length);
 		System.arraycopy(textData, 0, payload, 1 + languageData.length, textData.length);
 
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, TextRecord.TYPE, record.getId(), payload);
+		return payload;
 	}
 
 	private byte[] getTextAsBytes(TextRecord textRecord, Charset encoding) {

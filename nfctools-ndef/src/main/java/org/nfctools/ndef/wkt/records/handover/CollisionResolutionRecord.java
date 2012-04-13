@@ -20,18 +20,19 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**
  * 
- * The Collision Resolution Record is used in the Handover Request Record to transmit the random number 
- * required to resolve a collision of handover request messages. It SHALL NOT be used elsewhere.
+ * The Collision Resolution Record is used in the Handover Request Record to transmit the random number required to
+ * resolve a collision of handover request messages. It SHALL NOT be used elsewhere.
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
 public class CollisionResolutionRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = {0x63, 0x72 }; // "cr"
-
-	/** This 16-bit field contains an integer number that SHALL be randomly generated before sending a Handover Request Message */
+	/**
+	 * This 16-bit field contains an integer number that SHALL be randomly generated before sending a Handover Request
+	 * Message
+	 */
 	private int randomNumber;
 
 	public CollisionResolutionRecord() {
@@ -39,8 +40,8 @@ public class CollisionResolutionRecord extends WellKnownRecord {
 
 	public CollisionResolutionRecord(int randomNumber) {
 		this.randomNumber = randomNumber;
-	}	
-	
+	}
+
 	public int getRandomNumber() {
 		return randomNumber;
 	}
@@ -65,11 +66,10 @@ public class CollisionResolutionRecord extends WellKnownRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CollisionResolutionRecord other = (CollisionResolutionRecord) obj;
+		CollisionResolutionRecord other = (CollisionResolutionRecord)obj;
 		if (randomNumber != other.randomNumber)
 			return false;
 		return true;
 	}
-	
-	
+
 }

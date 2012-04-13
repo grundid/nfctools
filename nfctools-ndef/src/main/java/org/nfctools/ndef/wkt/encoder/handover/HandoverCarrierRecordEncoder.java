@@ -20,10 +20,8 @@ import java.io.ByteArrayOutputStream;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
-import org.nfctools.ndef.wkt.encoder.RecordEncoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord.CarrierTypeFormat;
@@ -31,71 +29,68 @@ import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord.CarrierTypeF
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class HandoverCarrierRecordEncoder implements RecordEncoder {
+public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof HandoverCarrierRecord;
-	}
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		
-		HandoverCarrierRecord handoverCarrierRecord = (HandoverCarrierRecord)record;
-		
+		HandoverCarrierRecord handoverCarrierRecord = (HandoverCarrierRecord)wellKnownRecord;
+
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		
+
 		CarrierTypeFormat carrierTypeFormat = handoverCarrierRecord.getCarrierTypeFormat();
-		if(carrierTypeFormat == null) {
+		if (carrierTypeFormat == null) {
 			throw new IllegalArgumentException("Expected carrier type format");
 		}
 		bout.write(carrierTypeFormat.getValue() & 0x7);
-		
+
 		Object carrierType = handoverCarrierRecord.getCarrierType();
-		
+
 		byte[] encoded;
-		
-		switch(carrierTypeFormat) {
-			case WellKnown : {
+
+		switch (carrierTypeFormat) {
+			case WellKnown: {
 				// NFC Forum well-known type [NFC RTD]
-				if(carrierType instanceof WellKnownRecord) {
+				if (carrierType instanceof WellKnownRecord) {
 					WellKnownRecord abstractWellKnownRecord = (WellKnownRecord)carrierType;
-					
+
 					encoded = messageEncoder.encodeSingle(abstractWellKnownRecord);
-					
+
 					break;
-				} else {
+				}
+				else {
 					throw new IllegalArgumentException();
 				}
 			}
-			case Media : {
+			case Media: {
 				// Media-type as defined in RFC 2046 [RFC 2046]
 				String string = (String)carrierType;
-				
+
 				encoded = string.getBytes(NdefConstants.DEFAULT_CHARSET);
-				
+
 				break;
 			}
-			case AbsoluteURI : {
+			case AbsoluteURI: {
 				// Absolute URI as defined in RFC 3986 [RFC 3986]
 				String string = (String)carrierType;
-				
+
 				encoded = string.getBytes(NdefConstants.DEFAULT_CHARSET);
-				
+
 				break;
 			}
-			case External : {
+			case External: {
 				// NFC Forum external type [NFC RTD]
-				if(carrierType instanceof ExternalTypeRecord) {
+				if (carrierType instanceof ExternalTypeRecord) {
 					ExternalTypeRecord externalTypeRecord = (ExternalTypeRecord)carrierType;
-					
+
 					encoded = messageEncoder.encodeSingle(externalTypeRecord);
-									
+
 					break;
-				} else {
+				}
+				else {
 					throw new IllegalArgumentException();
 				}
 			}
@@ -103,18 +98,18 @@ public class HandoverCarrierRecordEncoder implements RecordEncoder {
 				throw new RuntimeException();
 			}
 		}
-		
-		if(encoded.length > 255) {
+
+		if (encoded.length > 255) {
 			throw new IllegalArgumentException("Carrier type 255 byte limit exceeded.");
 		}
 		bout.write(encoded.length);
 		bout.write(encoded, 0, encoded.length);
-		
-		if(handoverCarrierRecord.hasCarrierData()) {
+
+		if (handoverCarrierRecord.hasCarrierData()) {
 			bout.write(handoverCarrierRecord.getCarrierData(), 0, handoverCarrierRecord.getCarrierDataSize());
 		}
-		
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, HandoverCarrierRecord.TYPE, record.getId(), bout.toByteArray());
+
+		return bout.toByteArray();
 	}
 
 }

@@ -18,14 +18,30 @@ package org.nfctools.ndef;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nfctools.ndef.auri.AbsoluteUriRecordEncoder;
+import org.nfctools.ndef.empty.EmptyRecordEncoder;
+import org.nfctools.ndef.ext.ExternalTypeEncoder;
+import org.nfctools.ndef.mime.MimeRecordEncoder;
+import org.nfctools.ndef.unknown.UnknownRecordEncoder;
+import org.nfctools.ndef.wkt.WellKnownRecordConfig;
+import org.nfctools.ndef.wkt.WellKnownRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
 
 public class NdefRecordEncoder {
 
-	public List<RecordEncoder> knownRecordEncoders = new ArrayList<RecordEncoder>();
+	private List<RecordEncoder> knownRecordEncoders = new ArrayList<RecordEncoder>();
+	private WellKnownRecordEncoder wellKnownRecordEncoder = new WellKnownRecordEncoder();
+
+	public NdefRecordEncoder() {
+		knownRecordEncoders.add(wellKnownRecordEncoder);
+		knownRecordEncoders.add(new MimeRecordEncoder());
+		knownRecordEncoders.add(new AbsoluteUriRecordEncoder());
+		knownRecordEncoders.add(new ExternalTypeEncoder());
+		knownRecordEncoders.add(new EmptyRecordEncoder());
+		knownRecordEncoders.add(new UnknownRecordEncoder());
+	}
 
 	public NdefRecord encode(Record record, NdefMessageEncoder messageEncoder) {
-
 		for (RecordEncoder encoder : knownRecordEncoders) {
 			if (encoder.canEncode(record)) {
 				return encoder.encodeRecord(record, messageEncoder);
@@ -34,8 +50,7 @@ public class NdefRecordEncoder {
 		throw new IllegalArgumentException("Unsupported record [" + record.getClass().getName() + "]");
 	}
 
-	public void addRecordEncoder(RecordEncoder recordEncoder) {
-		knownRecordEncoders.add(recordEncoder);
+	public void registerRecordConfig(WellKnownRecordConfig recordconfig) {
+		wellKnownRecordEncoder.addRecordConfig(recordconfig);
 	}
-
 }

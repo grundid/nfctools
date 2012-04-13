@@ -20,61 +20,58 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
-import org.nfctools.ndef.wkt.encoder.RecordEncoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
- *
+ * 
  */
 
-public class HandoverSelectRecordEncoder implements RecordEncoder {
+public class HandoverSelectRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof HandoverSelectRecord;
-	}
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		
-		HandoverSelectRecord handoverSelectRecord = (HandoverSelectRecord)record;
-		
+		HandoverSelectRecord handoverSelectRecord = (HandoverSelectRecord)wellKnownRecord;
+
 		ByteArrayOutputStream payload = new ByteArrayOutputStream();
-		
+
 		// major version, minor version
 		payload.write((handoverSelectRecord.getMajorVersion() << 4) | handoverSelectRecord.getMinorVersion());
 
 		// implementation note: write alternative carriers and error record together
-		if(handoverSelectRecord.hasError() && handoverSelectRecord.hasAlternativeCarriers()) {
-			
+		if (handoverSelectRecord.hasError() && handoverSelectRecord.hasAlternativeCarriers()) {
+
 			List<Record> records = new ArrayList<Record>();
-			
+
 			// n alternative carrier records
 			records.addAll(handoverSelectRecord.getAlternativeCarriers());
-			
+
 			// an error message
 			records.add(handoverSelectRecord.getError());
-			
+
 			messageEncoder.encode(records, payload);
-		} else if(handoverSelectRecord.hasAlternativeCarriers()) {
-			
+		}
+		else if (handoverSelectRecord.hasAlternativeCarriers()) {
+
 			// n alternative carrier records
 			messageEncoder.encode(handoverSelectRecord.getAlternativeCarriers(), payload);
-		} else if(handoverSelectRecord.hasError()){
-			
+		}
+		else if (handoverSelectRecord.hasError()) {
+
 			// an error message
 			messageEncoder.encodeSingle(handoverSelectRecord.getError(), payload);
-		} else {
+		}
+		else {
 			// do nothing
 		}
-		
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, HandoverSelectRecord.TYPE, record.getId(), payload.toByteArray());
+
+		return payload.toByteArray();
 	}
 
 }
