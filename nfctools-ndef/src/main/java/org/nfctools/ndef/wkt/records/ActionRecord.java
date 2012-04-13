@@ -18,8 +18,6 @@ package org.nfctools.ndef.wkt.records;
 
 public class ActionRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 'a', 'c', 't' };
-
 	private Action action;
 
 	public ActionRecord(Action action) {
