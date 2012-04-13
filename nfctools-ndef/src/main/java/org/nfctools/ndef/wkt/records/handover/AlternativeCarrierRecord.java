@@ -178,4 +178,8 @@ public class AlternativeCarrierRecord extends WellKnownRecord {
 		auxiliaryDataReferences.remove(index);
 	}
 
+	public boolean hasAuxiliaryDataReferences() {
+		return !auxiliaryDataReferences.isEmpty();
+	}
+
 }
