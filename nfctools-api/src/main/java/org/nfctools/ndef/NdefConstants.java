@@ -57,14 +57,14 @@ public class NdefConstants {
 
 	public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
-	public static final short TNF_EMPTY = 0;
-	public static final short TNF_WELL_KNOWN = 1;
-	public static final short TNF_MIME_MEDIA = 2;
-	public static final short TNF_ABSOLUTE_URI = 3;
-	public static final short TNF_EXTERNAL_TYPE = 4;
-	public static final short TNF_UNKNOWN = 5;
-	public static final short TNF_UNCHANGED = 6;
-	public static final short TNF_RESERVED = 7;
+	public static final byte TNF_EMPTY = 0;
+	public static final byte TNF_WELL_KNOWN = 1;
+	public static final byte TNF_MIME_MEDIA = 2;
+	public static final byte TNF_ABSOLUTE_URI = 3;
+	public static final byte TNF_EXTERNAL_TYPE = 4;
+	public static final byte TNF_UNKNOWN = 5;
+	public static final byte TNF_UNCHANGED = 6;
+	public static final byte TNF_RESERVED = 7;
 
 	public static final Charset UTF_8_CHARSET = Charset.forName("UTF-8");
 	public static final Charset DEFAULT_CHARSET = Charset.forName("US-ASCII"); // http://www.ietf.org/rfc/rfc2046.txt point 4.1.2

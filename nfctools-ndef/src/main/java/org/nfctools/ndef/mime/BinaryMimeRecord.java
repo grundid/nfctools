@@ -69,4 +69,8 @@ public class BinaryMimeRecord extends MimeRecord {
 		return true;
 	}
 
+	public boolean hasContent() {
+		return content != null;
+	}
+
 }

@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.records;
+package org.nfctools.ndef.wkt.handover.decoder;
 
+import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
+import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**
  * 
@@ -23,11 +27,16 @@ package org.nfctools.ndef.wkt.records;
  * 
  */
 
-public class HandoverSelectRecord extends AbstractWellKnownRecord {
+public class CollisionResolutionRecordDecoder implements WellKnownRecordPayloadDecoder {
 
-	public static final byte[] TYPE = { 0x48, 0x73 }; // "Hs"
+	@Override
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 
-	public HandoverSelectRecord() {
-		super(TYPE);
+		CollisionResolutionRecord collisionResolutionRecord = new CollisionResolutionRecord();
+
+		collisionResolutionRecord.setRandomNumber((((payload[0] << 8) | payload[1]) & 0xFFFF));
+
+		return collisionResolutionRecord;
 	}
+
 }

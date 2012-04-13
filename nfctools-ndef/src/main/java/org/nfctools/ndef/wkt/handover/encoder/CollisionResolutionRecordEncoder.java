@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.unchanged;
+package org.nfctools.ndef.wkt.handover.encoder;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
-import org.nfctools.ndef.wkt.encoder.RecordEncoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**
  * 
@@ -28,22 +27,18 @@ import org.nfctools.ndef.wkt.encoder.RecordEncoder;
  * 
  */
 
-public class UnchangedRecordEncoder implements RecordEncoder {
+public class CollisionResolutionRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof UnchangedRecord;
-	}
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		if (record.getClass() != UnchangedRecord.class) {
-			throw new IllegalArgumentException("Unexpected Record " + record.getClass().getName());
-		}
+		CollisionResolutionRecord collisionResolutionRecord = (CollisionResolutionRecord)wellKnownRecord;
 
-		return new NdefRecord(NdefConstants.TNF_UNCHANGED, NdefConstants.EMPTY_BYTE_ARRAY, record.getId(),
-				NdefConstants.EMPTY_BYTE_ARRAY);
+		int randomNumber = collisionResolutionRecord.getRandomNumber();
 
+		byte[] payload = new byte[] { (byte)((randomNumber >> 8) & 0xFF), (byte)(randomNumber & 0xFF) }; // msb, lsb
+
+		return payload;
 	}
 
 }

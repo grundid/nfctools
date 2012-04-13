@@ -37,12 +37,10 @@ public class UnknownRecordEncoder implements RecordEncoder {
 
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		if (record.getClass() != UnknownRecord.class) {
-			throw new IllegalArgumentException("Unexpected Record " + record.getClass().getName());
-		}
-
+		UnknownRecord unknownRecord = (UnknownRecord)record;
+		
 		return new NdefRecord(NdefConstants.TNF_UNKNOWN, NdefConstants.EMPTY_BYTE_ARRAY, record.getId(),
-				NdefConstants.EMPTY_BYTE_ARRAY);
+				unknownRecord.getPayload());
 
 	}
 

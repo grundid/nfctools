@@ -15,11 +15,7 @@
  */
 package org.nfctools.ndef.wkt.records;
 
-import org.nfctools.ndef.Record;
-
-public class GenericControlRecord extends Record {
-
-	public static final byte[] TYPE = { 'G', 'c' };
+public class GenericControlRecord extends WellKnownRecord {
 
 	private static final byte CB_CHECK_EXIT_CONDITION = 0x02;
 	private static final byte CB_IGNORE_FOLLOWING_IF_FAILED = 0x04;

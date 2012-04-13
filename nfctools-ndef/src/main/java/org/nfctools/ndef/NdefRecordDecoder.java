@@ -20,98 +20,42 @@ import java.util.List;
 
 import org.nfctools.ndef.auri.AbsoluteUriRecordDecoder;
 import org.nfctools.ndef.empty.EmptyRecordDecoder;
+import org.nfctools.ndef.ext.ExternalTypeDecoder;
 import org.nfctools.ndef.mime.MimeRecordDecoder;
-import org.nfctools.ndef.unchanged.UnchangedRecordDecoder;
 import org.nfctools.ndef.unknown.UnknownRecordDecoder;
+import org.nfctools.ndef.wkt.WellKnownRecordConfig;
+import org.nfctools.ndef.wkt.WellKnownRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.RecordDecoder;
 
 public class NdefRecordDecoder {
 
-	// non-pluggable decoders
-	private EmptyRecordDecoder emptyRecordDecoder = new EmptyRecordDecoder();
-	private AbsoluteUriRecordDecoder absoluteUriRecordDecoder = new AbsoluteUriRecordDecoder();
-	private MimeRecordDecoder mimeRecordDecoder = new MimeRecordDecoder();
-	private UnchangedRecordDecoder unchangedRecordDecoder = new UnchangedRecordDecoder();
-	private UnknownRecordDecoder unknownRecordDecoder = new UnknownRecordDecoder();
+	private WellKnownRecordDecoder wellKnownRecordDecoder = new WellKnownRecordDecoder();
 
-	// pluggable decoders
-	// plug decoders which only look at the raw byte types
-	/** well-known decoder types */
-	private List<RecordDecoder<? extends Record>> wellKnownRecordDecoders = new ArrayList<RecordDecoder<? extends Record>>();
-	/** external type decoders */
-	private List<RecordDecoder<? extends Record>> externalRecordDecoders = new ArrayList<RecordDecoder<? extends Record>>();
+	private List<RecordDecoder<? extends Record>> recordDecoders = new ArrayList<RecordDecoder<? extends Record>>();
+
+	public NdefRecordDecoder() {
+		recordDecoders.add(wellKnownRecordDecoder);
+		recordDecoders.add(new AbsoluteUriRecordDecoder());
+		recordDecoders.add(new MimeRecordDecoder());
+		recordDecoders.add(new ExternalTypeDecoder());
+		recordDecoders.add(new EmptyRecordDecoder());
+		recordDecoders.add(new UnknownRecordDecoder());
+	}
 
 	public Record decode(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 
-		switch (ndefRecord.getTnf()) {
-			case NdefConstants.TNF_EMPTY: {
-				return emptyRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
-			}
-
-			case NdefConstants.TNF_WELL_KNOWN:
-				return handleWellKnownRecordType(ndefRecord, messageDecoder);
-
-			case NdefConstants.TNF_MIME_MEDIA: {
-				if (mimeRecordDecoder.canDecode(ndefRecord)) {
-					return mimeRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
-				}
-				break;
-			}
-
-			case NdefConstants.TNF_ABSOLUTE_URI: {
-				if (absoluteUriRecordDecoder.canDecode(ndefRecord)) {
-					return absoluteUriRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
-				}
-				break;
-			}
-
-			case NdefConstants.TNF_EXTERNAL_TYPE:
-				return handleExternalRecordType(ndefRecord, messageDecoder);
-			case NdefConstants.TNF_UNKNOWN: {
-				if (unknownRecordDecoder.canDecode(ndefRecord)) {
-					return unknownRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
-				}
-				break;
-			}
-
-			case NdefConstants.TNF_UNCHANGED: {
-				if (unchangedRecordDecoder.canDecode(ndefRecord)) {
-					return unchangedRecordDecoder.decodeRecord(ndefRecord, messageDecoder);
-				}
-				break;
-			}
-
-			case NdefConstants.TNF_RESERVED:
-
+		if (ndefRecord.isChunked()) {
+			throw new IllegalArgumentException("Cannot decode chunked record");
 		}
 
+		for (RecordDecoder<? extends Record> decoder : recordDecoders) {
+			if (decoder.canDecode(ndefRecord))
+				return decoder.decodeRecord(ndefRecord, messageDecoder);
+		}
 		throw new IllegalArgumentException("Unsupported NDEF Type Name Format [" + ndefRecord.getTnf() + "]");
 	}
 
-	private Record handleExternalRecordType(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		for (RecordDecoder<? extends Record> decoder : externalRecordDecoders) {
-			if (decoder.canDecode(ndefRecord)) {
-				return decoder.decodeRecord(ndefRecord, messageDecoder);
-			}
-		}
-		throw new IllegalArgumentException("Unsupported NDEF record type [" + new String(ndefRecord.getType()) + "]");
+	public void registerRecordConfig(WellKnownRecordConfig recordconfig) {
+		wellKnownRecordDecoder.addRecordConfig(recordconfig);
 	}
-
-	private Record handleWellKnownRecordType(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		for (RecordDecoder<? extends Record> decoder : wellKnownRecordDecoders) {
-			if (decoder.canDecode(ndefRecord)) {
-				return decoder.decodeRecord(ndefRecord, messageDecoder);
-			}
-		}
-		throw new IllegalArgumentException("Unsupported NDEF record type [" + new String(ndefRecord.getType()) + "]");
-	}
-
-	public void addWellKnownRecordDecoder(RecordDecoder<? extends Record> recordDecoder) {
-		wellKnownRecordDecoders.add(recordDecoder);
-	}
-
-	public void addExternalRecordDecoder(RecordDecoder<? extends Record> recordDecoder) {
-		externalRecordDecoders.add(recordDecoder);
-	}
-
 }

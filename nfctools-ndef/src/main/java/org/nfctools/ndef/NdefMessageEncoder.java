@@ -31,22 +31,32 @@ public class NdefMessageEncoder {
 
 	public byte[] encodeSingle(Record record) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		encodeSingle(record, baos);
+		return baos.toByteArray();
+	}
+	
+	public void encodeSingle(Record record, ByteArrayOutputStream out) {
 		byte header = (byte)(NdefConstants.MB | NdefConstants.ME);
 		NdefRecord ndefRecord = ndefRecordEncoder.encode(record, this);
-		writeNdefRecord(baos, header, ndefRecord);
-		return baos.toByteArray();
+		writeNdefRecord(out, header, ndefRecord);
 	}
 
 	public byte[] encode(Record... records) {
 		return encode(Arrays.asList(records));
 	}
 
-	public byte[] encode(Iterable<Record> records) {
+	public byte[] encode(Iterable<? extends Record> records) {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
+		encode(records, baos);
+
+		return baos.toByteArray();
+	}
+
+	public void encode(Iterable<? extends Record> records, ByteArrayOutputStream baos) {
 		byte header = (byte)NdefConstants.MB;
-		for (Iterator<Record> it = records.iterator(); it.hasNext();) {
+		for (Iterator<? extends Record> it = records.iterator(); it.hasNext();) {
 			Record record = it.next();
 			header = setMessageEndIfLastRecord(it, header);
 
@@ -55,11 +65,9 @@ public class NdefMessageEncoder {
 			writeNdefRecord(baos, header, ndefRecord);
 			header = 0;
 		}
-
-		return baos.toByteArray();
 	}
-
-	private byte setMessageEndIfLastRecord(Iterator<Record> it, byte header) {
+	
+	private byte setMessageEndIfLastRecord(Iterator<? extends Record> it, byte header) {
 		if (!it.hasNext()) {
 			header |= NdefConstants.ME;
 		}
