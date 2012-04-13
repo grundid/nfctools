@@ -15,24 +15,17 @@
  */
 package org.nfctools.ndef.wkt.encoder;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class GcActionRecordEncoder implements RecordEncoder {
-
-	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof GcActionRecord;
-	}
+public class GcActionRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-		GcActionRecord actionRecord = (GcActionRecord)record;
-
+		GcActionRecord actionRecord = (GcActionRecord)wellKnownRecord;
 		byte[] payload = null;
 
 		if (actionRecord.hasAction()) {
@@ -47,7 +40,6 @@ public class GcActionRecordEncoder implements RecordEncoder {
 			System.arraycopy(subPayload, 0, payload, 1, subPayload.length);
 		}
 
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, GcActionRecord.TYPE, record.getId(), payload);
-
+		return payload;
 	}
 }

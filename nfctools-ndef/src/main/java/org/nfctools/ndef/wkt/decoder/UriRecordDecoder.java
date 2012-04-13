@@ -15,31 +15,26 @@
  */
 package org.nfctools.ndef.wkt.decoder;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.UriRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 // TODO Any character value within the URI between (and including) 0 and 31 SHALL be recorded 
 // as an error, and the URI record to be discarded. 
 // Any invalid UTF-8 sequence SHALL be considered an error, and the entire URI record SHALL be discarded.
-public class UriRecordDecoder extends AbstractTypeRecordDecoder<UriRecord> {
-
-	public UriRecordDecoder() {
-		super(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE);
-	}
+public class UriRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	protected UriRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 		String prefix = "";
-		if (ndefRecord.getPayload()[0] >= UriRecord.abbreviableUris.length || ndefRecord.getPayload()[0] < 0) {
-			throw new IllegalArgumentException("Unkown abbreviation index " + ndefRecord.getPayload()[0]);
+		if (payload[0] >= UriRecord.abbreviableUris.length || payload[0] < 0) {
+			throw new IllegalArgumentException("Unkown abbreviation index " + payload[0]);
 		}
 		else {
-			prefix = UriRecord.abbreviableUris[ndefRecord.getPayload()[0]];
+			prefix = UriRecord.abbreviableUris[payload[0]];
 		}
-		String uri = new String(ndefRecord.getPayload(), 1, ndefRecord.getPayload().length - 1,
-				UriRecord.DEFAULT_URI_CHARSET);
+		String uri = new String(payload, 1, payload.length - 1, UriRecord.DEFAULT_URI_CHARSET);
 		return new UriRecord(prefix + uri);
 	}
 }

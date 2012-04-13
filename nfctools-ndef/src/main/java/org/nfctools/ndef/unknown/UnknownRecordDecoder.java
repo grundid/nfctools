@@ -35,6 +35,24 @@ public class UnknownRecordDecoder extends AbstractRecordDecoder<UnknownRecord> {
 
 	@Override
 	protected UnknownRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		return new UnknownRecord();
+
+		
+		/**
+		The value 0x05 (Unknown) SHOULD be used to indicate that the type of the payload is
+		unknown. This is similar to the "application/octet-stream" media type defined by MIME [RFC
+		2046]. When used, the TYPE_LENGTH field MUST be zero and thus the TYPE field is omitted
+		from the NDEF record. Regarding implementation, it is RECOMMENDED that an NDEF parser
+		receiving an NDEF record of this type, without further context to its use, provides a mechanism
+		for storing but not processing the payload (see section 4.2).
+
+		 */
+		
+		// check that type is zero length
+		byte[] type = ndefRecord.getType();
+		if(type != null && type.length > 0) {
+			throw new IllegalArgumentException("Record type not expected");
+		}
+		
+		return new UnknownRecord(ndefRecord.getPayload());
 	}
 }

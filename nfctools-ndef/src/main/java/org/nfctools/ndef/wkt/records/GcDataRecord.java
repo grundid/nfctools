@@ -21,9 +21,7 @@ import java.util.List;
 
 import org.nfctools.ndef.Record;
 
-public class GcDataRecord extends Record {
-
-	public static final byte[] TYPE = { 'd' };
+public class GcDataRecord extends WellKnownRecord {
 
 	private List<Record> records = new ArrayList<Record>();
 

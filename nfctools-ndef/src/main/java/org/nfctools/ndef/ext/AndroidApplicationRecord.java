@@ -35,6 +35,7 @@ public class AndroidApplicationRecord extends ExternalTypeRecord {
 	}
 
 	public AndroidApplicationRecord() {
+		setNamespace(TYPE);
 	}
 
 	public String getPackageName() {

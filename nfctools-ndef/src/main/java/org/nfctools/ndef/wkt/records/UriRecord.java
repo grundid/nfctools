@@ -17,11 +17,8 @@ package org.nfctools.ndef.wkt.records;
 
 import java.nio.charset.Charset;
 
-import org.nfctools.ndef.Record;
+public class UriRecord extends WellKnownRecord {
 
-public class UriRecord extends Record {
-
-	public static final byte[] TYPE = { 'U' };
 	public static final Charset DEFAULT_URI_CHARSET = Charset.forName("UTF-8");
 
 	public static final String[] abbreviableUris = { "", "http://www.", "https://www.", "http://", "https://", "tel:",
@@ -34,6 +31,9 @@ public class UriRecord extends Record {
 
 	public UriRecord(String uri) {
 		this.uri = uri;
+	}
+
+	public UriRecord() {
 	}
 
 	public String getUri() {

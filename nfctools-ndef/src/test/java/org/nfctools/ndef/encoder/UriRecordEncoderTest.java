@@ -15,17 +15,13 @@
  */
 package org.nfctools.ndef.encoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;
 import org.nfctools.ndef.wkt.records.UriRecord;
-import org.nfctools.utils.NfcUtils;
 
 public class UriRecordEncoderTest {
 
@@ -35,29 +31,24 @@ public class UriRecordEncoderTest {
 	@Test
 	public void testEncode() throws Exception {
 		UriRecord record = new UriRecord("http://www.example.com");
-		NdefRecord ndefRecord = encoder.encodeRecord(record, messageEncoder);
-		assertEquals(NdefConstants.TNF_WELL_KNOWN, ndefRecord.getTnf());
-		assertTrue(NfcUtils.isEqualArray(new byte[] { 'U' }, ndefRecord.getType()));
-
-		assertEquals(1, ndefRecord.getPayload()[0]);
-		assertEquals('e', ndefRecord.getPayload()[1]);
+		byte[] payload = encoder.encodePayload(record, messageEncoder);
+		assertEquals(1, payload[0]);
+		assertEquals('e', payload[1]);
 	}
 
 	@Test
 	public void testEncodeLastKnownAbbreviation() throws Exception {
 		UriRecord record = new UriRecord("urn:nfc:blabla");
-		NdefRecord ndefRecord = encoder.encodeRecord(record, messageEncoder);
-
-		assertEquals(35, ndefRecord.getPayload()[0]);
-		assertEquals('b', ndefRecord.getPayload()[1]);
+		byte[] payload = encoder.encodePayload(record, messageEncoder);
+		assertEquals(35, payload[0]);
+		assertEquals('b', payload[1]);
 	}
 
 	@Test
 	public void testEncodeNoAbbreviation() throws Exception {
 		UriRecord record = new UriRecord("sms:+1234567890?body=Hi");
-		NdefRecord ndefRecord = encoder.encodeRecord(record, messageEncoder);
-
-		assertEquals(0, ndefRecord.getPayload()[0]);
-		assertEquals('s', ndefRecord.getPayload()[1]);
+		byte[] payload = encoder.encodePayload(record, messageEncoder);
+		assertEquals(0, payload[0]);
+		assertEquals('s', payload[1]);
 	}
 }
