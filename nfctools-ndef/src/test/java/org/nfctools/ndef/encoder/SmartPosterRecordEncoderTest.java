@@ -15,7 +15,7 @@
  */
 package org.nfctools.ndef.encoder;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.nio.charset.Charset;
 import java.util.Locale;
@@ -23,7 +23,6 @@ import java.util.Locale;
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.encoder.SmartPosterRecordEncoder;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
@@ -40,11 +39,10 @@ public class SmartPosterRecordEncoderTest {
 
 	@Test
 	public void testEncode() throws Exception {
-
 		SmartPosterRecord smartPosterRecord = new SmartPosterRecord();
 		smartPosterRecord.setTitle(new TextRecord("Test", Charset.forName("UTF8"), Locale.GERMAN));
 		smartPosterRecord.setUri(new UriRecord("sms:+491234567890?body=Hi!%20Wie%20geht%20es%20dir%3F"));
-		NdefRecord ndefRecord = encoder.encodeRecord(smartPosterRecord, messageEncoder);
-		assertEquals(innerSmartPoster, NfcUtils.convertBinToASCII(ndefRecord.getPayload()));
+		byte[] payload = encoder.encodeRecordPayload(smartPosterRecord, messageEncoder);
+		assertEquals(innerSmartPoster, NfcUtils.convertBinToASCII(payload));
 	}
 }

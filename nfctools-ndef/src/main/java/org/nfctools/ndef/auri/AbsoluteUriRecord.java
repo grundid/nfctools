@@ -29,6 +29,8 @@ import org.nfctools.ndef.Record;
 
 public class AbsoluteUriRecord extends Record {
 
+	public static final byte[] TYPE = { 'U' };
+
 	private String uri;
 
 	public AbsoluteUriRecord(String uri) {

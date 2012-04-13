@@ -20,27 +20,23 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.RecordUtils;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class TextRecordDecoder extends AbstractTypeRecordDecoder<TextRecord> {
-
-	public TextRecordDecoder() {
-		super(NdefConstants.TNF_WELL_KNOWN, TextRecord.TYPE);
-	}
+public class TextRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	protected TextRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		ByteArrayInputStream bais = new ByteArrayInputStream(ndefRecord.getPayload());
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+		ByteArrayInputStream bais = new ByteArrayInputStream(payload);
 
 		int status = bais.read();
 		byte languageCodeLength = (byte)(status & TextRecord.LANGUAGE_CODE_MASK);
 		String languageCode = new String(RecordUtils.getBytesFromStream(languageCodeLength, bais));
 
-		byte[] textData = RecordUtils.getBytesFromStream(ndefRecord.getPayload().length - languageCodeLength - 1, bais);
+		byte[] textData = RecordUtils.getBytesFromStream(payload.length - languageCodeLength - 1, bais);
 		Charset textEncoding = ((status & 0x80) != 0) ? TextRecord.UTF16 : TextRecord.UTF8;
 
 		try {

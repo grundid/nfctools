@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-
 package org.nfctools.ndef.encoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.nio.charset.Charset;
 import java.util.Locale;
 
 import org.junit.Test;
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.utils.NfcUtils;
@@ -39,47 +35,29 @@ public class TextRecordEncoderTest {
 
 	@Test
 	public void testCreateTextRecordUtf8German() throws Exception {
-
 		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf8"), Locale.GERMAN);
-		NdefRecord ndefRecord = encoder.encodeRecord(textRecord, messageEncoder);
-		byte[] bytes = ndefRecord.getPayload();
+		byte[] bytes = encoder.encodeRecordPayload(textRecord, messageEncoder);
 		assertEquals("02646554657374C3B6C3A4C3BCC39FC396C384C39C3F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf16German() throws Exception {
-
 		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf-16be"), Locale.GERMAN);
-		NdefRecord ndefRecord = encoder.encodeRecord(textRecord, messageEncoder);
-		byte[] bytes = ndefRecord.getPayload();
+		byte[] bytes = encoder.encodeRecordPayload(textRecord, messageEncoder);
 		assertEquals("826465005400650073007400F600E400FC00DF00D600C400DC003F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf8English() throws Exception {
-
 		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf8"), Locale.ENGLISH);
-		NdefRecord ndefRecord = encoder.encodeRecord(textRecord, messageEncoder);
-		byte[] bytes = ndefRecord.getPayload();
+		byte[] bytes = encoder.encodeRecordPayload(textRecord, messageEncoder);
 		assertEquals("02656E54657374C3B6C3A4C3BCC39FC396C384C39C3F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf16English() throws Exception {
-
 		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf-16be"), Locale.ENGLISH);
-		NdefRecord ndefRecord = encoder.encodeRecord(textRecord, messageEncoder);
-		byte[] bytes = ndefRecord.getPayload();
+		byte[] bytes = encoder.encodeRecordPayload(textRecord, messageEncoder);
 		assertEquals("82656E005400650073007400F600E400FC00DF00D600C400DC003F", NfcUtils.convertBinToASCII(bytes));
-	}
-
-	@Test
-	public void testEncode() throws Exception {
-
-		TextRecord textRecord = new TextRecord("Test", Charset.forName("UTF-8"), Locale.GERMAN);
-		NdefRecord ndefRecord = encoder.encodeRecord(textRecord, messageEncoder);
-		assertEquals(NdefConstants.TNF_WELL_KNOWN, ndefRecord.getTnf());
-		assertTrue(NfcUtils.isEqualArray(new byte[] { 'T' }, ndefRecord.getType()));
-
 	}
 }

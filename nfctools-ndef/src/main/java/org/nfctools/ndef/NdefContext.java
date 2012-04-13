@@ -24,8 +24,29 @@ import org.nfctools.ndef.wkt.WellKnownRecordConfig;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.decoder.ActionRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.GcActionRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.GcDataRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.GcTargetRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.GenericControlRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.SmartPosterRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.TextRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.UriRecordDecoder;
 import org.nfctools.ndef.wkt.encoder.ActionRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.GcActionRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.GcDataRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.GcTargetRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.GenericControlRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.SmartPosterRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;
 import org.nfctools.ndef.wkt.records.ActionRecord;
+import org.nfctools.ndef.wkt.records.GcActionRecord;
+import org.nfctools.ndef.wkt.records.GcDataRecord;
+import org.nfctools.ndef.wkt.records.GcTargetRecord;
+import org.nfctools.ndef.wkt.records.GenericControlRecord;
+import org.nfctools.ndef.wkt.records.SmartPosterRecord;
+import org.nfctools.ndef.wkt.records.TextRecord;
+import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**
@@ -44,37 +65,19 @@ public class NdefContext {
 	static {
 		registerWellKnownRecord(new RecordType("act"), ActionRecord.class, new ActionRecordEncoder(),
 				new ActionRecordDecoder());
+		registerWellKnownRecord(new RecordType("U"), UriRecord.class, new UriRecordEncoder(), new UriRecordDecoder());
+		registerWellKnownRecord(new RecordType("T"), TextRecord.class, new TextRecordEncoder(), new TextRecordDecoder());
+		registerWellKnownRecord(new RecordType("Sp"), SmartPosterRecord.class, new SmartPosterRecordEncoder(),
+				new SmartPosterRecordDecoder());
+		registerWellKnownRecord(new RecordType("Gc"), GenericControlRecord.class, new GenericControlRecordEncoder(),
+				new GenericControlRecordDecoder());
+		registerWellKnownRecord(new RecordType("t"), GcTargetRecord.class, new GcTargetRecordEncoder(),
+				new GcTargetRecordDecoder());
+		registerWellKnownRecord(new RecordType("d"), GcDataRecord.class, new GcDataRecordEncoder(),
+				new GcDataRecordDecoder());
+		registerWellKnownRecord(new RecordType("a"), GcActionRecord.class, new GcActionRecordEncoder(),
+				new GcActionRecordDecoder());
 
-		// decoders
-		// well known decoders
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new SmartPosterDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new TextRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new UriRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new ActionRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new GenericControlRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new GcTargetRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new GcActionRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new GcDataRecordDecoder());
-		//
-		//		// handover
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new AlternativeCarrierRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverCarrierRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverRequestRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new HandoverSelectRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new ErrorRecordDecoder());
-		//		ndefRecordDecoder.addWellKnownRecordDecoder(new CollisionResolutionRecordDecoder());
-
-		// encoders
-
-		//		// well known encoders
-		//		ndefRecordEncoder.addRecordEncoder(new SmartPosterRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new TextRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new UriRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new ActionRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new GenericControlRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new GcTargetRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new GcActionRecordEncoder());
-		//		ndefRecordEncoder.addRecordEncoder(new GcDataRecordEncoder());
 		//
 		//		// handover
 		//		ndefRecordEncoder.addRecordEncoder(new AlternativeCarrierRecordEncoder());
@@ -91,7 +94,7 @@ public class NdefContext {
 
 	}
 
-	private static void registerWellKnownRecord(RecordType recordType, Class<? extends WellKnownRecord> recordClass,
+	public static void registerWellKnownRecord(RecordType recordType, Class<? extends WellKnownRecord> recordClass,
 			WellKnownRecordPayloadEncoder payloadEncoder, WellKnownRecordPayloadDecoder payloadDecoder) {
 		WellKnownRecordConfig config = new WellKnownRecordConfig(recordType, recordClass, payloadEncoder,
 				payloadDecoder);

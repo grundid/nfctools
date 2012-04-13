@@ -20,7 +20,6 @@ import java.util.Locale;
 
 public class TextRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 'T' };
 	public static final byte LANGUAGE_CODE_MASK = 0x1F;
 
 	public static final Charset UTF8 = Charset.forName("UTF-8");

@@ -18,24 +18,17 @@ package org.nfctools.ndef.wkt.encoder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class SmartPosterRecordEncoder implements RecordEncoder {
-
-	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof SmartPosterRecord;
-	}
+public class SmartPosterRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		SmartPosterRecord myRecord = (SmartPosterRecord)record;
-		byte[] payload = createPayload(messageEncoder, myRecord);
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, SmartPosterRecord.TYPE, record.getId(), payload);
+	public byte[] encodeRecordPayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+		SmartPosterRecord myRecord = (SmartPosterRecord)wellKnownRecord;
+		return createPayload(messageEncoder, myRecord);
 	}
 
 	private byte[] createPayload(NdefMessageEncoder messageEncoder, SmartPosterRecord myRecord) {

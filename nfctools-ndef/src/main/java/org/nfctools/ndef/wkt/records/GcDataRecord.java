@@ -23,8 +23,6 @@ import org.nfctools.ndef.Record;
 
 public class GcDataRecord extends WellKnownRecord {
 
-	public static final byte[] TYPE = { 'd' };
-
 	private List<Record> records = new ArrayList<Record>();
 
 	public GcDataRecord(Record... records) {

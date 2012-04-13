@@ -21,7 +21,6 @@ import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
-import org.nfctools.ndef.wkt.records.UriRecord;
 
 /**
  * 
@@ -39,7 +38,7 @@ public class AbsoluteUriRecordEncoder implements RecordEncoder {
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		AbsoluteUriRecord absoluteUriRecord = (AbsoluteUriRecord)record;
-		return new NdefRecord(NdefConstants.TNF_ABSOLUTE_URI, UriRecord.TYPE, absoluteUriRecord.getId(),
+		return new NdefRecord(NdefConstants.TNF_ABSOLUTE_URI, AbsoluteUriRecord.TYPE, absoluteUriRecord.getId(),
 				absoluteUriRecord.getUri().getBytes(NdefConstants.DEFAULT_CHARSET));
 	}
 }
