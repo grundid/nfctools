@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.decoder.handover;
+package org.nfctools.ndef.wkt.handover.decoder;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
+import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
-import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
-import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord.CarrierTypeFormat;
 
 /**
  * 

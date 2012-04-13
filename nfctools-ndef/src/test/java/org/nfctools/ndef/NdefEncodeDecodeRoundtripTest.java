@@ -28,20 +28,20 @@ import org.nfctools.ndef.ext.AndroidApplicationRecord;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.TextMimeRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
+import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
+import org.nfctools.ndef.wkt.handover.records.ErrorRecord;
+import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.HandoverRequestRecord;
+import org.nfctools.ndef.wkt.handover.records.HandoverSelectRecord;
+import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord.CarrierPowerState;
+import org.nfctools.ndef.wkt.handover.records.ErrorRecord.ErrorReason;
+import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
-import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
-import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPowerState;
-import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
-import org.nfctools.ndef.wkt.records.handover.ErrorRecord;
-import org.nfctools.ndef.wkt.records.handover.ErrorRecord.ErrorReason;
-import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord;
-import org.nfctools.ndef.wkt.records.handover.HandoverCarrierRecord.CarrierTypeFormat;
-import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
-import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**
  * 

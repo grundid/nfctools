@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.records.handover;
+package org.nfctools.ndef.wkt.handover.records;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,26 +22,27 @@ import java.util.List;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**
- * The Handover Request Record identifies a list of possible alternative carriers that the Handover Requester device
- * would be able to use for further communication with the Handover Selector. At least a single alternative carrier MUST
- * be specified by the Handover Requester. If multiple alternative carriers are specified, the Handover Selector SHOULD
- * process the records in order and acknowledge the first appropriate match, if any.
  * 
- * Only Alternative Carrier Records or Collision Resolution Records have a defined meaning in the payload of a Handover
- * Request Record. However, an implementation SHALL silently ignore and SHALL NOT raise an error if it encounters other
- * unknown record types.
+ * The Handover Select Record identifies the alternative carriers that the Handover Selector device selected from the
+ * list provided within the previous Handover Request Message. The Handover Selector MAY acknowledge zero, one, or more
+ * of the proposed alternative carriers at its own discretion.
+ * 
+ * Only Alternative Carrier Records have a defined meaning in the payload of a Handover Select Record. However, an
+ * implementation SHALL NOT raise an error if it encounters other record types, but SHOULD silently ignore them.
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
  */
 
-public class HandoverRequestRecord extends WellKnownRecord {
+public class HandoverSelectRecord extends WellKnownRecord {
 
 	/**
 	 * This 4-bit field equals the major version number of the Connection Handover specification and SHALL be set to 0x1
 	 * by an implementation that conforms to this specification. When an NDEF parser reads a different value, it SHALL
 	 * NOT assume backward compatibility.
+	 * 
 	 */
+
 	private byte majorVersion = 0x01;
 
 	/**
@@ -53,37 +54,32 @@ public class HandoverRequestRecord extends WellKnownRecord {
 	private byte minorVersion = 0x02;
 
 	/**
-	 * This record contains a 16-bit random number that is used in the collision resolution procedure defined in section
-	 * 2.7. Only a single Collision Resolution Record SHALL be allowed in a Handover Request Message
-	 */
-
-	private CollisionResolutionRecord collisionResolution;
-
-	/**
-	 * Each record specifies a single alternative carrier that the Handover Requester would be able to utilize for
-	 * further communication with the Handover Selector device.
+	 * Each record specifies a single alternative carrier that the Handover Selector would be able to utilize for
+	 * further communication with the Handover Requester device. The order of the Alternative Carrier Records gives an
+	 * implicit preference ranking that the Handover Requester SHOULD obey.
 	 */
 	private List<AlternativeCarrierRecord> alternativeCarriers;
 
-	public HandoverRequestRecord() {
+	private ErrorRecord error;
+
+	public HandoverSelectRecord() {
 		alternativeCarriers = new ArrayList<AlternativeCarrierRecord>();
 	}
 
-	public HandoverRequestRecord(CollisionResolutionRecord collisionResolution) {
-		this(collisionResolution, new ArrayList<AlternativeCarrierRecord>());
+	public HandoverSelectRecord(byte majorVersion, byte minorVersion) {
+		this(majorVersion, minorVersion, new ArrayList<AlternativeCarrierRecord>());
 	}
 
-	public HandoverRequestRecord(CollisionResolutionRecord collisionResolution,
-			List<AlternativeCarrierRecord> alternativeCarriers) {
-		this.collisionResolution = collisionResolution;
-		this.alternativeCarriers = alternativeCarriers;
+	public HandoverSelectRecord(byte majorVersion, byte minorVersion, List<AlternativeCarrierRecord> alternativeCarriers) {
+		this(majorVersion, minorVersion, alternativeCarriers, null);
 	}
 
-	public HandoverRequestRecord(byte majorVersion, byte minorVersion, CollisionResolutionRecord collisionResolution,
-			List<AlternativeCarrierRecord> alternativeCarriers) {
-		this(collisionResolution, alternativeCarriers);
+	public HandoverSelectRecord(byte majorVersion, byte minorVersion,
+			List<AlternativeCarrierRecord> alternativeCarriers, ErrorRecord error) {
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
+		this.alternativeCarriers = alternativeCarriers;
+		this.error = error;
 	}
 
 	public byte getMajorVersion() {
@@ -110,24 +106,24 @@ public class HandoverRequestRecord extends WellKnownRecord {
 		this.alternativeCarriers = alternativeCarriers;
 	}
 
-	public CollisionResolutionRecord getCollisionResolution() {
-		return collisionResolution;
+	public ErrorRecord getError() {
+		return error;
 	}
 
-	public void setCollisionResolution(CollisionResolutionRecord collisionResolution) {
-		this.collisionResolution = collisionResolution;
+	public void setError(ErrorRecord error) {
+		this.error = error;
+	}
+
+	public boolean hasError() {
+		return error != null;
 	}
 
 	public boolean hasAlternativeCarriers() {
 		return !alternativeCarriers.isEmpty();
 	}
 
-	public void add(AlternativeCarrierRecord alternativeCarrierRecord) {
-		this.alternativeCarriers.add(alternativeCarrierRecord);
-	}
-
-	public boolean hasCollisionResolution() {
-		return this.collisionResolution != null;
+	public void add(AlternativeCarrierRecord record) {
+		this.alternativeCarriers.add(record);
 	}
 
 	@Override
@@ -135,7 +131,7 @@ public class HandoverRequestRecord extends WellKnownRecord {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((alternativeCarriers == null) ? 0 : alternativeCarriers.hashCode());
-		result = prime * result + ((collisionResolution == null) ? 0 : collisionResolution.hashCode());
+		result = prime * result + ((error == null) ? 0 : error.hashCode());
 		result = prime * result + majorVersion;
 		result = prime * result + minorVersion;
 		return result;
@@ -149,18 +145,18 @@ public class HandoverRequestRecord extends WellKnownRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HandoverRequestRecord other = (HandoverRequestRecord)obj;
+		HandoverSelectRecord other = (HandoverSelectRecord)obj;
 		if (alternativeCarriers == null) {
 			if (other.alternativeCarriers != null)
 				return false;
 		}
 		else if (!alternativeCarriers.equals(other.alternativeCarriers))
 			return false;
-		if (collisionResolution == null) {
-			if (other.collisionResolution != null)
+		if (error == null) {
+			if (other.error != null)
 				return false;
 		}
-		else if (!collisionResolution.equals(other.collisionResolution))
+		else if (!error.equals(other.error))
 			return false;
 		if (majorVersion != other.majorVersion)
 			return false;

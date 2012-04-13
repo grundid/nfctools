@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.encoder.handover;
+package org.nfctools.ndef.wkt.handover.encoder;
 
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
-import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
 
 /**
  * 

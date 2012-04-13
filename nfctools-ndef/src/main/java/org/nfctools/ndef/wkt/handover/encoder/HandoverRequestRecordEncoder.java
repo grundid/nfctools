@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.encoder.handover;
+package org.nfctools.ndef.wkt.handover.encoder;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -23,8 +23,8 @@ import java.util.List;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.wkt.handover.records.HandoverRequestRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
-import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
 
 /**
  * 
@@ -32,44 +32,36 @@ import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
  * 
  */
 
-public class HandoverSelectRecordEncoder implements WellKnownRecordPayloadEncoder {
+public class HandoverRequestRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
 	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-		HandoverSelectRecord handoverSelectRecord = (HandoverSelectRecord)wellKnownRecord;
+		HandoverRequestRecord handoverRequestRecord = (HandoverRequestRecord)wellKnownRecord;
 
 		ByteArrayOutputStream payload = new ByteArrayOutputStream();
 
 		// major version, minor version
-		payload.write((handoverSelectRecord.getMajorVersion() << 4) | handoverSelectRecord.getMinorVersion());
+		payload.write((handoverRequestRecord.getMajorVersion() << 4) | handoverRequestRecord.getMinorVersion());
 
-		// implementation note: write alternative carriers and error record together
-		if (handoverSelectRecord.hasError() && handoverSelectRecord.hasAlternativeCarriers()) {
-
-			List<Record> records = new ArrayList<Record>();
-
-			// n alternative carrier records
-			records.addAll(handoverSelectRecord.getAlternativeCarriers());
-
-			// an error message
-			records.add(handoverSelectRecord.getError());
-
-			messageEncoder.encode(records, payload);
+		if (!handoverRequestRecord.hasCollisionResolution()) {
+			throw new IllegalArgumentException("Expected collision resolution");
 		}
-		else if (handoverSelectRecord.hasAlternativeCarriers()) {
 
-			// n alternative carrier records
-			messageEncoder.encode(handoverSelectRecord.getAlternativeCarriers(), payload);
+		// implementation note: write alternative carriers and and collision resolution together
+		if (!handoverRequestRecord.hasAlternativeCarriers()) {
+			// At least a single alternative carrier MUST be specified by the Handover Requester.
+			throw new IllegalArgumentException("Expected at least one alternative carrier");
 		}
-		else if (handoverSelectRecord.hasError()) {
+		List<Record> records = new ArrayList<Record>();
 
-			// an error message
-			messageEncoder.encodeSingle(handoverSelectRecord.getError(), payload);
-		}
-		else {
-			// do nothing
-		}
+		// a collision resolution record
+		records.add(handoverRequestRecord.getCollisionResolution());
+
+		// n alternative carrier records
+		records.addAll(handoverRequestRecord.getAlternativeCarriers());
+
+		messageEncoder.encode(records, payload);
 
 		return payload.toByteArray();
 	}

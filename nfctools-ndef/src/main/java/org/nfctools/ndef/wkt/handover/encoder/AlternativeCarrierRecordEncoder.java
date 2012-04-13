@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.encoder.handover;
+package org.nfctools.ndef.wkt.handover.encoder;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -22,9 +22,9 @@ import java.util.List;
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord.CarrierPowerState;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
-import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
-import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPowerState;
 
 /**
  * 

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.encoder.handover;
+package org.nfctools.ndef.wkt.handover.decoder;
 
-import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
+import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
+import org.nfctools.ndef.wkt.handover.records.ErrorRecord;
+import org.nfctools.ndef.wkt.handover.records.ErrorRecord.ErrorReason;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
-import org.nfctools.ndef.wkt.records.handover.ErrorRecord;
-import org.nfctools.ndef.wkt.records.handover.ErrorRecord.ErrorReason;
 
 /**
  * 
@@ -28,25 +28,17 @@ import org.nfctools.ndef.wkt.records.handover.ErrorRecord.ErrorReason;
  * 
  */
 
-public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
+public class ErrorRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+		ErrorRecord errorRecord = new ErrorRecord();
 
-		ErrorRecord errorRecord = (ErrorRecord)wellKnownRecord;
+		ErrorReason errorReason = ErrorReason.toErrorReason(payload[0]);
 
-		if (!errorRecord.hasErrorReason()) {
-			throw new IllegalArgumentException("Expected error reason");
-		}
+		errorRecord.setErrorReason(errorReason);
 
-		if (!errorRecord.hasErrorData()) {
-			throw new IllegalArgumentException("Expected error data");
-		}
-
-		ErrorReason errorReason = errorRecord.getErrorReason();
-
-		byte[] payload;
-
+		Number number;
 		switch (errorReason) {
 			case TemporaryMemoryConstraints: {
 				/**
@@ -56,7 +48,7 @@ public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 				 * the subsequent receipt of a Handover Request Message by the Handover Selector.
 				 */
 
-				payload = new byte[] { errorReason.getValue(), (byte)(errorRecord.getErrorData().shortValue() & 0xFF) };
+				number = new Short((short)(payload[1] & 0xFFFF));
 
 				break;
 			}
@@ -67,10 +59,9 @@ public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 				 * number of octets of an acceptable Handover Select Message. The number of octets SHALL be determined
 				 * by the total length of the NDEF message, including all header information.
 				 */
-				long unsignedInt = errorRecord.getErrorData().longValue();
-				payload = new byte[] { errorReason.getValue(), (byte)((unsignedInt >> 24) & 0xFF),
-						(byte)((unsignedInt >> 16) & 0xFF), (byte)((unsignedInt >> 8) & 0xFF),
-						(byte)(unsignedInt & 0xFF) };
+
+				number = new Long(((long)(payload[1] & 0xFF) << 24) + ((payload[2] & 0xFF) << 16)
+						+ ((payload[3] & 0xFF) << 8) + ((payload[4] & 0xFF) << 0));
 
 				break;
 			}
@@ -83,7 +74,7 @@ public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 				 * Handover Request Message by the Handover Selector.
 				 */
 
-				payload = new byte[] { errorReason.getValue(), (byte)(errorRecord.getErrorData().shortValue() & 0xFF) };
+				number = new Short((short)(payload[1] & 0xFFFF));
 
 				break;
 			}
@@ -92,7 +83,9 @@ public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 			}
 		}
 
-		return payload;
+		errorRecord.setErrorData(number);
+
+		return errorRecord;
 	}
 
 }

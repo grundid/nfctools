@@ -16,11 +16,11 @@ import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.MimeRecord;
-import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord;
-import org.nfctools.ndef.wkt.records.handover.AlternativeCarrierRecord.CarrierPowerState;
-import org.nfctools.ndef.wkt.records.handover.CollisionResolutionRecord;
-import org.nfctools.ndef.wkt.records.handover.HandoverRequestRecord;
-import org.nfctools.ndef.wkt.records.handover.HandoverSelectRecord;
+import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
+import org.nfctools.ndef.wkt.handover.records.HandoverRequestRecord;
+import org.nfctools.ndef.wkt.handover.records.HandoverSelectRecord;
+import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord.CarrierPowerState;
 import org.nfctools.utils.NfcUtils;
 
 public class HandoverDecoderTest {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.records.handover;
+package org.nfctools.ndef.wkt.handover.records;
 
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
