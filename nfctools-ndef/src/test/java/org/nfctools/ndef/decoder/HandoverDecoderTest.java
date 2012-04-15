@@ -108,6 +108,33 @@ public class HandoverDecoderTest {
 		assertEquals("0", bluetooth.getKey());
 	}
 
+	@Test
+	public void testBluetoothHandoverSelectTag12() throws Exception {
+		byte[] message = getResource("/handover/1.2/BluetoothHandoverSelectMessageTag.bin");
+		
+		List<Record> records = decoder.decodeToRecords(message);
+		assertEquals(2, records.size());
+		
+		HandoverSelectRecord handoverSelectRecord = (HandoverSelectRecord)records.get(0);
+
+		assertEquals(1, handoverSelectRecord.getMajorVersion());
+		assertEquals(2, handoverSelectRecord.getMinorVersion());
+
+		List<AlternativeCarrierRecord> alternativeCarriers = handoverSelectRecord.getAlternativeCarriers();
+		assertEquals(1, alternativeCarriers.size());
+		
+		AlternativeCarrierRecord alternativeCarrierRecord = alternativeCarriers.get(0);
+		assertEquals(AlternativeCarrierRecord.CarrierPowerState.Unknown, alternativeCarrierRecord.getCarrierPowerState()); // note: active in figure, but unknown in table
+		assertEquals("0", alternativeCarrierRecord.getCarrierDataReference());
+		assertFalse(alternativeCarrierRecord.hasAuxiliaryDataReferences());
+
+		assertFalse(handoverSelectRecord.hasError());
+		
+		MimeRecord bluetooth = (MimeRecord) records.get(1);
+		assertEquals("0", bluetooth.getKey());
+	}
+
+	
 	public byte[] getResource(String resouce) throws IOException {
 		InputStream in = getClass().getResourceAsStream(resouce);
 
