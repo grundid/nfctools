@@ -28,6 +28,7 @@ import org.nfctools.ndef.wkt.decoder.GcActionRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GcDataRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GcTargetRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.GenericControlRecordDecoder;
+import org.nfctools.ndef.wkt.decoder.SignatureRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.SmartPosterRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.TextRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.UriRecordDecoder;
@@ -36,6 +37,7 @@ import org.nfctools.ndef.wkt.encoder.GcActionRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcDataRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GcTargetRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.GenericControlRecordEncoder;
+import org.nfctools.ndef.wkt.encoder.SignatureRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.SmartPosterRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;
@@ -62,6 +64,7 @@ import org.nfctools.ndef.wkt.records.GcActionRecord;
 import org.nfctools.ndef.wkt.records.GcDataRecord;
 import org.nfctools.ndef.wkt.records.GcTargetRecord;
 import org.nfctools.ndef.wkt.records.GenericControlRecord;
+import org.nfctools.ndef.wkt.records.SignatureRecord;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
@@ -95,6 +98,8 @@ public class NdefContext {
 				new GcDataRecordDecoder());
 		registerWellKnownRecord(new RecordType("a"), GcActionRecord.class, new GcActionRecordEncoder(),
 				new GcActionRecordDecoder());
+		registerWellKnownRecord(new RecordType("Sig"), SignatureRecord.class, new SignatureRecordEncoder(),
+				new SignatureRecordDecoder());
 
 		registerWellKnownRecord(new RecordType("ac"), AlternativeCarrierRecord.class,
 				new AlternativeCarrierRecordEncoder(), new AlternativeCarrierRecordDecoder());
