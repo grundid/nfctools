@@ -39,9 +39,11 @@ import org.nfctools.ndef.wkt.handover.records.ErrorRecord.ErrorReason;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
+import org.nfctools.ndef.wkt.records.SignatureRecord;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
+import org.nfctools.ndef.wkt.records.SignatureRecord.CertificateFormat;
 
 /**
  * 
@@ -77,10 +79,15 @@ public class NdefEncodeDecodeRoundtripTest {
 
 	private static HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord(new CollisionResolutionRecord((short)321));
 
+	private static SignatureRecord signatureRecord = new SignatureRecord(SignatureRecord.SignatureType.NOT_PRESENT, new byte[]{0x00, 0x01, 0x10, 0x11}, CertificateFormat.X_509, "http://certificate.uri");
+	private static SignatureRecord signatureRecordMarker = new SignatureRecord(SignatureRecord.SignatureType.NOT_PRESENT);
+	
 	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
 			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
 			collisionResolutionRecord, errorRecord,
 			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
+			
+			signatureRecordMarker, signatureRecord
 			};
 
 	static {
@@ -98,6 +105,9 @@ public class NdefEncodeDecodeRoundtripTest {
 
 		handoverSelectRecord.add(alternativeCarrierRecord);
 		handoverSelectRecord.setError(new ErrorRecord(ErrorReason.PermanenteMemoryConstraints, new Long(1L)));
+		
+		// add some certificates to signature
+		signatureRecord.add(new byte[]{0x00, 0x10, 0x11});
 	}
 
 	@Test

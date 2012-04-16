@@ -15,6 +15,7 @@
  */
 package org.nfctools.ndef;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -90,5 +91,28 @@ public class RecordUtils {
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static int readUnsignedShort(InputStream in) throws IOException {
+		int ch1 = in.read();
+		int ch2 = in.read();
+		if ((ch1 | ch2) < 0) {
+			throw new EOFException();
+		}
+		return (short)((ch1 << 8) + (ch2 << 0));
+	}
+
+	public static byte[] readByteArray(InputStream in, int len) throws IOException {
+		byte[] buffer = new byte[len];
+
+		int n = 0;
+		while (n < len) {
+			int count = in.read(buffer, n, len - n);
+			if (count < 0)
+				throw new EOFException();
+			n += count;
+		}
+
+		return buffer;
 	}
 }
