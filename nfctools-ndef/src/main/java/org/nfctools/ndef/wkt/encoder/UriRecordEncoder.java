@@ -17,6 +17,7 @@ package org.nfctools.ndef.wkt.encoder;
 
 import java.io.UnsupportedEncodingException;
 
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.UriRecord;
@@ -27,6 +28,11 @@ public class UriRecordEncoder implements WellKnownRecordPayloadEncoder {
 	@Override
 	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 		UriRecord uriRecord = (UriRecord)wellKnownRecord;
+		
+		if(!uriRecord.hasUri()) {
+			throw new NdefEncoderException("Expected URI", wellKnownRecord);
+		}
+
 		String uri = uriRecord.getUri();
 		byte[] uriAsBytes = getUriAsBytes(uri);
 

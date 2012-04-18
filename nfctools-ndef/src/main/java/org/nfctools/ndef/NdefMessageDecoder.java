@@ -24,7 +24,7 @@ import java.util.List;
 public class NdefMessageDecoder {
 
 	private NdefRecordDecoder ndefRecordDecoder;
-
+	
 	public NdefMessageDecoder(NdefRecordDecoder ndefRecordDecoder) {
 		this.ndefRecordDecoder = ndefRecordDecoder;
 	}

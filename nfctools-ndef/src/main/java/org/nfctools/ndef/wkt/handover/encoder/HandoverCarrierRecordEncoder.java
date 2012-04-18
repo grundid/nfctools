@@ -19,6 +19,7 @@ package org.nfctools.ndef.wkt.handover.encoder;
 import java.io.ByteArrayOutputStream;
 
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
@@ -43,7 +44,7 @@ public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncod
 
 		CarrierTypeFormat carrierTypeFormat = handoverCarrierRecord.getCarrierTypeFormat();
 		if (carrierTypeFormat == null) {
-			throw new IllegalArgumentException("Expected carrier type format");
+			throw new NdefEncoderException("Expected carrier type format", handoverCarrierRecord);
 		}
 		bout.write(carrierTypeFormat.getValue() & 0x7);
 
@@ -62,7 +63,7 @@ public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncod
 					break;
 				}
 				else {
-					throw new IllegalArgumentException();
+					throw new NdefEncoderException("Expected well-known record to be of supertype " + WellKnownRecord.class.getName(), handoverCarrierRecord);
 				}
 			}
 			case Media: {
@@ -91,7 +92,7 @@ public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncod
 					break;
 				}
 				else {
-					throw new IllegalArgumentException();
+					throw new NdefEncoderException("Expected external type record to be of supertype " + ExternalTypeRecord.class.getName(), handoverCarrierRecord);
 				}
 			}
 			default: {
@@ -100,7 +101,7 @@ public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncod
 		}
 
 		if (encoded.length > 255) {
-			throw new IllegalArgumentException("Carrier type 255 byte limit exceeded.");
+			throw new NdefEncoderException("Carrier type 255 byte limit exceeded.", handoverCarrierRecord);
 		}
 		bout.write(encoded.length);
 		bout.write(encoded, 0, encoded.length);

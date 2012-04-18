@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord;
@@ -44,19 +45,19 @@ public class AlternativeCarrierRecordEncoder implements WellKnownRecordPayloadEn
 		// cps
 		CarrierPowerState carrierPowerState = alternativeCarrierRecord.getCarrierPowerState();
 		if (carrierPowerState == null) {
-			throw new IllegalArgumentException("Expected carrier power state");
+			throw new NdefEncoderException("Expected carrier power state", alternativeCarrierRecord);
 		}
 		bout.write(carrierPowerState.getValue() & 0x7); // 3 lsb
 
 		// carrier data reference: 1
 		String carrierDataReference = alternativeCarrierRecord.getCarrierDataReference();
 		if (carrierDataReference == null) {
-			throw new IllegalArgumentException("Expected carrier data reference");
+			throw new NdefEncoderException("Expected carrier data reference", alternativeCarrierRecord);
 		}
 		byte[] carrierDataReferenceChar = carrierDataReference.getBytes(NdefConstants.DEFAULT_CHARSET);
 		if (carrierDataReferenceChar.length > 255) {
-			throw new IllegalArgumentException("Expected carrier data reference '" + carrierDataReference
-					+ "' <= 255 bytes");
+			throw new NdefEncoderException("Expected carrier data reference '" + carrierDataReference
+					+ "' <= 255 bytes", alternativeCarrierRecord);
 		}
 		// carrier data reference length (1)
 		bout.write(carrierDataReferenceChar.length);
@@ -74,8 +75,8 @@ public class AlternativeCarrierRecordEncoder implements WellKnownRecordPayloadEn
 			// carrier data reference length (1)
 
 			if (auxiliaryDataReferenceChar.length > 255) {
-				throw new IllegalArgumentException("Expected auxiliary data reference '" + auxiliaryDataReference
-						+ "' <= 255 bytes");
+				throw new NdefEncoderException("Expected auxiliary data reference '" + auxiliaryDataReference
+						+ "' <= 255 bytes", alternativeCarrierRecord);
 			}
 
 			bout.write(auxiliaryDataReferenceChar.length);

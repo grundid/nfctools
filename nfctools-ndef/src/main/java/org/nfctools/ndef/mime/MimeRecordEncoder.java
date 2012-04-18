@@ -16,6 +16,7 @@
 package org.nfctools.ndef.mime;
 
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
@@ -32,6 +33,10 @@ public class MimeRecordEncoder implements RecordEncoder {
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		MimeRecord mimeRecord = (MimeRecord)record;
 
+		if(!mimeRecord.hasContentType()) {
+			throw new NdefEncoderException("Expected content type", mimeRecord);
+		}
+		
 		return new NdefRecord(NdefConstants.TNF_MIME_MEDIA, mimeRecord.getContentType().getBytes(
 						NdefConstants.DEFAULT_CHARSET), record.getId(), mimeRecord.getContentAsBytes());
 	}

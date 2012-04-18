@@ -16,6 +16,7 @@
 
 package org.nfctools.ndef.wkt.handover.encoder;
 
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.handover.records.ErrorRecord;
@@ -36,16 +37,14 @@ public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 		ErrorRecord errorRecord = (ErrorRecord)wellKnownRecord;
 
 		if (!errorRecord.hasErrorReason()) {
-			throw new IllegalArgumentException("Expected error reason");
+			throw new NdefEncoderException("Expected error reason", wellKnownRecord);
 		}
 
 		if (!errorRecord.hasErrorData()) {
-			throw new IllegalArgumentException("Expected error data");
+			throw new NdefEncoderException("Expected error data", wellKnownRecord);
 		}
 
 		ErrorReason errorReason = errorRecord.getErrorReason();
-
-		byte[] payload;
 
 		switch (errorReason) {
 			case TemporaryMemoryConstraints: {
@@ -56,9 +55,7 @@ public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 				 * the subsequent receipt of a Handover Request Message by the Handover Selector.
 				 */
 
-				payload = new byte[] { errorReason.getValue(), (byte)(errorRecord.getErrorData().shortValue() & 0xFF) };
-
-				break;
+				return new byte[] { errorReason.getValue(), (byte)(errorRecord.getErrorData().shortValue() & 0xFF) };
 			}
 			case PermanenteMemoryConstraints: {
 
@@ -68,11 +65,9 @@ public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 				 * by the total length of the NDEF message, including all header information.
 				 */
 				long unsignedInt = errorRecord.getErrorData().longValue();
-				payload = new byte[] { errorReason.getValue(), (byte)((unsignedInt >> 24) & 0xFF),
+				return new byte[] { errorReason.getValue(), (byte)((unsignedInt >> 24) & 0xFF),
 						(byte)((unsignedInt >> 16) & 0xFF), (byte)((unsignedInt >> 8) & 0xFF),
 						(byte)(unsignedInt & 0xFF) };
-
-				break;
 			}
 			case CarrierSpecificConstraints: {
 
@@ -83,16 +78,11 @@ public class ErrorRecordEncoder implements WellKnownRecordPayloadEncoder {
 				 * Handover Request Message by the Handover Selector.
 				 */
 
-				payload = new byte[] { errorReason.getValue(), (byte)(errorRecord.getErrorData().shortValue() & 0xFF) };
-
-				break;
-			}
-			default: {
-				throw new RuntimeException();
+				return new byte[] { errorReason.getValue(), (byte)(errorRecord.getErrorData().shortValue() & 0xFF) };
 			}
 		}
 
-		return payload;
+		throw new NdefEncoderException("Unknown error reason " + errorReason, wellKnownRecord);
 	}
 
 }

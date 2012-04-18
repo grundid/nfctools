@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
@@ -45,13 +46,13 @@ public class HandoverRequestRecordEncoder implements WellKnownRecordPayloadEncod
 		payload.write((handoverRequestRecord.getMajorVersion() << 4) | handoverRequestRecord.getMinorVersion());
 
 		if (!handoverRequestRecord.hasCollisionResolution()) {
-			throw new IllegalArgumentException("Expected collision resolution");
+			throw new NdefEncoderException("Expected collision resolution", handoverRequestRecord);
 		}
 
 		// implementation note: write alternative carriers and and collision resolution together
 		if (!handoverRequestRecord.hasAlternativeCarriers()) {
 			// At least a single alternative carrier MUST be specified by the Handover Requester.
-			throw new IllegalArgumentException("Expected at least one alternative carrier");
+			throw new NdefEncoderException("Expected at least one alternative carrier", handoverRequestRecord);
 		}
 		List<Record> records = new ArrayList<Record>();
 

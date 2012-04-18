@@ -18,6 +18,7 @@ package org.nfctools.ndef.wkt.encoder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GenericControlRecord;
@@ -29,17 +30,14 @@ public class GenericControlRecordEncoder implements WellKnownRecordPayloadEncode
 	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 		GenericControlRecord myRecord = (GenericControlRecord)wellKnownRecord;
 
-		byte[] subPayload = createSubPayload(messageEncoder, myRecord);
-		byte[] payload = new byte[subPayload.length + 1];
-		payload[0] = myRecord.getConfigurationByte();
-		System.arraycopy(subPayload, 0, payload, 1, subPayload.length);
-
-		return payload;
-	}
-
-	private byte[] createSubPayload(NdefMessageEncoder messageEncoder, GenericControlRecord myRecord) {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			
+			baos.write(myRecord.getConfigurationByte());
+
+			if(!myRecord.hasTarget()) {
+				throw new NdefEncoderException("Expected target", myRecord);
+			}
 			baos.write(messageEncoder.encodeSingle(myRecord.getTarget()));
 
 			if (myRecord.getAction() != null)
