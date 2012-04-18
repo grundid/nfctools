@@ -28,35 +28,43 @@ import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.utils.NfcUtils;
 
+/***
+ * 
+ * Implementation note: Java source files do not really specify encoding, thus special characters might get corrupted.
+ */
+
 public class TextRecordEncoderTest {
 
 	private TextRecordEncoder encoder = new TextRecordEncoder();
 	private NdefMessageEncoder messageEncoder = NdefContext.getNdefMessageEncoder();
 
+	private static String string = new String(new char[]{84, 101, 115, 116, 246, 228, 252, 223, 214, 196, 220, 63});
+	
 	@Test
 	public void testCreateTextRecordUtf8German() throws Exception {
-		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf8"), Locale.GERMAN);
+		
+		TextRecord textRecord = new TextRecord(string, Charset.forName("utf8"), Locale.GERMAN);
 		byte[] bytes = encoder.encodePayload(textRecord, messageEncoder);
 		assertEquals("02646554657374C3B6C3A4C3BCC39FC396C384C39C3F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf16German() throws Exception {
-		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf-16be"), Locale.GERMAN);
+		TextRecord textRecord = new TextRecord(string, Charset.forName("utf-16be"), Locale.GERMAN);
 		byte[] bytes = encoder.encodePayload(textRecord, messageEncoder);
 		assertEquals("826465005400650073007400F600E400FC00DF00D600C400DC003F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf8English() throws Exception {
-		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf8"), Locale.ENGLISH);
+		TextRecord textRecord = new TextRecord(string, Charset.forName("utf8"), Locale.ENGLISH);
 		byte[] bytes = encoder.encodePayload(textRecord, messageEncoder);
 		assertEquals("02656E54657374C3B6C3A4C3BCC39FC396C384C39C3F", NfcUtils.convertBinToASCII(bytes));
 	}
 
 	@Test
 	public void testCreateTextRecordUtf16English() throws Exception {
-		TextRecord textRecord = new TextRecord("TestöäüßÖÄÜ?", Charset.forName("utf-16be"), Locale.ENGLISH);
+		TextRecord textRecord = new TextRecord(string, Charset.forName("utf-16be"), Locale.ENGLISH);
 		byte[] bytes = encoder.encodePayload(textRecord, messageEncoder);
 		assertEquals("82656E005400650073007400F600E400FC00DF00D600C400DC003F", NfcUtils.convertBinToASCII(bytes));
 	}

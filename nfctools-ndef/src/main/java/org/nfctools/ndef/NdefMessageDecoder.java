@@ -24,7 +24,7 @@ import java.util.List;
 public class NdefMessageDecoder {
 
 	private NdefRecordDecoder ndefRecordDecoder;
-
+	
 	public NdefMessageDecoder(NdefRecordDecoder ndefRecordDecoder) {
 		this.ndefRecordDecoder = ndefRecordDecoder;
 	}
@@ -144,7 +144,7 @@ public class NdefMessageDecoder {
 		try {
 			while (bais.available() > 0) {
 				int header = bais.read();
-				short tnf = (short)(header & NdefConstants.TNF_MASK);
+				byte tnf = (byte)(header & NdefConstants.TNF_MASK);
 
 				int typeLength = bais.read();
 				int payloadLength = getPayloadLength((header & NdefConstants.SR) != 0, bais);

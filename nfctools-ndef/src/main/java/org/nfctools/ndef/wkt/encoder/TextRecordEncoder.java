@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
@@ -31,14 +32,27 @@ public class TextRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 		TextRecord textRecord = (TextRecord)wellKnownRecord;
 
+		if(!textRecord.hasLocale()) {
+			throw new NdefEncoderException("Expected locale", wellKnownRecord);
+		}
+
+		if(!textRecord.hasEncoding()) {
+			throw new NdefEncoderException("Expected encoding", wellKnownRecord);
+		}
+
+		if(!textRecord.hasText()) {
+			throw new NdefEncoderException("Expected text", wellKnownRecord);
+		}
+
 		Locale locale = textRecord.getLocale();
 
 		byte[] languageData = (locale.getLanguage() + (locale.getCountry() == null || locale.getCountry().length() == 0 ? ""
 				: ("-" + locale.getCountry()))).getBytes();
 
-		if (languageData.length > TextRecord.LANGUAGE_CODE_MASK)
-			throw new IllegalArgumentException("language code length longer than 2^5. this is not supported.");
-
+		if (languageData.length > TextRecord.LANGUAGE_CODE_MASK) {
+			throw new NdefEncoderException("language code length longer than 2^5. this is not supported.", wellKnownRecord);
+		}
+		
 		Charset encoding = textRecord.getEncoding();
 
 		byte[] textData = getTextAsBytes(textRecord, encoding);

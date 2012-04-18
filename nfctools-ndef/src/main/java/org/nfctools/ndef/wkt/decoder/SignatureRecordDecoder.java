@@ -16,9 +16,7 @@
 package org.nfctools.ndef.wkt.decoder;
 
 import java.io.ByteArrayInputStream;
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
@@ -46,16 +44,20 @@ public class SignatureRecordDecoder implements WellKnownRecordPayloadDecoder {
 			boolean signatureUriPresent = (header & 0x80) != 0;
 			SignatureType type = SignatureType.toSignatureType((header & 0x7F));
 			
+			signatureRecord.setSignatureType(type);
+			
 			if(signatureUriPresent || type != SignatureType.NOT_PRESENT) {
 				
 				int size = RecordUtils.readUnsignedShort(bais);
 
-				byte[] signatureOrUri = RecordUtils.readByteArray(bais, size);
-
-				if(signatureUriPresent) {
-					signatureRecord.setSignatureUri(new String(signatureOrUri, NdefConstants.UTF_8_CHARSET));
-				} else {
-					signatureRecord.setSignature(signatureOrUri);
+				if(size > 0) {
+					byte[] signatureOrUri = RecordUtils.readByteArray(bais, size);
+	
+					if(signatureUriPresent) {
+						signatureRecord.setSignatureUri(new String(signatureOrUri, NdefConstants.UTF_8_CHARSET));
+					} else {
+						signatureRecord.setSignature(signatureOrUri);
+					}
 				}
 				
 				int certificateHeader = bais.read();

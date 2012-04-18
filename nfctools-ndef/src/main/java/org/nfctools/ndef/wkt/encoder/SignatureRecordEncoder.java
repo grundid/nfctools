@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.SignatureRecord;
@@ -29,28 +30,29 @@ public class SignatureRecordEncoder implements WellKnownRecordPayloadEncoder {
 				baos.write(signatureRecord.getVersion());
 
 				if(!signatureRecord.hasSignatureType()) {
-					throw new IllegalArgumentException("Expected signature type");
+					throw new NdefEncoderException("Expected signature type", signatureRecord);
 				}
-				baos.write((1 << 7) | (signatureRecord.getSignatureType().getValue() & 0x7F));
 
 				if(signatureRecord.hasSignature() && signatureRecord.hasSignatureUri()) {
-					throw new IllegalArgumentException("Expected signature or signature uri, not both");
+					throw new NdefEncoderException("Expected signature or signature uri, not both", signatureRecord);
 				} else if(!signatureRecord.hasSignature() && !signatureRecord.hasSignatureUri()) {
-					throw new IllegalArgumentException("Expected signature or signature uri");
+					throw new NdefEncoderException("Expected signature or signature uri", signatureRecord);
 				}
+
+				baos.write(((signatureRecord.hasSignatureUri() ? 1 : 0) << 7) | (signatureRecord.getSignatureType().getValue() & 0x7F));
 
 				byte[] signatureOrUri;
 				if(signatureRecord.hasSignature()) {
 					signatureOrUri = signatureRecord.getSignature();
 
 					if(signatureOrUri.length > 65535) {
-						throw new IllegalArgumentException("Expected signature size " + signatureOrUri.length + " <= 65535");
+						throw new NdefEncoderException("Expected signature size " + signatureOrUri.length + " <= 65535", signatureRecord);
 					}
 				} else {
 					signatureOrUri = signatureRecord.getSignatureUri().getBytes(NdefConstants.UTF_8_CHARSET);
 
 					if(signatureOrUri.length > 65535) {
-						throw new IllegalArgumentException("Expected signature uri byte size " + signatureOrUri.length + " <= 65535");
+						throw new NdefEncoderException("Expected signature uri byte size " + signatureOrUri.length + " <= 65535", signatureRecord);
 					}
 				}
 
@@ -60,12 +62,12 @@ public class SignatureRecordEncoder implements WellKnownRecordPayloadEncoder {
 				baos.write(signatureOrUri);
 
 				if(!signatureRecord.hasCertificateFormat()) {
-					throw new IllegalArgumentException("Expected certificate format");
+					throw new NdefEncoderException("Expected certificate format", signatureRecord);
 				}
 
 				List<byte[]> certificates = signatureRecord.getCertificates();
 				if(certificates.size() > 16) {
-					throw new IllegalArgumentException("Expected number of certificates " + certificates.size() + " <= 15");
+					throw new NdefEncoderException("Expected number of certificates " + certificates.size() + " <= 15", signatureRecord);
 				}
 
 				CertificateFormat certificateFormat = signatureRecord.getCertificateFormat();
@@ -75,7 +77,7 @@ public class SignatureRecordEncoder implements WellKnownRecordPayloadEncoder {
 					byte[] certificate = certificates.get(i);
 
 					if(certificate.length > 65535) {
-						throw new IllegalArgumentException("Expected certificate " + i + " size " + certificate.length + " <= 65535");
+						throw new NdefEncoderException("Expected certificate " + i + " size " + certificate.length + " <= 65535", signatureRecord);
 					}
 
 					baos.write((certificate.length >> 8) & 0xFF);
@@ -88,7 +90,7 @@ public class SignatureRecordEncoder implements WellKnownRecordPayloadEncoder {
 					byte[] certificateUri = signatureRecord.getCertificateUri().getBytes(NdefConstants.UTF_8_CHARSET);
 
 					if(certificateUri.length > 65535) {
-						throw new IllegalArgumentException("Expected certificate uri byte size " + certificateUri.length + " <= 65535");
+						throw new NdefEncoderException("Expected certificate uri byte size " + certificateUri.length + " <= 65535", signatureRecord);
 					}
 
 					baos.write((certificateUri.length >> 8) & 0xFF);

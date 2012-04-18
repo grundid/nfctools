@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
@@ -21,10 +22,18 @@ public class WellKnownRecordEncoder implements RecordEncoder {
 
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+
+		byte[] key = record.getId();
+		if(key != null) {
+			if(key.length > 255) {
+				throw new NdefEncoderException("Expected record id length <= 255 bytes", record);
+			}
+		}
+		
 		WellKnownRecordConfig config = knownRecordTypes.get(record.getClass());
 		byte[] payload = config.getPayloadEncoder().encodePayload((WellKnownRecord)record, messageEncoder);
 		byte[] type = config.getRecordType().getType();
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, type, record.getId(), payload);
+		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, type, key, payload);
 	}
 
 	public void addRecordConfig(WellKnownRecordConfig config) {
