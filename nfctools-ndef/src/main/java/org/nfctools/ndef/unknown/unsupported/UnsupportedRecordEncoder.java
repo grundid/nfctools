@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Adrian Stabiszewski, as@nfctools.org
+ * Copyright 2011 Adrian Stabiszewski, as@nfctools.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nfctools.ndef.mime;
 
-import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefEncoderException;
+package org.nfctools.ndef.unknown.unsupported;
+
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
 
-public class MimeRecordEncoder implements RecordEncoder {
+/**
+ * 
+ * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
+ * 
+ */
+
+public class UnsupportedRecordEncoder implements RecordEncoder {
 
 	@Override
 	public boolean canEncode(Record record) {
-		return record instanceof MimeRecord;
+		return record instanceof UnsupportedRecord;
 	}
 
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		MimeRecord mimeRecord = (MimeRecord)record;
-
-		if(!mimeRecord.hasContentType()) {
-			throw new NdefEncoderException("Expected content type", mimeRecord);
-		}
+		UnsupportedRecord unsupportedRecord = (UnsupportedRecord)record;
 		
-		return new NdefRecord(NdefConstants.TNF_MIME_MEDIA, mimeRecord.getContentType().getBytes(
-						NdefConstants.DEFAULT_CHARSET), record.getId(), mimeRecord.getContentAsBytes());
+		return new NdefRecord(unsupportedRecord.getTnf(), unsupportedRecord.getType(), unsupportedRecord.getId(), unsupportedRecord.getPayload());
 	}
+
 }

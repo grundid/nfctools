@@ -23,6 +23,7 @@ import org.nfctools.ndef.empty.EmptyRecordDecoder;
 import org.nfctools.ndef.ext.ExternalTypeDecoder;
 import org.nfctools.ndef.mime.MimeRecordDecoder;
 import org.nfctools.ndef.unknown.UnknownRecordDecoder;
+import org.nfctools.ndef.unknown.unsupported.UnsupportedRecord;
 import org.nfctools.ndef.wkt.WellKnownRecordConfig;
 import org.nfctools.ndef.wkt.WellKnownRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.RecordDecoder;
@@ -52,7 +53,13 @@ public class NdefRecordDecoder {
 			if (decoder.canDecode(ndefRecord))
 				return decoder.decodeRecord(ndefRecord, messageDecoder);
 		}
-		throw new IllegalArgumentException("Unsupported NDEF Type Name Format [" + ndefRecord.getTnf() + "]");
+		
+		// NFC Data Exchange Format (NDEF) 1.0:
+		// An NDEF parser that receives an NDEF record with an unknown or unsupported TNF field value SHOULD treat it as 0x05 (Unknown).
+		// It is RECOMMENDED that an NDEF parser receiving an NDEF record of this type, 
+		// without further context to its use, provides a mechanism for storing but not processing the payload.
+		
+		return new UnsupportedRecord(ndefRecord);
 	}
 
 	public void registerRecordConfig(WellKnownRecordConfig recordconfig) {

@@ -15,6 +15,7 @@
  */
 package org.nfctools.ndef.wkt.encoder;
 
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.ActionRecord;
@@ -26,7 +27,7 @@ public class ActionRecordEncoder implements WellKnownRecordPayloadEncoder {
 	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 		ActionRecord record = (ActionRecord)wellKnownRecord;
 		if (!record.hasAction()) {
-			throw new IllegalArgumentException("Expected action");
+			throw new NdefEncoderException("Expected action", wellKnownRecord);
 		}
 		return new byte[] { record.getAction().getValue() };
 	}

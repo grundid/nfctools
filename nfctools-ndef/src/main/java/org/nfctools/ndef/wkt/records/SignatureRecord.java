@@ -1,6 +1,7 @@
 package org.nfctools.ndef.wkt.records;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -198,5 +199,97 @@ public class SignatureRecord extends WellKnownRecord {
 	public void add(byte[] certificate) {
 		this.certificates.add(certificate);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime
+				* result
+				+ ((certificateFormat == null) ? 0 : certificateFormat
+						.hashCode());
+		result = prime * result
+				+ ((certificateUri == null) ? 0 : certificateUri.hashCode());
+		result = prime * result
+				+ ((certificates == null) ? 0 : certificatesHash());
+		result = prime * result + Arrays.hashCode(signature);
+		result = prime * result
+				+ ((signatureType == null) ? 0 : signatureType.hashCode());
+		result = prime * result
+				+ ((signatureUri == null) ? 0 : signatureUri.hashCode());
+		result = prime * result + version;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SignatureRecord other = (SignatureRecord) obj;
+		if (certificateFormat != other.certificateFormat)
+			return false;
+		if (certificateUri == null) {
+			if (other.certificateUri != null)
+				return false;
+		} else if (!certificateUri.equals(other.certificateUri))
+			return false;
+		if (!Arrays.equals(signature, other.signature))
+			return false;
+		if (signatureType != other.signatureType)
+			return false;
+		if (signatureUri == null) {
+			if (other.signatureUri != null)
+				return false;
+		} else if (!signatureUri.equals(other.signatureUri))
+			return false;
+		if (version != other.version)
+			return false;
+		
+		return certificatesEquals(other);
+	}
+	
+	private int certificatesHash() {
+		int hash;
+		
+		if(certificates != null) {
+			hash = certificates.size();
+			
+			for(byte[] certificate : certificates) {
+				hash += Arrays.hashCode(certificate);
+			}
+		} else {
+			hash = 0;
+		}
+		return hash;
+	}
+
+	private boolean certificatesEquals(SignatureRecord other) {
+		if (certificates == null) {
+			if (other.certificates != null)
+				return false;
+		} else {
+			if (other.certificates == null) {
+				return false;
+			}
+			if(other.certificates.size() != certificates.size()) {
+				return false;
+			}
+			
+			for(int i = 0; i < certificates.size(); i++) {
+				byte[] otherCertificate = other.certificates.get(i);
+				byte[] thisCertificate = certificates.get(i);
+				
+				if(!Arrays.equals(otherCertificate, thisCertificate)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	
 }
