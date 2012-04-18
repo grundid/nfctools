@@ -32,13 +32,14 @@ public class SignatureRecordEncoder implements WellKnownRecordPayloadEncoder {
 				if(!signatureRecord.hasSignatureType()) {
 					throw new NdefEncoderException("Expected signature type", signatureRecord);
 				}
-				baos.write((1 << 7) | (signatureRecord.getSignatureType().getValue() & 0x7F));
 
 				if(signatureRecord.hasSignature() && signatureRecord.hasSignatureUri()) {
 					throw new NdefEncoderException("Expected signature or signature uri, not both", signatureRecord);
 				} else if(!signatureRecord.hasSignature() && !signatureRecord.hasSignatureUri()) {
 					throw new NdefEncoderException("Expected signature or signature uri", signatureRecord);
 				}
+
+				baos.write(((signatureRecord.hasSignatureUri() ? 1 : 0) << 7) | (signatureRecord.getSignatureType().getValue() & 0x7F));
 
 				byte[] signatureOrUri;
 				if(signatureRecord.hasSignature()) {

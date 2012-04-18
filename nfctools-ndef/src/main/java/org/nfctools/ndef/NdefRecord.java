@@ -23,7 +23,7 @@ package org.nfctools.ndef;
 
 public class NdefRecord {
 
-	private short tnf;
+	private byte tnf;
 	/** An identifier that indicates the type of the payload. This specification supports URIs
 	  *	[RFC 3986], MIME media type constructs [RFC 2616], as well as an NFC-specific
 	  *	record type as type identifiers. 
@@ -41,14 +41,14 @@ public class NdefRecord {
 	 */
 	private boolean chunked = false;
 
-	public NdefRecord(short tnf, boolean chunked, byte[] type, byte[] id, byte[] payload) {
+	public NdefRecord(byte tnf, boolean chunked, byte[] type, byte[] id, byte[] payload) {
 		this.tnf = tnf;
 		this.chunked = chunked;
 		this.type = type;
 		this.id = id;
 		this.payload = payload;
 	}
-	public NdefRecord(short tnf, byte[] type, byte[] id, byte[] payload) {
+	public NdefRecord(byte tnf, byte[] type, byte[] id, byte[] payload) {
 		this(tnf, false, type, id, payload);
 	}
 
@@ -56,7 +56,7 @@ public class NdefRecord {
 		return chunked;
 	}
 	
-	public short getTnf() {
+	public byte getTnf() {
 		return tnf;
 	}
 

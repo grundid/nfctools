@@ -23,6 +23,7 @@ import org.nfctools.ndef.empty.EmptyRecordEncoder;
 import org.nfctools.ndef.ext.ExternalTypeEncoder;
 import org.nfctools.ndef.mime.MimeRecordEncoder;
 import org.nfctools.ndef.unknown.UnknownRecordEncoder;
+import org.nfctools.ndef.unknown.unsupported.UnsupportedRecordEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordConfig;
 import org.nfctools.ndef.wkt.WellKnownRecordEncoder;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
@@ -39,6 +40,7 @@ public class NdefRecordEncoder {
 		knownRecordEncoders.add(new ExternalTypeEncoder());
 		knownRecordEncoders.add(new EmptyRecordEncoder());
 		knownRecordEncoders.add(new UnknownRecordEncoder());
+		knownRecordEncoders.add(new UnsupportedRecordEncoder());
 	}
 
 	public NdefRecord encode(Record record, NdefMessageEncoder messageEncoder) {

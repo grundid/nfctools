@@ -16,7 +16,10 @@ public class WellKnownRecordDecoder implements RecordDecoder<WellKnownRecord> {
 
 	@Override
 	public boolean canDecode(NdefRecord ndefRecord) {
-		return NdefConstants.TNF_WELL_KNOWN == ndefRecord.getTnf();
+		if(NdefConstants.TNF_WELL_KNOWN == ndefRecord.getTnf()) {
+			return recordDecoders.containsKey(new RecordType(ndefRecord.getType()));
+		}
+		return false;
 	}
 
 	@Override

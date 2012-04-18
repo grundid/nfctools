@@ -16,9 +16,11 @@
 
 package org.nfctools.ndef;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Locale;
 
 import org.junit.Test;
@@ -28,6 +30,7 @@ import org.nfctools.ndef.ext.AndroidApplicationRecord;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.TextMimeRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
+import org.nfctools.ndef.unknown.unsupported.UnsupportedRecord;
 import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord;
 import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
 import org.nfctools.ndef.wkt.handover.records.ErrorRecord;
@@ -44,6 +47,7 @@ import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.ndef.wkt.records.SignatureRecord.CertificateFormat;
+import org.nfctools.ndef.wkt.records.SignatureRecord.SignatureType;
 
 /**
  * 
@@ -82,12 +86,16 @@ public class NdefEncodeDecodeRoundtripTest {
 	private static SignatureRecord signatureRecord = new SignatureRecord(SignatureRecord.SignatureType.NOT_PRESENT, new byte[]{0x00, 0x01, 0x10, 0x11}, CertificateFormat.X_509, "http://certificate.uri");
 	private static SignatureRecord signatureRecordMarker = new SignatureRecord(SignatureRecord.SignatureType.NOT_PRESENT);
 	
+	private static UnsupportedRecord unsupportedRecord = new UnsupportedRecord(NdefConstants.TNF_RESERVED, "abc".getBytes(), "id".getBytes(), "DEF".getBytes());
+	
 	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
 			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
 			collisionResolutionRecord, errorRecord,
 			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
 			
-			signatureRecordMarker, signatureRecord
+			signatureRecordMarker, signatureRecord,
+			
+			unsupportedRecord
 			};
 
 	static {
@@ -108,6 +116,8 @@ public class NdefEncodeDecodeRoundtripTest {
 		
 		// add some certificates to signature
 		signatureRecord.add(new byte[]{0x00, 0x10, 0x11});
+		signatureRecord.setSignatureType(SignatureType.RSASSA_PSS_SHA_1);
+		signatureRecord.setSignature(new byte[]{0x01, 0x11, 0x12});
 	}
 
 	@Test
@@ -123,8 +133,27 @@ public class NdefEncodeDecodeRoundtripTest {
 			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
 
 			if(!record.equals(decodedRecord)) {
+				record.equals(decodedRecord);
+				
 				fail(record.getClass().getName());
 			}
 		}
+		
+		List<Record> decodeToRecords = ndefMessageDecoder.decodeToRecords(ndefMessageEncoder.encode(records));
+		for(int i = 0; i < decodeToRecords.size(); i++) {
+			if(!records[i].equals(decodeToRecords.get(i))) {
+				fail(records[i].getClass().getName());
+			}
+		}
+		
+		// check byte level just to make sure
+		byte[] encoded = ndefMessageEncoder.encode(records);
+		byte[] encodedDecodedEncoded = ndefMessageEncoder.encode(ndefMessageDecoder.decodeToRecords(ndefMessageEncoder.encode(records)));
+		
+		assertEquals(encoded.length, encodedDecodedEncoded.length);
+		for(int i = 0; i < encoded.length; i++) {
+			assertEquals(Integer.toString(i), encoded[i], encodedDecodedEncoded[i]);
+		}
+		
 	}
 }
