@@ -23,7 +23,7 @@ package org.nfctools.ndef;
  * 
  */
 
-public class NdefEncoderException extends IllegalArgumentException {
+public class NdefEncoderException extends NdefException {
 
 	private static final long serialVersionUID = 1L;
 	
