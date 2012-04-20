@@ -17,14 +17,12 @@ package org.nfctools.ndef.ext;
 
 import org.nfctools.ndef.Record;
 
-public class ExternalTypeRecord extends Record {
+public abstract class ExternalTypeRecord extends Record {
 
-	private String namespace;
-	private String content;
+	protected String namespace;
 
-	public ExternalTypeRecord(String namespace, String content) {
+	public ExternalTypeRecord(String namespace) {
 		this.namespace = namespace;
-		this.content = content;
 	}
 
 	public ExternalTypeRecord() {
@@ -38,33 +36,16 @@ public class ExternalTypeRecord extends Record {
 		this.namespace = namespace;
 	}
 
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	@Override
-	public String toString() {
-		return "Namespace: [" + namespace + "] Content: [" + content + "]";
-	}
-
 	public boolean hasNamespace() {
 		return namespace != null;
-	}
-
-	public boolean hasContent() {
-		return content != null;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((content == null) ? 0 : content.hashCode());
-		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+		result = prime * result
+				+ ((namespace == null) ? 0 : namespace.hashCode());
 		return result;
 	}
 
@@ -76,20 +57,14 @@ public class ExternalTypeRecord extends Record {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExternalTypeRecord other = (ExternalTypeRecord)obj;
-		if (content == null) {
-			if (other.content != null)
-				return false;
-		}
-		else if (!content.equals(other.content))
-			return false;
+		ExternalTypeRecord other = (ExternalTypeRecord) obj;
 		if (namespace == null) {
 			if (other.namespace != null)
 				return false;
-		}
-		else if (!namespace.equals(other.namespace))
+		} else if (!namespace.equals(other.namespace))
 			return false;
 		return true;
 	}
+
 
 }

@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.nfctools.ndef.auri.AbsoluteUriRecord;
 import org.nfctools.ndef.empty.EmptyRecord;
 import org.nfctools.ndef.ext.AndroidApplicationRecord;
+import org.nfctools.ndef.ext.GeoRecord;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.TextMimeRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
@@ -82,12 +83,17 @@ public class NdefEncodeDecodeRoundtripTest {
 	private static SignatureRecord signatureRecord = new SignatureRecord(SignatureRecord.SignatureType.NOT_PRESENT, new byte[]{0x00, 0x01, 0x10, 0x11}, CertificateFormat.X_509, "http://certificate.uri");
 	private static SignatureRecord signatureRecordMarker = new SignatureRecord(SignatureRecord.SignatureType.NOT_PRESENT);
 	
+	private static GeoRecord addressInformationGeoRecord = new GeoRecord("Oslo");
+	private static GeoRecord coordinatesGeoRecord = new GeoRecord(59.949444, 10.756389);
+	
 	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
 			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
 			collisionResolutionRecord, errorRecord,
 			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
 			
-			signatureRecordMarker, signatureRecord
+			signatureRecordMarker, signatureRecord,
+			
+			addressInformationGeoRecord, coordinatesGeoRecord
 			};
 
 	static {
@@ -123,6 +129,7 @@ public class NdefEncodeDecodeRoundtripTest {
 			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
 
 			if(!record.equals(decodedRecord)) {
+				
 				fail(record.getClass().getName());
 			}
 		}

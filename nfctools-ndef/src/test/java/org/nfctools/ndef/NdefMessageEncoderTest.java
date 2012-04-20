@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.junit.Test;
-import org.nfctools.ndef.ext.ExternalTypeRecord;
+import org.nfctools.ndef.ext.UnsupportedExternalTypeRecord;
 import org.nfctools.ndef.records.UnknownRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
@@ -68,7 +68,7 @@ public class NdefMessageEncoderTest {
 
 	@Test
 	public void testEncodeExternalType() throws Exception {
-		byte[] single = encoder.encodeSingle(new ExternalTypeRecord("android.com:pkg", "de.grundid.test1234"));
+		byte[] single = encoder.encodeSingle(new UnsupportedExternalTypeRecord("android.com:pkg", "de.grundid.test1234"));
 		assertEquals("D40F13616E64726F69642E636F6D3A706B6764652E6772756E6469642E7465737431323334",
 				NfcUtils.convertBinToASCII(single));
 	}

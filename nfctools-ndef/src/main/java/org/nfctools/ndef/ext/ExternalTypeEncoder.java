@@ -15,13 +15,20 @@
  */
 package org.nfctools.ndef.ext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordConfig;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
 
 public class ExternalTypeEncoder implements RecordEncoder {
+
+	private Map<Class<?>, ExternalTypeRecordConfig> externalRecordTypes = new HashMap<Class<?>, ExternalTypeRecordConfig>();
 
 	@Override
 	public boolean canEncode(Record record) {
@@ -31,8 +38,23 @@ public class ExternalTypeEncoder implements RecordEncoder {
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		ExternalTypeRecord externalType = (ExternalTypeRecord)record;
+		
+		ExternalTypeRecordConfig config = externalRecordTypes.get(record.getClass());
+		
+		byte[] payload;
+		if(config != null) {
+			payload = config.getContentEncoder().encodeContent(externalType).getBytes(NdefConstants.DEFAULT_CHARSET);
+		} else if(externalType instanceof UnsupportedExternalTypeRecord){
+			UnsupportedExternalTypeRecord externalTypeUnsupportedRecord = (UnsupportedExternalTypeRecord)externalType;
+			payload = externalTypeUnsupportedRecord.getContent().getBytes(NdefConstants.DEFAULT_CHARSET);
+		} else {
+			throw new IllegalArgumentException("Unable to encode external type " + externalType.getClass().getName()); // TODO change to ndef exception
+		}
 		byte[] type = externalType.getNamespace().getBytes(NdefConstants.DEFAULT_CHARSET);
-		byte[] paylod = externalType.getContent().getBytes(NdefConstants.DEFAULT_CHARSET);
-		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, type, record.getId(), paylod);
+		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, type, record.getId(), payload);
+	}
+	
+	public void addRecordConfig(ExternalTypeRecordConfig config) {
+		externalRecordTypes.put(config.getRecordClass(), config);
 	}
 }
