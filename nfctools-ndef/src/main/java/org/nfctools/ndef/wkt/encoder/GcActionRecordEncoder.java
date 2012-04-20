@@ -15,6 +15,7 @@
  */
 package org.nfctools.ndef.wkt.encoder;
 
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
@@ -28,6 +29,10 @@ public class GcActionRecordEncoder implements WellKnownRecordPayloadEncoder {
 		GcActionRecord actionRecord = (GcActionRecord)wellKnownRecord;
 		byte[] payload = null;
 
+		if (actionRecord.hasAction() && actionRecord.hasActionRecord()) {
+			throw new NdefEncoderException("Expected action or action record, not both.", wellKnownRecord);
+		} 
+
 		if (actionRecord.hasAction()) {
 			payload = new byte[2];
 			payload[0] = GcActionRecord.NUMERIC_CODE;
@@ -38,6 +43,8 @@ public class GcActionRecordEncoder implements WellKnownRecordPayloadEncoder {
 			payload = new byte[subPayload.length + 1];
 			payload[0] = 0;
 			System.arraycopy(subPayload, 0, payload, 1, subPayload.length);
+		} else {
+			throw new NdefEncoderException("Expected action or action record.", wellKnownRecord);
 		}
 
 		return payload;
