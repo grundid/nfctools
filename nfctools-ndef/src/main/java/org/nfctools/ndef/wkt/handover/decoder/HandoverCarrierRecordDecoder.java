@@ -19,7 +19,7 @@ package org.nfctools.ndef.wkt.handover.decoder;
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.Record;
-import org.nfctools.ndef.ext.ExternalTypeRecord;
+import org.nfctools.ndef.ext.UnsupportedExternalTypeRecord;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
@@ -79,7 +79,7 @@ public class HandoverCarrierRecordDecoder implements WellKnownRecordPayloadDecod
 
 				Record record = messageDecoder.decodeToRecord(carrierType);
 
-				if (record instanceof ExternalTypeRecord) {
+				if (record instanceof UnsupportedExternalTypeRecord) {
 					handoverCarrierRecord.setCarrierType(record);
 				}
 				else {
