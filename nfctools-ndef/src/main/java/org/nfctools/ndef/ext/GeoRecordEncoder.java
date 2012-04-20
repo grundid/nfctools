@@ -16,6 +16,8 @@
 
 package org.nfctools.ndef.ext;
 
+import org.nfctools.ndef.NdefEncoderException;
+
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
@@ -58,17 +60,17 @@ public class GeoRecordEncoder implements ExternalTypeContentEncoder {
 		
 		double latitude = geoRecord.getLatitude();
 		if (latitude > 90.0 || latitude < -90.0) {
-			throw new IllegalArgumentException("Expected latitude within 90 positive or negative degrees, found " + latitude + " degrees.");
+			throw new NdefEncoderException("Expected latitude within 90 positive or negative degrees, found " + latitude + " degrees.", externalType);
 		}
 		double longitude = geoRecord.getLongitude();
 		if (longitude > 180.0 || longitude < -180.0) {
-			throw new IllegalArgumentException("Expected longitude within 180 positive or negative degrees, found " + longitude + " degrees.");
+			throw new NdefEncoderException("Expected longitude within 180 positive or negative degrees, found " + longitude + " degrees.", externalType);
 		}
 
 		String addressInformation = geoRecord.getAddressInformation();
 		
 		if((longitude != 0.0 || latitude != 0.0) && addressInformation != null) {
-			throw new IllegalArgumentException("Expected latitude and longitude coordinates or address information, not both.");
+			throw new NdefEncoderException("Expected latitude and longitude coordinates or address information, not both.", externalType);
 		}
 
 		StringBuilder result = new StringBuilder();
