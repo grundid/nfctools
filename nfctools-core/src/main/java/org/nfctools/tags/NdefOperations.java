@@ -12,12 +12,14 @@ import org.nfctools.ndef.NdefMessage;
  */
 public interface NdefOperations {
 
-	void setCredentialsForReadOnly(Object o);
-
 	/**
 	 * Get the maximum NDEF message size in bytes.
 	 */
 	int getMaxSize();
+
+	boolean hasNdefMessage();
+
+	boolean isFormated();
 
 	/**
 	 * Read the current NdefMessage on this tag.

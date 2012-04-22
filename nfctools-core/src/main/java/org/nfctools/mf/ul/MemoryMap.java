@@ -32,4 +32,7 @@ public class MemoryMap {
 		this.dynamicLock = dynamicLock;
 	}
 
+	public boolean hasDynamicLock() {
+		return dynamicLock != null;
+	}
 }

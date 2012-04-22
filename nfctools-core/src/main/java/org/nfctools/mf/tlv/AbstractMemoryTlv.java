@@ -19,6 +19,14 @@ public class AbstractMemoryTlv extends Tlv {
 		bytesPerPage = MfUtils.getLeastSignificantNibble(bytes[2]);
 	}
 
+	public byte[] toBytes() {
+		byte[] bytes = new byte[3];
+		bytes[0] = MfUtils.encodeNibbles(pageAddress, byteOffset);
+		bytes[1] = (byte)size;
+		bytes[2] = MfUtils.encodeNibbles(0, bytesPerPage);
+		return bytes;
+	}
+
 	public int getPosition() {
 		return (int)Math.round(pageAddress * (int)Math.pow(2, bytesPerPage) + byteOffset);
 	}

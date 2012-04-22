@@ -35,6 +35,8 @@ public interface Terminal extends NfcDevice {
 
 	void setCardTerminal(CardTerminal cardTerminal);
 
+	CardTerminal getCardTerminal();
+
 	void setStatusListener(TerminalStatusListener statusListener);
 
 	void setNfcipConnectionListener(NFCIPConnectionListener nfcipConnectionListener);

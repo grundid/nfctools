@@ -46,6 +46,11 @@ public abstract class AbstractTerminal implements Terminal, MfCardListener {
 	}
 
 	@Override
+	public CardTerminal getCardTerminal() {
+		return cardTerminal;
+	}
+
+	@Override
 	public void setStatusListener(TerminalStatusListener statusListener) {
 		this.statusListener = statusListener;
 	}
@@ -67,6 +72,7 @@ public abstract class AbstractTerminal implements Terminal, MfCardListener {
 		}
 	}
 
+	@Override
 	public void setNdefListener(NdefListener ndefListener) {
 		this.ndefListener = ndefListener;
 	}

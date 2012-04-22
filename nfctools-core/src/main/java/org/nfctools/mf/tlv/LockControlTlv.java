@@ -14,10 +14,9 @@ public class LockControlTlv extends AbstractMemoryTlv {
 		bytesLockedPerLockBit = MfUtils.getMostSignificantNibble(bytes[2]);
 	}
 
+	@Override
 	public byte[] toBytes() {
-		byte[] bytes = new byte[3];
-		bytes[0] = MfUtils.encodeNibbles(pageAddress, byteOffset);
-		bytes[1] = (byte)size;
+		byte[] bytes = super.toBytes();
 		bytes[2] = MfUtils.encodeNibbles(bytesLockedPerLockBit, bytesPerPage);
 		return bytes;
 	}
