@@ -15,11 +15,26 @@
  */
 package org.nfctools.ndef;
 
-import java.io.IOException;
 
-public class NdefException extends IOException {
+public class NdefException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
 
 	public NdefException(String message) {
 		super(message);
 	}
+
+	public NdefException() {
+		super();
+	}
+
+	public NdefException(String message, Throwable throwable) {
+		super(message, throwable);
+	}
+
+	public NdefException(Throwable throwable) {
+		super(throwable);
+	}
+	
+	
 }

@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-
 package org.nfctools.ndef.decoder;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.UriRecordDecoder;
 import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.utils.NfcUtils;
@@ -37,48 +34,30 @@ public class UriRecordDecoderTest {
 
 	@Test
 	public void testDecode() throws Exception {
-
 		byte[] payload = NfcUtils.convertASCIIToBin(payloadUri);
-
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE,
-				NdefConstants.EMPTY_BYTE_ARRAY, payload);
-
-		UriRecord uriRecord = decoder.decodeRecord(ndefRecord, messageDecoder);
+		UriRecord uriRecord = (UriRecord)decoder.decodePayload(payload, messageDecoder);
 		assertEquals("http://www.example.com", uriRecord.getUri());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testDecodeInvalidBottomIndex() throws Exception {
-
 		byte[] payload = NfcUtils.convertASCIIToBin(payloadUri);
 		payload[0] = -1;
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE,
-				NdefConstants.EMPTY_BYTE_ARRAY, payload);
-
-		decoder.decodeRecord(ndefRecord, messageDecoder);
+		decoder.decodePayload(payload, messageDecoder);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testDecodeInvalidTopIndex() throws Exception {
-
 		byte[] payload = NfcUtils.convertASCIIToBin(payloadUri);
 		payload[0] = 36;
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE,
-				NdefConstants.EMPTY_BYTE_ARRAY, payload);
-
-		decoder.decodeRecord(ndefRecord, messageDecoder);
+		decoder.decodePayload(payload, messageDecoder);
 	}
 
 	@Test
 	public void testDecodeLastKnownAbbreviation() throws Exception {
-
 		byte[] payload = NfcUtils.convertASCIIToBin(payloadUri);
 		payload[0] = 35;
-
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, UriRecord.TYPE,
-				NdefConstants.EMPTY_BYTE_ARRAY, payload);
-
-		UriRecord uriRecord = decoder.decodeRecord(ndefRecord, messageDecoder);
+		UriRecord uriRecord = (UriRecord)decoder.decodePayload(payload, messageDecoder);
 		assertEquals("urn:nfc:example.com", uriRecord.getUri());
 	}
 

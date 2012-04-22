@@ -15,12 +15,13 @@
  */
 package org.nfctools.ndef;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.nfctools.ndef.ext.ExternalType;
 import org.nfctools.ndef.ext.ExternalTypeDecoder;
 import org.nfctools.ndef.ext.ExternalTypeEncoder;
+import org.nfctools.ndef.ext.ExternalTypeRecord;
 
 public class ExternalTypeTest {
 
@@ -29,7 +30,7 @@ public class ExternalTypeTest {
 
 	@Test
 	public void testExternalTypeEncoder() throws Exception {
-		ExternalType record = new ExternalType("android.com:pkg", "demo.package");
+		ExternalTypeRecord record = new ExternalTypeRecord("android.com:pkg", "demo.package");
 		NdefRecord ndefRecord = encoder.encodeRecord(record, null);
 
 		assertEquals(NdefConstants.TNF_EXTERNAL_TYPE, ndefRecord.getTnf());
@@ -45,7 +46,7 @@ public class ExternalTypeTest {
 
 		assertTrue(decoder.canDecode(record));
 
-		ExternalType externalType = decoder.decodeRecord(record, null);
+		ExternalTypeRecord externalType = decoder.decodeRecord(record, null);
 
 		assertEquals("android.com:pkg", externalType.getNamespace());
 		assertEquals("content", externalType.getContent());

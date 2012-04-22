@@ -18,53 +18,51 @@ package org.nfctools.ndef;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nfctools.ndef.auri.AbsoluteUriRecordDecoder;
+import org.nfctools.ndef.empty.EmptyRecordDecoder;
+import org.nfctools.ndef.ext.ExternalTypeDecoder;
+import org.nfctools.ndef.mime.MimeRecordDecoder;
+import org.nfctools.ndef.unknown.UnknownRecordDecoder;
+import org.nfctools.ndef.unknown.unsupported.UnsupportedRecord;
+import org.nfctools.ndef.wkt.WellKnownRecordConfig;
+import org.nfctools.ndef.wkt.WellKnownRecordDecoder;
 import org.nfctools.ndef.wkt.decoder.RecordDecoder;
-import org.nfctools.ndef.wkt.records.UriRecord;
 
 public class NdefRecordDecoder {
 
-	public List<RecordDecoder<? extends Record>> knownRecordDecoders = new ArrayList<RecordDecoder<? extends Record>>();
+	private WellKnownRecordDecoder wellKnownRecordDecoder = new WellKnownRecordDecoder();
+
+	private List<RecordDecoder<? extends Record>> recordDecoders = new ArrayList<RecordDecoder<? extends Record>>();
+
+	public NdefRecordDecoder() {
+		recordDecoders.add(wellKnownRecordDecoder);
+		recordDecoders.add(new AbsoluteUriRecordDecoder());
+		recordDecoders.add(new MimeRecordDecoder());
+		recordDecoders.add(new ExternalTypeDecoder());
+		recordDecoders.add(new EmptyRecordDecoder());
+		recordDecoders.add(new UnknownRecordDecoder());
+	}
 
 	public Record decode(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 
-		switch (ndefRecord.getTnf()) {
-			case NdefConstants.TNF_EMPTY:
-				break;
-			case NdefConstants.TNF_WELL_KNOWN:
-			case NdefConstants.TNF_EXTERNAL_TYPE:
-				return handleWellKnownRecordType(ndefRecord, messageDecoder);
-			case NdefConstants.TNF_MIME_MEDIA:
-				return handleMimeMediaType(ndefRecord, messageDecoder);
-			case NdefConstants.TNF_ABSOLUTE_URI:
-				return handleAbsoluteUri(ndefRecord);
+		if (ndefRecord.isChunked()) {
+			throw new IllegalArgumentException("Cannot decode chunked record");
 		}
 
-		throw new RuntimeException("unsupported NDEF Type Name Format [" + ndefRecord.getTnf() + "]");
-	}
-
-	private UriRecord handleAbsoluteUri(NdefRecord ndefRecord) {
-		return new UriRecord(new String(ndefRecord.getType()));
-	}
-
-	private Record handleMimeMediaType(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		for (RecordDecoder<? extends Record> decoder : knownRecordDecoders) {
-			if (decoder.canDecode(ndefRecord)) {
+		for (RecordDecoder<? extends Record> decoder : recordDecoders) {
+			if (decoder.canDecode(ndefRecord))
 				return decoder.decodeRecord(ndefRecord, messageDecoder);
-			}
 		}
-		throw new RuntimeException("unsupported NDEF record type [" + new String(ndefRecord.getType()) + "]");
+		
+		// NFC Data Exchange Format (NDEF) 1.0:
+		// An NDEF parser that receives an NDEF record with an unknown or unsupported TNF field value SHOULD treat it as 0x05 (Unknown).
+		// It is RECOMMENDED that an NDEF parser receiving an NDEF record of this type, 
+		// without further context to its use, provides a mechanism for storing but not processing the payload.
+		
+		return new UnsupportedRecord(ndefRecord);
 	}
 
-	private Record handleWellKnownRecordType(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		for (RecordDecoder<? extends Record> decoder : knownRecordDecoders) {
-			if (decoder.canDecode(ndefRecord)) {
-				return decoder.decodeRecord(ndefRecord, messageDecoder);
-			}
-		}
-		throw new RuntimeException("unsupported NDEF record type [" + new String(ndefRecord.getType()) + "]");
-	}
-
-	public void addRecordDecoder(RecordDecoder<? extends Record> recordDecoder) {
-		knownRecordDecoders.add(recordDecoder);
+	public void registerRecordConfig(WellKnownRecordConfig recordconfig) {
+		wellKnownRecordDecoder.addRecordConfig(recordconfig);
 	}
 }

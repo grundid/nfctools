@@ -15,16 +15,16 @@
  */
 package org.nfctools.ndef.wkt.records;
 
-import org.nfctools.ndef.Record;
 
-public class ActionRecord extends Record {
-
-	public static final byte[] TYPE = { 'a', 'c', 't' };
+public class ActionRecord extends WellKnownRecord {
 
 	private Action action;
 
 	public ActionRecord(Action action) {
 		this.action = action;
+	}
+
+	public ActionRecord() {
 	}
 
 	public Action getAction() {
@@ -35,4 +35,35 @@ public class ActionRecord extends Record {
 	public String toString() {
 		return "Action: " + action;
 	}
+
+	public void setAction(Action action) {
+		this.action = action;
+	}
+
+	public boolean hasAction() {
+		return action != null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ActionRecord other = (ActionRecord)obj;
+		if (action != other.action)
+			return false;
+		return true;
+	}
+
 }

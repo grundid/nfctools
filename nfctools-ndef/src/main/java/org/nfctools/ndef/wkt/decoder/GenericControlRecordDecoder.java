@@ -19,25 +19,21 @@ import java.util.List;
 
 import org.nfctools.ndef.NdefMessage;
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
 import org.nfctools.ndef.wkt.records.GcDataRecord;
 import org.nfctools.ndef.wkt.records.GcTargetRecord;
 import org.nfctools.ndef.wkt.records.GenericControlRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class GenericControlRecordDecoder extends AbstractRecordDecoder<GenericControlRecord> {
-
-	public GenericControlRecordDecoder() {
-		super(GenericControlRecord.TYPE);
-	}
+public class GenericControlRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public GenericControlRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		byte configurationByte = ndefRecord.getPayload()[0];
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+		byte configurationByte = payload[0];
 
-		NdefMessage payloadNdefMessage = messageDecoder.decode(ndefRecord.getPayload(), 1,
-				ndefRecord.getPayload().length - 1);
+		NdefMessage payloadNdefMessage = messageDecoder.decode(payload, 1, payload.length - 1);
 
 		GcTargetRecord target = null;
 		GcActionRecord action = null;
@@ -61,8 +57,6 @@ public class GenericControlRecordDecoder extends AbstractRecordDecoder<GenericCo
 		GenericControlRecord gcr = new GenericControlRecord(target, configurationByte);
 		gcr.setAction(action);
 		gcr.setData(data);
-
-		setIdOnRecord(ndefRecord, gcr);
 		return gcr;
 	}
 }

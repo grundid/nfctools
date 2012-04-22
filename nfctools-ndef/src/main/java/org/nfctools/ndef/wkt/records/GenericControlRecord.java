@@ -15,11 +15,7 @@
  */
 package org.nfctools.ndef.wkt.records;
 
-import org.nfctools.ndef.Record;
-
-public class GenericControlRecord extends Record {
-
-	public static final byte[] TYPE = { 'G', 'c' };
+public class GenericControlRecord extends WellKnownRecord {
 
 	private static final byte CB_CHECK_EXIT_CONDITION = 0x02;
 	private static final byte CB_IGNORE_FOLLOWING_IF_FAILED = 0x04;
@@ -36,6 +32,9 @@ public class GenericControlRecord extends Record {
 	public GenericControlRecord(GcTargetRecord target, byte configurationByte) {
 		this.target = target;
 		this.configurationByte = configurationByte;
+	}
+
+	public GenericControlRecord() {
 	}
 
 	public void setConfigurationByte(byte configurationByte) {
@@ -89,6 +88,61 @@ public class GenericControlRecord extends Record {
 	@Override
 	public String toString() {
 		return "GenericControl: [" + getTarget() + ", " + getAction() + ", " + getData() + "]";
+	}
+
+	public boolean hasTarget() {
+		return target != null;
+	}
+
+	public boolean hasAction() {
+		return action != null;
+	}
+
+	public boolean hasData() {
+		return data != null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result + configurationByte;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GenericControlRecord other = (GenericControlRecord)obj;
+		if (action == null) {
+			if (other.action != null)
+				return false;
+		}
+		else if (!action.equals(other.action))
+			return false;
+		if (configurationByte != other.configurationByte)
+			return false;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		}
+		else if (!data.equals(other.data))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		}
+		else if (!target.equals(other.target))
+			return false;
+		return true;
 	}
 
 }

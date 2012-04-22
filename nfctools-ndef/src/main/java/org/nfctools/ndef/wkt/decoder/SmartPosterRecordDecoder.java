@@ -18,28 +18,23 @@ package org.nfctools.ndef.wkt.decoder;
 import java.util.List;
 
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.ActionRecord;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class SmartPosterDecoder extends AbstractRecordDecoder<SmartPosterRecord> {
-
-	public SmartPosterDecoder() {
-		super(SmartPosterRecord.TYPE);
-	}
+public class SmartPosterRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public SmartPosterRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 		SmartPosterRecord smartPosterRecord = new SmartPosterRecord();
 
-		List<Record> records = messageDecoder.decodeToRecords(messageDecoder.decode(ndefRecord.getPayload()));
+		List<Record> records = messageDecoder.decodeToRecords(messageDecoder.decode(payload));
 
 		for (Record record : records) {
-
 			if (record instanceof UriRecord) {
 				smartPosterRecord.setUri((UriRecord)record);
 			}
@@ -50,9 +45,6 @@ public class SmartPosterDecoder extends AbstractRecordDecoder<SmartPosterRecord>
 				smartPosterRecord.setAction((ActionRecord)record);
 			}
 		}
-
-		setIdOnRecord(ndefRecord, smartPosterRecord);
 		return smartPosterRecord;
 	}
-
 }

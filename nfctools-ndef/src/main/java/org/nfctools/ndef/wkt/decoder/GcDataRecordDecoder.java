@@ -18,25 +18,21 @@ package org.nfctools.ndef.wkt.decoder;
 import java.util.List;
 
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.GcDataRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class GcDataRecordDecoder extends AbstractRecordDecoder<GcDataRecord> {
-
-	public GcDataRecordDecoder() {
-		super(GcDataRecord.TYPE);
-	}
+public class GcDataRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public GcDataRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 		GcDataRecord dataRecord = new GcDataRecord();
 
-		List<Record> records = messageDecoder.decodeToRecords(ndefRecord.getPayload());
+		List<Record> records = messageDecoder.decodeToRecords(payload);
 		for (Record record : records) {
 			dataRecord.add(record);
 		}
-		setIdOnRecord(ndefRecord, dataRecord);
 		return dataRecord;
 	}
 }

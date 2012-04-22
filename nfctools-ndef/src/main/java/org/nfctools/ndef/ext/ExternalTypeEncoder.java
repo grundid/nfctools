@@ -16,6 +16,7 @@
 package org.nfctools.ndef.ext;
 
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
@@ -25,13 +26,22 @@ public class ExternalTypeEncoder implements RecordEncoder {
 
 	@Override
 	public boolean canEncode(Record record) {
-		return record instanceof ExternalType;
+		return record instanceof ExternalTypeRecord;
 	}
 
 	@Override
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
-		ExternalType externalType = (ExternalType)record;
-		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, externalType.getNamespace().getBytes(), record.getId(),
-				externalType.getContent().getBytes());
+		ExternalTypeRecord externalType = (ExternalTypeRecord)record;
+		
+		if(!externalType.hasNamespace()) {
+			throw new NdefEncoderException("Expected namespace", record);
+		}
+		if(!externalType.hasContent()) {
+			throw new NdefEncoderException("Expected content", record);
+		}
+		
+		byte[] type = externalType.getNamespace().getBytes(NdefConstants.DEFAULT_CHARSET);
+		byte[] paylod = externalType.getContent().getBytes(NdefConstants.DEFAULT_CHARSET);
+		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, type, record.getId(), paylod);
 	}
 }

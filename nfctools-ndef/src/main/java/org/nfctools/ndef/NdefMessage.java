@@ -15,7 +15,12 @@
  */
 package org.nfctools.ndef;
 
-@SuppressWarnings("unused")
+/**
+ * The basic message construct defined by this specification. An NDEF message contains
+ * one or more NDEF records
+ * 
+ */
+
 public class NdefMessage {
 
 	private NdefRecord[] ndefRecords;
@@ -24,16 +29,7 @@ public class NdefMessage {
 		this.ndefRecords = ndefRecords;
 	}
 
-	public NdefMessage(byte[] bytes) {
-		throw new UnsupportedOperationException();
-	}
-
 	public NdefRecord[] getNdefRecords() {
 		return ndefRecords;
 	}
-
-	public byte[] toByteArray() {
-		throw new UnsupportedOperationException();
-	}
-
 }

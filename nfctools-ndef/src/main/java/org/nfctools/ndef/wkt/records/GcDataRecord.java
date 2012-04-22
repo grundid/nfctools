@@ -21,9 +21,7 @@ import java.util.List;
 
 import org.nfctools.ndef.Record;
 
-public class GcDataRecord extends Record {
-
-	public static final byte[] TYPE = { 'd' };
+public class GcDataRecord extends WellKnownRecord {
 
 	private List<Record> records = new ArrayList<Record>();
 
@@ -56,6 +54,36 @@ public class GcDataRecord extends Record {
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+
+	public void remove(Record record) {
+		records.remove(record);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((records == null) ? 0 : records.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GcDataRecord other = (GcDataRecord)obj;
+		if (records == null) {
+			if (other.records != null)
+				return false;
+		}
+		else if (!records.equals(other.records))
+			return false;
+		return true;
 	}
 
 }

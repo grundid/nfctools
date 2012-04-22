@@ -18,11 +18,8 @@ package org.nfctools.ndef.wkt.records;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
-import org.nfctools.ndef.Record;
+public class TextRecord extends WellKnownRecord {
 
-public class TextRecord extends Record {
-
-	public static final byte[] TYPE = { 'T' };
 	public static final byte LANGUAGE_CODE_MASK = 0x1F;
 
 	public static final Charset UTF8 = Charset.forName("UTF-8");
@@ -53,6 +50,9 @@ public class TextRecord extends Record {
 			throw new IllegalArgumentException("unsupported encoding. only utf8 and utf16 are allowed.");
 	}
 
+	public TextRecord() {
+	}
+
 	public String getText() {
 		return text;
 	}
@@ -79,5 +79,72 @@ public class TextRecord extends Record {
 
 		sb.append("]");
 		return sb.toString();
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public void setEncoding(Charset encoding) {
+		if (!encoding.equals(UTF8) && !encoding.equals(UTF16))
+			throw new IllegalArgumentException("unsupported encoding. only utf8 and utf16 are allowed.");
+
+		this.encoding = encoding;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public boolean hasText() {
+		return text != null;
+	}
+
+	public boolean hasLocale() {
+		return locale != null;
+	}
+
+	public boolean hasEncoding() {
+		return encoding != null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((encoding == null) ? 0 : encoding.hashCode());
+		result = prime * result + ((locale == null) ? 0 : locale.hashCode());
+		result = prime * result + ((text == null) ? 0 : text.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TextRecord other = (TextRecord)obj;
+		if (encoding == null) {
+			if (other.encoding != null)
+				return false;
+		}
+		else if (!encoding.equals(other.encoding))
+			return false;
+		if (locale == null) {
+			if (other.locale != null)
+				return false;
+		}
+		else if (!locale.equals(other.locale))
+			return false;
+		if (text == null) {
+			if (other.text != null)
+				return false;
+		}
+		else if (!text.equals(other.text))
+			return false;
+		return true;
 	}
 }

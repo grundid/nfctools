@@ -16,23 +16,42 @@
 package org.nfctools.ndef.ext;
 
 import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 
-public class ExternalTypeDecoder extends AbstractRecordDecoder<ExternalType> {
+public class ExternalTypeDecoder extends AbstractRecordDecoder<ExternalTypeRecord> {
 
 	public ExternalTypeDecoder() {
-		super(new byte[0]);
+		super(NdefConstants.TNF_EXTERNAL_TYPE);
 	}
 
 	@Override
-	public boolean canDecode(NdefRecord ndefRecord) {
-		return ndefRecord.getTnf() == NdefConstants.TNF_EXTERNAL_TYPE;
+	protected ExternalTypeRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+		String namespace = new String(ndefRecord.getType(), NdefConstants.DEFAULT_CHARSET);
+		String content = new String(ndefRecord.getPayload(), NdefConstants.DEFAULT_CHARSET);
+		ExternalTypeRecord record = null;
+		if (NdefContext.getKnownExternalTypesByNamespace().containsKey(namespace)) {
+			record = createKnownExternalType(namespace, content);
+		}
+		else
+			record = new ExternalTypeRecord(namespace, content);
+		return record;
 	}
 
-	@Override
-	public ExternalType decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		return new ExternalType(new String(ndefRecord.getType()), new String(ndefRecord.getPayload()));
+	private ExternalTypeRecord createKnownExternalType(String namespace, String content) {
+
+		try {
+			Class<? extends ExternalTypeRecord> recordClass = NdefContext.getKnownExternalTypesByNamespace().get(
+					namespace);
+			ExternalTypeRecord record = recordClass.newInstance();
+			record.setContent(content);
+			record.setNamespace(namespace);
+			return record;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

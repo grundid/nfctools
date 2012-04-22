@@ -102,4 +102,16 @@ public class NfcUtils {
 		bais.read(bytes, 0, bytes.length);
 		return bytes;
 	}
+
+	public static byte getLeastSignificantNibble(byte data) {
+		return (byte)(data & 0x0F);
+	}
+
+	public static byte getMostSignificantNibble(byte data) {
+		return (byte)((data & 0xF0) >> 4);
+	}
+
+	public static byte encodeNibbles(int mostSignificantNibble, int leastSignificantNibble) {
+		return (byte)((mostSignificantNibble & 0x0F) << 4 | (leastSignificantNibble & 0x0F));
+	}
 }

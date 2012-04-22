@@ -15,6 +15,8 @@
  */
 package org.nfctools.ndef.mime;
 
+import java.util.Arrays;
+
 public class BinaryMimeRecord extends MimeRecord {
 
 	private byte[] content;
@@ -22,6 +24,9 @@ public class BinaryMimeRecord extends MimeRecord {
 	public BinaryMimeRecord(String contentType, byte[] content) {
 		super(contentType);
 		this.content = content;
+	}
+
+	public BinaryMimeRecord() {
 	}
 
 	public byte[] getContent() {
@@ -41,4 +46,31 @@ public class BinaryMimeRecord extends MimeRecord {
 	public String toString() {
 		return "Content-Type: " + contentType + " Content: " + new String(content);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Arrays.hashCode(content);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BinaryMimeRecord other = (BinaryMimeRecord)obj;
+		if (!Arrays.equals(content, other.content))
+			return false;
+		return true;
+	}
+
+	public boolean hasContent() {
+		return content != null;
+	}
+
 }

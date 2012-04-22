@@ -16,22 +16,16 @@
 package org.nfctools.ndef.wkt.decoder;
 
 import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefRecord;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class ActionRecordDecoder extends AbstractRecordDecoder<ActionRecord> {
-
-	public ActionRecordDecoder() {
-		super(ActionRecord.TYPE);
-	}
+public class ActionRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public ActionRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
-		int actionId = ndefRecord.getPayload()[0];
-		Action action = Action.getActionByValue(actionId);
-		ActionRecord actionRecord = new ActionRecord(action);
-		setIdOnRecord(ndefRecord, actionRecord);
-		return actionRecord;
+	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+		Action action = Action.getActionByValue(payload[0]);
+		return new ActionRecord(action);
 	}
 }

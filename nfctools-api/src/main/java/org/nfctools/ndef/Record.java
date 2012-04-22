@@ -15,6 +15,7 @@
  */
 package org.nfctools.ndef;
 
+import java.util.Arrays;
 
 public abstract class Record {
 
@@ -39,4 +40,27 @@ public abstract class Record {
 	public boolean hasKey() {
 		return id != null && id.length > 0;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(id);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Record other = (Record)obj;
+		if (!Arrays.equals(id, other.id))
+			return false;
+		return true;
+	}
+
 }

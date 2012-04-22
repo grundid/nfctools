@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package org.nfctools.ndef;
 
 import static org.junit.Assert.*;
@@ -22,6 +21,7 @@ import static org.junit.Assert.*;
 import java.util.Locale;
 
 import org.junit.Test;
+import org.nfctools.ndef.wkt.decoder.SmartPosterRecordDecoder;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.utils.NfcUtils;
 
@@ -33,14 +33,11 @@ public class NdefRecordDecoderTest {
 	@Test
 	public void testDecodeNdefRecord() throws Exception {
 
-		NdefRecordDecoder decoder = NdefContext.getNdefRecordDecoder();
+		SmartPosterRecordDecoder decoder = new SmartPosterRecordDecoder();
 
 		byte[] payload = NfcUtils.convertASCIIToBin(innerSmartPoster);
 
-		NdefRecord ndefRecord = new NdefRecord(NdefConstants.TNF_WELL_KNOWN, SmartPosterRecord.TYPE,
-				NdefConstants.EMPTY_BYTE_ARRAY, payload);
-
-		Record record = decoder.decode(ndefRecord, NdefContext.getNdefMessageDecoder());
+		Record record = decoder.decodePayload(payload, NdefContext.getNdefMessageDecoder());
 		assertTrue(record instanceof SmartPosterRecord);
 
 		SmartPosterRecord smartPosterRecord = (SmartPosterRecord)record;

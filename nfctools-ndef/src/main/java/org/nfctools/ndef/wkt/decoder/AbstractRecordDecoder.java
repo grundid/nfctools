@@ -15,24 +15,30 @@
  */
 package org.nfctools.ndef.wkt.decoder;
 
+import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
-import org.nfctools.ndef.RecordUtils;
 
 public abstract class AbstractRecordDecoder<T extends Record> implements RecordDecoder<T> {
 
-	private byte[] type;
+	private int tnf;
 
-	protected AbstractRecordDecoder(byte[] type) {
-		this.type = type;
+	protected AbstractRecordDecoder(int tnf) {
+		this.tnf = tnf;
 	}
 
 	@Override
 	public boolean canDecode(NdefRecord ndefRecord) {
-		return RecordUtils.isEqualArray(ndefRecord.getType(), type);
+		return ndefRecord.getTnf() == tnf;
 	}
 
-	protected void setIdOnRecord(NdefRecord ndefRecord, Record record) {
+	protected abstract T createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder);
+
+	@Override
+	public T decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+		T record = createRecord(ndefRecord, messageDecoder);
 		record.setId(ndefRecord.getId());
+		return record;
 	}
+
 }

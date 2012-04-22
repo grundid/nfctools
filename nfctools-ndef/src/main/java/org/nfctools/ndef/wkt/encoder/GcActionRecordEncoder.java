@@ -15,25 +15,23 @@
  */
 package org.nfctools.ndef.wkt.encoder;
 
-import org.nfctools.ndef.NdefConstants;
+import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.NdefRecord;
-import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
+import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
-public class GcActionRecordEncoder implements RecordEncoder {
-
-	@Override
-	public boolean canEncode(Record record) {
-		return record instanceof GcActionRecord;
-	}
+public class GcActionRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 
-		GcActionRecord actionRecord = (GcActionRecord)record;
-
+		GcActionRecord actionRecord = (GcActionRecord)wellKnownRecord;
 		byte[] payload = null;
+
+		if (actionRecord.hasAction() && actionRecord.hasActionRecord()) {
+			throw new NdefEncoderException("Expected action or action record, not both.", wellKnownRecord);
+		} 
 
 		if (actionRecord.hasAction()) {
 			payload = new byte[2];
@@ -45,9 +43,10 @@ public class GcActionRecordEncoder implements RecordEncoder {
 			payload = new byte[subPayload.length + 1];
 			payload[0] = 0;
 			System.arraycopy(subPayload, 0, payload, 1, subPayload.length);
+		} else {
+			throw new NdefEncoderException("Expected action or action record.", wellKnownRecord);
 		}
 
-		return new NdefRecord(NdefConstants.TNF_WELL_KNOWN, GcActionRecord.TYPE, record.getId(), payload);
-
+		return payload;
 	}
 }
