@@ -34,7 +34,7 @@ public class CollisionResolutionRecordDecoder implements WellKnownRecordPayloadD
 
 		CollisionResolutionRecord collisionResolutionRecord = new CollisionResolutionRecord();
 
-		collisionResolutionRecord.setRandomNumber((((payload[0] << 8) | payload[1]) & 0xFFFF));
+		collisionResolutionRecord.setRandomNumber(((payload[0] & 0xFF) << 8) | (payload[1] & 0xFF));
 
 		return collisionResolutionRecord;
 	}
