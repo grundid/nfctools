@@ -122,8 +122,8 @@ public class NdefContext {
 				new CollisionResolutionRecordEncoder(), new CollisionResolutionRecordDecoder());
 
 		// Known External Type Records
-		registerExternalType(AndroidApplicationRecord.TYPE, AndroidApplicationRecord.class, new AndroidApplicationRecordEncoder(), new AndroidApplicationRecordDecoder());
-		registerExternalType(GeoRecord.TYPE, GeoRecord.class, new GeoRecordEncoder(), new GeoRecordDecoder());
+		registerExternalType(AndroidApplicationRecord.NAMESPACE, AndroidApplicationRecord.class, new AndroidApplicationRecordEncoder(), new AndroidApplicationRecordDecoder());
+		registerExternalType(GeoRecord.NAMESPACE, GeoRecord.class, new GeoRecordEncoder(), new GeoRecordDecoder());
 
 	}
 

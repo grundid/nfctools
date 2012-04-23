@@ -20,6 +20,8 @@ import org.nfctools.ndef.NdefEncoderException;
 
 /**
  * 
+ * Geo record encoder.
+ * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
  */

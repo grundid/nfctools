@@ -38,27 +38,31 @@ public class ExternalTypeEncoder implements RecordEncoder {
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		ExternalTypeRecord externalType = (ExternalTypeRecord)record;
 		
-		if(!externalType.hasNamespace()) {
-			throw new NdefEncoderException("Expected namespace", record);
-		}
-		
 		ExternalTypeRecordConfig config = externalRecordTypes.get(record.getClass());
 		
+		String namespace;
 		byte[] payload;
 		if(config != null) {
+			namespace = config.getNamespace();
 			payload = config.getContentEncoder().encodeContent(externalType).getBytes(NdefConstants.DEFAULT_CHARSET);
+			
 		} else if(externalType instanceof UnsupportedExternalTypeRecord){
 			UnsupportedExternalTypeRecord externalTypeUnsupportedRecord = (UnsupportedExternalTypeRecord)externalType;
 			
 			if(!externalTypeUnsupportedRecord.hasContent()) {
 				throw new NdefEncoderException("Expected content", record);
 			}
+			if(!externalTypeUnsupportedRecord.hasNamespace()) {
+				throw new NdefEncoderException("Expected namespace", record);
+			}
 
+			namespace = externalTypeUnsupportedRecord.getNamespace();
 			payload = externalTypeUnsupportedRecord.getContent().getBytes(NdefConstants.DEFAULT_CHARSET);
 		} else {
-			throw new IllegalArgumentException("Unable to encode external type " + externalType.getClass().getName()); // TODO change to ndef exception
+			throw new NdefEncoderException("Unable to encode external type " + externalType.getClass().getName(), record);
 		}
-		byte[] type = externalType.getNamespace().getBytes(NdefConstants.DEFAULT_CHARSET);
+		
+		byte[] type = namespace.getBytes(NdefConstants.DEFAULT_CHARSET);
 		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, type, record.getId(), payload);
 	}
 	

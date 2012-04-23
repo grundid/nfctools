@@ -27,19 +27,17 @@ public class AndroidApplicationRecord extends ExternalTypeRecord {
 	private static final String JAVA_PACKAGE_CONVENSION = "^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$"; // http://checkstyle.sourceforge.net/config_naming.html
 
 	/**
-	 * An RTD indicating an Android Application Record.
+	 * A namespace indicating an Android Application Record.
 	 */
-	public static final String TYPE = "android.com:pkg";
+	public static final String NAMESPACE = "android.com:pkg";
 	
 	private String packageName;
 
 	public AndroidApplicationRecord(String packageName) {
-		this();
 		this.packageName = packageName;
 	}
-
+	
 	public AndroidApplicationRecord() {
-		setNamespace(TYPE);
 	}
 
 	public boolean hasPackageName() {
@@ -83,6 +81,5 @@ public class AndroidApplicationRecord extends ExternalTypeRecord {
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
 	}
-	
 	
 }

@@ -30,8 +30,8 @@ public class AndroidApplicationRecordEncoder implements ExternalTypeContentEncod
 		
 		AndroidApplicationRecord androidApplicationRecord = (AndroidApplicationRecord)externalType;
 		
-		if(!externalType.hasNamespace()) {
-			throw new NdefEncoderException("Expected namespace", androidApplicationRecord);
+		if(!androidApplicationRecord.hasPackageName()) {
+			throw new NdefEncoderException("Expected package name ", androidApplicationRecord);
 		}
 
 		return androidApplicationRecord.getPackageName();

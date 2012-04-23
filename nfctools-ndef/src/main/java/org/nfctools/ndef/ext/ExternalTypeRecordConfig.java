@@ -17,9 +17,10 @@
 package org.nfctools.ndef.ext;
 
 import org.nfctools.ndef.Record;
-import org.nfctools.ndef.RecordType;
 
 /**
+ * 
+ * Configuration of an external type record with namespace, class, encoder and decoder.
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
@@ -38,12 +39,7 @@ public class ExternalTypeRecordConfig {
 		this.contentEncoder = contentEncoder;
 		this.contentDecoder = contentDecoder;
 	}
-	public ExternalTypeRecordConfig(RecordType recordType,
-			Class<? extends ExternalTypeRecord> recordClass2,
-			ExternalTypeContentEncoder payloadEncoder,
-			ExternalTypeContentDecoder payloadDecoder) {
-		// TODO Auto-generated constructor stub
-	}
+
 	public String getNamespace() {
 		return namespace;
 	}
