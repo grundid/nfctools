@@ -24,29 +24,62 @@ package org.nfctools.ndef.ext;
  */
 public class AndroidApplicationRecord extends ExternalTypeRecord {
 
+	private static final String JAVA_PACKAGE_CONVENSION = "^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$"; // http://checkstyle.sourceforge.net/config_naming.html
+
 	/**
-	 * An RTD indicating an Android Application Record.
+	 * A namespace indicating an Android Application Record.
 	 */
-	public static final String TYPE = "android.com:pkg";
+	public static final String NAMESPACE = "android.com:pkg";
+	
+	private String packageName;
 
 	public AndroidApplicationRecord(String packageName) {
-		setNamespace(TYPE);
-		setContent(packageName);
+		this.packageName = packageName;
 	}
-
+	
 	public AndroidApplicationRecord() {
-		setNamespace(TYPE);
-	}
-
-	public String getPackageName() {
-		return getContent();
-	}
-
-	public void setPackageName(String packageName) {
-		setContent(packageName);
 	}
 
 	public boolean hasPackageName() {
-		return hasContent();
+		return packageName != null;
 	}
+	
+	public boolean matchesNamingConvension() {
+		return packageName.matches(JAVA_PACKAGE_CONVENSION);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((packageName == null) ? 0 : packageName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AndroidApplicationRecord other = (AndroidApplicationRecord) obj;
+		if (packageName == null) {
+			if (other.packageName != null)
+				return false;
+		} else if (!packageName.equals(other.packageName))
+			return false;
+		return true;
+	}
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
+	
 }
