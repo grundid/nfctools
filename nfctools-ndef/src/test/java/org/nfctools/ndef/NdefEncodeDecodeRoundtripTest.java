@@ -90,6 +90,7 @@ public class NdefEncodeDecodeRoundtripTest {
 	private static UnsupportedRecord unsupportedRecord = new UnsupportedRecord(NdefConstants.TNF_RESERVED, "abc".getBytes(), "id".getBytes(), "DEF".getBytes());
 	private static GeoRecord addressInformationGeoRecord = new GeoRecord("Oslo");
 	private static GeoRecord coordinatesGeoRecord = new GeoRecord(59.949444, 10.756389);
+	private static GeoRecord coordinatesAltitudeGeoRecord = new GeoRecord(59.949444, 10.756389, 100.0);
 	
 	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
 			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
@@ -99,7 +100,7 @@ public class NdefEncodeDecodeRoundtripTest {
 			signatureRecordMarker, signatureRecord,
 			
 			unsupportedRecord,
-			addressInformationGeoRecord, coordinatesGeoRecord
+			addressInformationGeoRecord, coordinatesGeoRecord, coordinatesAltitudeGeoRecord
 			};
 
 

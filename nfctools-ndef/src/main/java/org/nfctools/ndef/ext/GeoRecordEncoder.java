@@ -59,41 +59,48 @@ public class GeoRecordEncoder implements ExternalTypeContentEncoder {
 	public String encodeContent(ExternalTypeRecord externalType) {
 		
 		GeoRecord geoRecord = (GeoRecord)externalType;
-		
-		double latitude = geoRecord.getLatitude();
-		if (latitude > 90.0 || latitude < -90.0) {
-			throw new NdefEncoderException("Expected latitude within 90 positive or negative degrees, found " + latitude + " degrees.", externalType);
-		}
-		double longitude = geoRecord.getLongitude();
-		if (longitude > 180.0 || longitude < -180.0) {
-			throw new NdefEncoderException("Expected longitude within 180 positive or negative degrees, found " + longitude + " degrees.", externalType);
-		}
-
-		String addressInformation = geoRecord.getAddressInformation();
-		
-		if((longitude != 0.0 || latitude != 0.0) && addressInformation != null) {
-			throw new NdefEncoderException("Expected latitude and longitude coordinates or address information, not both.", externalType);
-		}
 
 		StringBuilder result = new StringBuilder();
-		result.append(latitude);
-		result.append(',');
-		result.append(longitude);
-		
-		double altitude = geoRecord.getAltitude();
-		if (altitude > 0) {
+
+		// if coordinates, then no address information and the opposite.
+		if(geoRecord.hasCoordinates()) {
+			if(geoRecord.hasAddressInformation()) {
+				throw new NdefEncoderException("Expected latitude and longitude coordinates or address information, not both.", externalType);
+			}
+			
+			Double latitude = geoRecord.getLatitude();
+			if (latitude.doubleValue() > 90.0 || latitude.doubleValue() < -90.0) {
+				throw new NdefEncoderException("Expected latitude within 90 positive or negative degrees, found " + latitude + " degrees.", externalType);
+			}
+			Double longitude = geoRecord.getLongitude();
+			if (longitude.doubleValue() > 180.0 || longitude.doubleValue() < -180.0) {
+				throw new NdefEncoderException("Expected longitude within 180 positive or negative degrees, found " + longitude + " degrees.", externalType);
+			}
+
+			result.append(latitude.toString());
 			result.append(',');
-			result.append(altitude);
+			result.append(longitude.toString());
+		}  else if(geoRecord.hasLatitude()) {
+			throw new NdefEncoderException("Expected longitude coordinate set when latitude coordinate set.", externalType);
+		}  else if(geoRecord.hasLongitude()) {
+			throw new NdefEncoderException("Expected latitude coordinate set when longitude coordinate set.", externalType);
+		} else if(!geoRecord.hasAddressInformation()) {
+			throw new NdefEncoderException("Expected coordinates or address information set.", externalType);
+		} else {
+			result.append("0,0");
+		}
+
+		if (geoRecord.hasAltitude()) {
+			result.append(',');
+			result.append(geoRecord.getAltitude().toString());
 		}
 		
-		if(addressInformation != null) {
+		if(geoRecord.hasAddressInformation()) {
 			result.append("?q=");
-			result.append(encode(addressInformation));
+			result.append(encode(geoRecord.getAddressInformation()));
 		}
 		
 		return result.toString();
 	}
-	
-
 
 }

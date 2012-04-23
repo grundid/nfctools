@@ -17,27 +17,28 @@
 package org.nfctools.ndef;
 
 /**
- * Encoder exception for determining the source of the exception. 
+ * Decoder exception for determining the source of the exception. 
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
  */
-
-public class NdefEncoderException extends NdefException {
+public class NdefDecoderException extends NdefException {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Record location;
+	private NdefRecord location;
 	
-	public NdefEncoderException(String message, Record location) {
+	public NdefDecoderException(String message) {
+		super(message);
+	}
+	
+	public NdefDecoderException(String message, NdefRecord location) {
 		super(message);
 		
 		this.location = location;
 	}
 
-	public Record getLocation() {
+	public NdefRecord getLocation() {
 		return location;
 	}
-
-	
 }

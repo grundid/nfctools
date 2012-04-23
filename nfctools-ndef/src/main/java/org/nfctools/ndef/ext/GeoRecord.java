@@ -32,9 +32,9 @@ public class GeoRecord extends ExternalTypeRecord {
 
 	public static final String NAMESPACE = "usingnfc.com:geo";
 
-	private double latitude;
-	private double longitude;
-	private double altitude;
+	private Double latitude;
+	private Double longitude;
+	private Double altitude;
 
 	private String addressInformation;
 
@@ -42,42 +42,40 @@ public class GeoRecord extends ExternalTypeRecord {
 	}
 	
 	public GeoRecord(String addressInformation) {
-		this();
 		this.addressInformation = addressInformation;
 	}
 
-	public GeoRecord(double latitude, double longitude) {
-		this();
+	public GeoRecord(Double latitude, Double longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
 
-	public GeoRecord(double latitude, double longitude, double altitude) {
+	public GeoRecord(Double latitude, Double longitude, Double altitude) {
 		this(latitude, longitude);
 		this.altitude = altitude;
 	}
 
-	public double getLatitude() {
+	public Double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(double latitude) {
+	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
 	}
 
-	public double getLongitude() {
+	public Double getLongitude() {
 		return longitude;
 	}
-
-	public void setLongitude(double longitude) {
+	
+	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
 
-	public double getAltitude() {
+	public Double getAltitude() {
 		return altitude;
 	}
 
-	public void setAltitude(double altitude) {
+	public void setAltitude(Double altitude) {
 		this.altitude = altitude;
 	}
 
@@ -89,4 +87,23 @@ public class GeoRecord extends ExternalTypeRecord {
 		this.addressInformation = addressInformation;
 	}
 
+	public boolean hasAddressInformation() {
+		return addressInformation != null;
+	}
+
+	public boolean hasLongitude() {
+		return longitude != null;
+	}
+
+	public boolean hasLatitude() {
+		return latitude != null;
+	}
+
+	public boolean hasAltitude() {
+		return altitude != null;
+	}
+
+	public boolean hasCoordinates() {
+		return latitude != null && longitude != null;
+	}
 }
