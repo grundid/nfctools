@@ -18,6 +18,7 @@ package org.nfctools.utils;
 import java.util.Collection;
 
 import org.nfctools.ndef.NdefListener;
+import org.nfctools.ndef.NdefOperations;
 import org.nfctools.ndef.Record;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,4 +33,17 @@ public class LoggingNdefListener implements NdefListener {
 			log.info(record.toString());
 		}
 	}
+
+	@Override
+	public void onNdefOperations(NdefOperations ndefOperations) {
+		if (ndefOperations.isFormatted()) {
+			if (ndefOperations.hasNdefMessage())
+				onNdefMessages(ndefOperations.readNdefMessage());
+			else
+				log.info("Empty formatted tag. Size: " + ndefOperations.getMaxSize() + " bytes");
+		}
+		else
+			log.info("Empty tag. NOT formatted. Size: " + ndefOperations.getMaxSize() + " bytes");
+	}
+
 }

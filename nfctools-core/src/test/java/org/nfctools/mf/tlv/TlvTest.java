@@ -18,22 +18,22 @@ package org.nfctools.mf.tlv;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 import org.junit.Test;
+import org.nfctools.tags.TagOutputStream;
 
 public class TlvTest {
 
 	@Test
 	public void testTlvWriter() throws Exception {
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		TypeLengthValueWriter writer = new TypeLengthValueWriter(baos);
+		TagOutputStream out = new TagOutputStream(7);
+		TypeLengthValueWriter writer = new TypeLengthValueWriter(out);
 
 		writer.write(new NdefMessageTlv(new byte[] { 0x01, 0x02, 0x03, 0x04 }));
 		writer.close();
 
-		byte[] writtenData = baos.toByteArray();
+		byte[] writtenData = out.getBuffer();
 
 		byte[] expectedData = { 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, (byte)0xFE };
 
@@ -121,13 +121,13 @@ public class TlvTest {
 		expectedData[3] = 0x00;
 		expectedData[1028] = (byte)0xFE;
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		TypeLengthValueWriter writer = new TypeLengthValueWriter(baos);
+		TagOutputStream out = new TagOutputStream(1029);
+		TypeLengthValueWriter writer = new TypeLengthValueWriter(out);
 
 		writer.write(new NdefMessageTlv(largeData));
 		writer.close();
 
-		byte[] writtenData = baos.toByteArray();
+		byte[] writtenData = out.getBuffer();
 
 		assertArrayEquals(expectedData, writtenData);
 

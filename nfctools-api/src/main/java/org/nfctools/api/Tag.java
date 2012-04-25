@@ -15,6 +15,30 @@
  */
 package org.nfctools.api;
 
-public interface Tag extends Target {
+public class Tag {
 
+	private TagType tagType;
+	private byte[] generalBytes;
+
+	public Tag(TagType tagType, byte[] generalBytes) {
+		this.tagType = tagType;
+		this.generalBytes = generalBytes;
+	}
+
+	public byte[] getGeneralBytes() {
+		return generalBytes;
+	}
+
+	public TagType getTagType() {
+		return tagType;
+	}
+
+	public byte[] getId() {
+		throw new RuntimeException("not implemented yet");
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " - " + tagType;
+	}
 }

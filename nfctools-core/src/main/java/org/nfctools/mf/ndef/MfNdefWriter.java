@@ -15,7 +15,6 @@
  */
 package org.nfctools.mf.ndef;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -33,6 +32,7 @@ import org.nfctools.mf.tlv.TypeLengthValueWriter;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefWriter;
 import org.nfctools.ndef.Record;
+import org.nfctools.tags.TagOutputStream;
 import org.nfctools.utils.NfcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,7 @@ public class MfNdefWriter implements NdefWriter<MfCard> {
 			applicationDirectory.deleteApplication(MfNdefConstants.NDEF_APP_ID, deleteKeyValue, new TrailerBlock());
 		}
 
-		byte[] tlvWrappedNdefData = wrapNdefMessageWithTlv(ndefData);
+		byte[] tlvWrappedNdefData = wrapNdefMessageWithTlv(ndefData, applicationDirectory.getMaxContinousSize());
 
 		/*
 		 * The specs states that the TLV terminator can be left out if the message ends with the available space.
@@ -131,17 +131,12 @@ public class MfNdefWriter implements NdefWriter<MfCard> {
 		return trailerBlock;
 	}
 
-	private byte[] wrapNdefMessageWithTlv(byte[] ndefMessage) {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			TypeLengthValueWriter writer = new TypeLengthValueWriter(baos);
-			writer.write(new NdefMessageTlv(ndefMessage));
-			writer.close();
+	private byte[] wrapNdefMessageWithTlv(byte[] ndefMessage, int maxSize) {
+		TagOutputStream out = new TagOutputStream(maxSize);
+		TypeLengthValueWriter writer = new TypeLengthValueWriter(out);
+		writer.write(new NdefMessageTlv(ndefMessage));
+		writer.close();
 
-			return baos.toByteArray();
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		return out.getBuffer();
 	}
 }

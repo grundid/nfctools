@@ -28,7 +28,7 @@ import org.nfctools.mf.ul.MemoryMap;
 
 public class FileMfUlReader {
 
-	public static MemoryMap loadCardFromFile(String fileName) throws IOException {
+	public static MemoryMap loadCardFromFile(String fileName) {
 		Collection<String> lines = readLinesFromFile(fileName);
 
 		MemoryMap memoryMap = new MemoryMap(lines.size());
@@ -50,13 +50,19 @@ public class FileMfUlReader {
 		return memoryMap;
 	}
 
-	private static Collection<String> readLinesFromFile(String fileName) throws IOException {
-		List<String> lines = new ArrayList<String>();
-		BufferedReader br = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(fileName)));
-		while (br.ready()) {
-			lines.add(br.readLine());
+	private static Collection<String> readLinesFromFile(String fileName) {
+		try {
+			List<String> lines = new ArrayList<String>();
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					ClassLoader.getSystemResourceAsStream(fileName)));
+			while (br.ready()) {
+				lines.add(br.readLine());
+			}
+			return lines;
 		}
-		return lines;
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

@@ -1,6 +1,6 @@
 package org.nfctools.mf.tlv;
 
-import org.nfctools.mf.MfUtils;
+import org.nfctools.utils.NfcUtils;
 
 public class AbstractMemoryTlv extends Tlv {
 
@@ -13,17 +13,17 @@ public class AbstractMemoryTlv extends Tlv {
 	}
 
 	public AbstractMemoryTlv(byte[] bytes) {
-		pageAddress = MfUtils.getMostSignificantNibble(bytes[0]);
-		byteOffset = MfUtils.getLeastSignificantNibble(bytes[0]);
+		pageAddress = NfcUtils.getMostSignificantNibble(bytes[0]);
+		byteOffset = NfcUtils.getLeastSignificantNibble(bytes[0]);
 		size = bytes[1];
-		bytesPerPage = MfUtils.getLeastSignificantNibble(bytes[2]);
+		bytesPerPage = NfcUtils.getLeastSignificantNibble(bytes[2]);
 	}
 
 	public byte[] toBytes() {
 		byte[] bytes = new byte[3];
-		bytes[0] = MfUtils.encodeNibbles(pageAddress, byteOffset);
+		bytes[0] = NfcUtils.encodeNibbles(pageAddress, byteOffset);
 		bytes[1] = (byte)size;
-		bytes[2] = MfUtils.encodeNibbles(0, bytesPerPage);
+		bytes[2] = NfcUtils.encodeNibbles(0, bytesPerPage);
 		return bytes;
 	}
 

@@ -121,7 +121,7 @@ public class ArygonReaderWriter implements MfReaderWriter {
 	@Override
 	public void setCardIntoHalt(MfCard card) throws IOException {
 		String targetId = "00";
-		log.debug("Halting Card " + card.getNfcId() + " / TargetId: " + targetId);
+		log.debug("Halting Card " + card.getId() + " / TargetId: " + targetId);
 		nfcReaderWriter.sendMessage(("0h" + targetId).getBytes());
 		ArygonMessage message = nfcReaderWriter.receiveMessage();
 		if (message.hasTamaErrorCode())
@@ -152,7 +152,7 @@ public class ArygonReaderWriter implements MfReaderWriter {
 	public void reselectCard(MfCard card) throws IOException {
 		scanForCard();
 		MfCard newcard = readCard();
-		if (!NfcUtils.isEqualArray(card.getNfcId(), newcard.getNfcId()))
+		if (!NfcUtils.isEqualArray(card.getId(), newcard.getId()))
 			throw new MfException("New card detected. Id does not match. (Expected: " + card + ", got: " + newcard
 					+ ")");
 	}

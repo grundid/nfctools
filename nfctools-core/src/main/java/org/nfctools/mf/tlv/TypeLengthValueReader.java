@@ -53,7 +53,7 @@ public class TypeLengthValueReader implements Iterator<Tlv> {
 						return readNextValue(type);
 					}
 					if (type == TlvConstants.PROPRIETARY_TLV) {
-						readNextValue(type);
+						readNextValue(type); // read and ignore
 					}
 				}
 				throw new NoSuchElementException();

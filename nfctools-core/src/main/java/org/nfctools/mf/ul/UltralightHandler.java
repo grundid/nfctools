@@ -5,11 +5,12 @@ import org.nfctools.mf.block.MfBlock;
 public class UltralightHandler {
 
 	public static boolean isBlank(MfBlock[] blocks) {
-		if (blocks[0].getData()[0] == 0x04) // manufacturer ID
+		if (blocks.length < 5)
+			throw new IllegalArgumentException("need at least 5 blocks");
+		if (blocks[0].getData()[0] == (byte)0x04) // manufacturer ID
 		{
 			if (isStaticallyUnlocked(blocks[2].getData()) && isOTPClear(blocks[3].getData())) {
-				return matchesVersion(blocks[4].getData(), (byte)0x02, (byte)0x00)
-						|| matchesVersion(blocks[4].getData(), (byte)0xff, (byte)0xff);
+				return isUltralight(blocks[4].getData()) || isUltralightC(blocks[4].getData());
 			}
 		}
 		return false;
@@ -27,8 +28,16 @@ public class UltralightHandler {
 		return block[2] == 0 && block[3] == 0;
 	}
 
-	private static boolean matchesVersion(byte[] block, byte major, byte minor) {
-		return block[0] == major && block[1] == minor;
+	public static boolean isUltralight(byte[] block) {
+		return matchesVersion(block, 0xff, 0xff);
+	}
+
+	public static boolean isUltralightC(byte[] block) {
+		return matchesVersion(block, 0x02, 0x00);
+	}
+
+	private static boolean matchesVersion(byte[] block, int major, int minor) {
+		return block[0] == (byte)major && block[1] == (byte)minor;
 	}
 
 	public static boolean isFormatted(MfBlock[] blocks) {
@@ -38,5 +47,4 @@ public class UltralightHandler {
 	private static boolean isCapabilityContainerValid(byte[] block) {
 		return block[0] == (byte)0xE1 && block[1] == (byte)0x10 && block[2] >= (byte)0x06;
 	}
-
 }

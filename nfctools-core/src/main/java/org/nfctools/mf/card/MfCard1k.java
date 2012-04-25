@@ -15,10 +15,12 @@
  */
 package org.nfctools.mf.card;
 
+import org.nfctools.api.TagType;
+
 public class MfCard1k extends MfCard {
 
 	public MfCard1k(byte[] cardId, Object connectionToken) {
-		super(cardId, connectionToken);
+		super(TagType.MIFARE_CLASSIC_1K, cardId, connectionToken);
 	}
 
 	@Override

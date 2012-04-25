@@ -16,38 +16,37 @@
 
 package org.nfctools.mf.tlv;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import org.nfctools.tags.TagOutputStream;
 
 public class TypeLengthValueWriter {
 
-	private OutputStream out;
+	private TagOutputStream out;
 
-	public TypeLengthValueWriter(OutputStream out) {
+	public TypeLengthValueWriter(TagOutputStream out) {
 		this.out = out;
 	}
 
-	public void write(LockControlTlv lockControlTlv) throws IOException {
+	public void write(LockControlTlv lockControlTlv) {
 		out.write(TlvConstants.LOCK_CONTROL_TLV);
 		writeData(lockControlTlv.toBytes());
 	}
 
-	public void write(MemoryControlTlv memoryControlTlv) throws IOException {
+	public void write(MemoryControlTlv memoryControlTlv) {
 		out.write(TlvConstants.MEMORY_CONTROL_TLV);
 		writeData(memoryControlTlv.toBytes());
 	}
 
-	public void write(NdefMessageTlv ndefMessageTlv) throws IOException {
+	public void write(NdefMessageTlv ndefMessageTlv) {
 		byte[] data = ndefMessageTlv.getNdefMessage();
 		out.write(TlvConstants.NDEF_TLV);
 		writeData(data);
 	}
 
-	public void writeNullTlv() throws IOException {
+	public void writeNullTlv() {
 		out.write(TlvConstants.NULL_TLV);
 	}
 
-	private void writeData(byte[] data) throws IOException {
+	private void writeData(byte[] data) {
 		if (data.length <= 0xFE) {
 			out.write(data.length);
 		}
@@ -57,13 +56,17 @@ public class TypeLengthValueWriter {
 			out.write(data.length & 0xFF);
 		}
 		else {
-			throw new IOException("data too long");
+			throw new IllegalArgumentException("data too long");
 		}
 
 		out.write(data, 0, data.length);
 	}
 
-	public void close() throws IOException {
-		out.write(TlvConstants.TERMINATOR_TLV);
+	public void close() {
+		if (out.getRemainingSize() > 0) {
+			out.write(TlvConstants.TERMINATOR_TLV);
+			while (out.getRemainingSize() > 0)
+				writeNullTlv();
+		}
 	}
 }

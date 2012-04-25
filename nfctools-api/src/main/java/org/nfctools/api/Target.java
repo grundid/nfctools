@@ -19,6 +19,7 @@ package org.nfctools.api;
  * A NFC Target.
  * 
  */
+@Deprecated
 public interface Target {
 
 	int getMode();

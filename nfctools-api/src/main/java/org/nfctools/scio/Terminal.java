@@ -19,27 +19,38 @@ import java.io.IOException;
 
 import javax.smartcardio.CardTerminal;
 
+import org.nfctools.api.TagListener;
 import org.nfctools.io.NfcDevice;
 import org.nfctools.ndef.NdefListener;
 import org.nfctools.nfcip.NFCIPConnectionListener;
 
 public interface Terminal extends NfcDevice {
 
-	boolean canHandle(String terminalName);
-
-	String getTerminalName();
-
-	void initInitiatorDep() throws IOException;
-
-	void initTargetDep() throws IOException;
-
-	void setCardTerminal(CardTerminal cardTerminal);
-
-	CardTerminal getCardTerminal();
+	void registerTagListener(TagListener tagListener);
 
 	void setStatusListener(TerminalStatusListener statusListener);
 
+	@Deprecated
+	boolean canHandle(String terminalName);
+
+	@Deprecated
+	String getTerminalName();
+
+	@Deprecated
+	void initInitiatorDep() throws IOException;
+
+	@Deprecated
+	void initTargetDep() throws IOException;
+
+	@Deprecated
+	void setCardTerminal(CardTerminal cardTerminal);
+
+	@Deprecated
+	CardTerminal getCardTerminal();
+
+	@Deprecated
 	void setNfcipConnectionListener(NFCIPConnectionListener nfcipConnectionListener);
 
+	@Deprecated
 	void setNdefListener(NdefListener ndefListener);
 }

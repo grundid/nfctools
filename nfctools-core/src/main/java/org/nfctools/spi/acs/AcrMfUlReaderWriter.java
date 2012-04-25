@@ -17,42 +17,32 @@ package org.nfctools.spi.acs;
 
 import java.io.IOException;
 
-import javax.smartcardio.Card;
-import javax.smartcardio.CardChannel;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
-
+import org.nfctools.api.ApduTag;
 import org.nfctools.mf.MfException;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.ul.DataBlock;
 import org.nfctools.mf.ul.MfUlReaderWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.nfctools.scio.Command;
+import org.nfctools.scio.Response;
 
-@SuppressWarnings("restriction")
 public class AcrMfUlReaderWriter implements MfUlReaderWriter {
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
+	private ApduTag tag;
+
+	public AcrMfUlReaderWriter(ApduTag tag) {
+		this.tag = tag;
+	}
 
 	@Override
-	public MfBlock[] readBlock(Card card, int startPage, int pagesToRead) throws IOException {
-		CardChannel cardChannel = card.getBasicChannel();
+	public MfBlock[] readBlock(int startPage, int pagesToRead) throws IOException {
 		MfBlock[] returnBlocks = new MfBlock[pagesToRead];
 		for (int currentPage = 0; currentPage < pagesToRead; currentPage++) {
 			int pageNumber = startPage + currentPage;
 
-			CommandAPDU readBlock = new CommandAPDU(Apdu.CLS_PTS, Apdu.INS_READ_BINARY, 0x00, pageNumber, 4);
-			ResponseAPDU readBlockResponse;
-			try {
-				readBlockResponse = cardChannel.transmit(readBlock);
-				if (!Apdu.isSuccess(readBlockResponse)) {
-					throw new MfException("Reading block failed. Page: " + pageNumber + ", Response: "
-							+ readBlockResponse);
-				}
-			}
-			catch (CardException e) {
-				throw new IOException(e);
+			Command readBlock = new Command(Apdu.INS_READ_BINARY, 0x00, pageNumber, 4);
+			Response readBlockResponse = tag.transmit(readBlock);
+			if (!Apdu.isSuccess(readBlockResponse)) {
+				throw new MfException("Reading block failed. Page: " + pageNumber + ", Response: " + readBlockResponse);
 			}
 			returnBlocks[currentPage] = new DataBlock(readBlockResponse.getData());
 		}
@@ -60,23 +50,15 @@ public class AcrMfUlReaderWriter implements MfUlReaderWriter {
 	}
 
 	@Override
-	public void writeBlock(Card card, int startPage, MfBlock... mfBlock) throws IOException {
-		CardChannel cardChannel = card.getBasicChannel();
+	public void writeBlock(int startPage, MfBlock... mfBlock) throws IOException {
 		for (int currentBlock = 0; currentBlock < mfBlock.length; currentBlock++) {
 			int blockNumber = startPage + currentBlock;
 
-			CommandAPDU writeBlock = new CommandAPDU(Apdu.CLS_PTS, Apdu.INS_UPDATE_BINARY, 0x00, blockNumber,
-					mfBlock[currentBlock].getData());
-			ResponseAPDU writeBlockResponse;
-			try {
-				writeBlockResponse = cardChannel.transmit(writeBlock);
-				if (!Apdu.isSuccess(writeBlockResponse)) {
-					throw new MfException("Writing block failed. Page: " + blockNumber + ", Response: "
-							+ writeBlockResponse);
-				}
-			}
-			catch (CardException e) {
-				throw new IOException(e);
+			Command writeBlock = new Command(Apdu.INS_UPDATE_BINARY, 0x00, blockNumber, mfBlock[currentBlock].getData());
+			Response writeBlockResponse = tag.transmit(writeBlock);
+			if (!Apdu.isSuccess(writeBlockResponse)) {
+				throw new MfException("Writing block failed. Page: " + blockNumber + ", Response: "
+						+ writeBlockResponse);
 			}
 		}
 	}

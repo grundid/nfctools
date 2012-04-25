@@ -15,13 +15,15 @@
  */
 package org.nfctools.mf.card;
 
+import org.nfctools.api.TagType;
+
 public class MfCard4k extends MfCard {
 
 	private final int FOUR_BLOCK_SECTORS = 32;
 	private final int SIXTEEN_BLOCK_SECTORS = 8;
 
 	public MfCard4k(byte[] cardId, Object connectionToken) {
-		super(cardId, connectionToken);
+		super(TagType.MIFARE_CLASSIC_4K, cardId, connectionToken);
 	}
 
 	@Override

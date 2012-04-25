@@ -1,6 +1,7 @@
-package org.nfctools.tags;
+package org.nfctools.ndef;
 
-import org.nfctools.ndef.NdefMessage;
+import java.util.List;
+
 
 /**
  * Some methods are inspired by the Ndef/NdefFormatable classes from the Android Project.
@@ -19,17 +20,7 @@ public interface NdefOperations {
 
 	boolean hasNdefMessage();
 
-	boolean isFormated();
-
-	/**
-	 * Read the current NdefMessage on this tag.
-	 */
-	NdefMessage getNdefMessage();
-
-	/**
-	 * Overwrite the NdefMessage on this tag.
-	 */
-	void writeNdefMessage(NdefMessage ndefMessage);
+	boolean isFormatted();
 
 	/**
 	 * Determine if the tag is writable.
@@ -37,17 +28,32 @@ public interface NdefOperations {
 	boolean isWritable();
 
 	/**
+	 * Read the current NdefMessage on this tag.
+	 */
+	List<Record> readNdefMessage();
+
+	/**
+	 * Overwrite the NdefMessage on this tag.
+	 */
+	void writeNdefMessage(Record... records);
+
+	/**
 	 * Make a tag read-only.
 	 */
-	boolean makeReadOnly();
+	void makeReadOnly();
+
+	/**
+	 * Format a tag as NDEF.
+	 */
+	void format();
 
 	/**
 	 * Format a tag as NDEF, and write a NdefMessage.
 	 */
-	void format(NdefMessage ndefMessage);
+	void format(Record... records);
 
 	/**
 	 * Formats a tag as NDEF, write a NdefMessage, and make read-only.
 	 */
-	void formatReadOnly(NdefMessage ndefMessage);
+	void formatReadOnly(Record... records);
 }

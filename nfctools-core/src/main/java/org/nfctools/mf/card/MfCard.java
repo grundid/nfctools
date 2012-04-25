@@ -16,15 +16,15 @@
 package org.nfctools.mf.card;
 
 import org.nfctools.api.Tag;
+import org.nfctools.api.TagType;
 import org.nfctools.utils.NfcUtils;
 
-public abstract class MfCard implements Tag {
+public abstract class MfCard extends Tag {
 
 	private Object connectionToken;
-	private byte[] nfcId;
 
-	protected MfCard(byte[] nfcId, Object connectionToken) {
-		this.nfcId = nfcId;
+	protected MfCard(TagType tagType, byte[] generalBytes, Object connectionToken) {
+		super(tagType, generalBytes);
 		this.connectionToken = connectionToken;
 	}
 
@@ -44,27 +44,12 @@ public abstract class MfCard implements Tag {
 		return blockId == getBlocksPerSector(sectorId) - 1;
 	}
 
-	@Override
-	public int getMode() {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public byte[] getNfcId() {
-		return nfcId;
-	}
-
-	@Override
-	public byte[] getGeneralBytes() {
-		return new byte[0];
-	}
-
 	public Object getConnectionToken() {
 		return connectionToken;
 	}
 
-	public String getCardIdAsHex() {
-		return NfcUtils.convertBinToASCII(nfcId);
+	private String getCardIdAsHex() {
+		return NfcUtils.convertBinToASCII(getGeneralBytes());
 	}
 
 	@Override

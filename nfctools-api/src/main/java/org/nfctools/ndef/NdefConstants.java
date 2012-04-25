@@ -57,6 +57,8 @@ public class NdefConstants {
 
 	public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
+	public static final byte[] EMPTY_NDEF_MESSAGE = { (byte)0xD0, 0x00, 0x00 };
+
 	public static final byte TNF_EMPTY = 0;
 	public static final byte TNF_WELL_KNOWN = 1;
 	public static final byte TNF_MIME_MEDIA = 2;

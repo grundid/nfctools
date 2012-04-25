@@ -29,15 +29,4 @@ public class MfUtils {
 				transportTrailer);
 	}
 
-	public static int getLeastSignificantNibble(byte data) {
-		return data & 0x0F;
-	}
-
-	public static int getMostSignificantNibble(byte data) {
-		return (data & 0xF0) >> 4;
-	}
-
-	public static byte encodeNibbles(int mostSignificantNibble, int leastSignificantNibble) {
-		return (byte)((mostSignificantNibble & 0x0F) << 4 | (leastSignificantNibble & 0x0F));
-	}
 }

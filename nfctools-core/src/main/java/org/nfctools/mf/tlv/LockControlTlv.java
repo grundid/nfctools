@@ -1,6 +1,6 @@
 package org.nfctools.mf.tlv;
 
-import org.nfctools.mf.MfUtils;
+import org.nfctools.utils.NfcUtils;
 
 public class LockControlTlv extends AbstractMemoryTlv {
 
@@ -11,13 +11,13 @@ public class LockControlTlv extends AbstractMemoryTlv {
 
 	public LockControlTlv(byte[] bytes) {
 		super(bytes);
-		bytesLockedPerLockBit = MfUtils.getMostSignificantNibble(bytes[2]);
+		bytesLockedPerLockBit = NfcUtils.getMostSignificantNibble(bytes[2]);
 	}
 
 	@Override
 	public byte[] toBytes() {
 		byte[] bytes = super.toBytes();
-		bytes[2] = MfUtils.encodeNibbles(bytesLockedPerLockBit, bytesPerPage);
+		bytes[2] = NfcUtils.encodeNibbles(bytesLockedPerLockBit, bytesPerPage);
 		return bytes;
 	}
 

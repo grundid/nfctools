@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
 
+import org.nfctools.api.TagListener;
 import org.nfctools.nfcip.NFCIPConnection;
 import org.nfctools.scio.AbstractTerminal;
 import org.nfctools.scio.TerminalStatus;
@@ -35,6 +36,12 @@ public class SclTerminal extends AbstractTerminal {
 	@Override
 	public boolean canHandle(String terminalName) {
 		return terminalName.contains("SCL3711");
+	}
+
+	@Override
+	public void registerTagListener(TagListener tagListener) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override

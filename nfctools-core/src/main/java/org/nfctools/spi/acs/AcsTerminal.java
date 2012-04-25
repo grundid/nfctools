@@ -21,6 +21,7 @@ import java.util.List;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
 
+import org.nfctools.api.TagListener;
 import org.nfctools.llcp.LlcpConstants;
 import org.nfctools.mf.MfException;
 import org.nfctools.mf.MfReaderWriter;
@@ -42,9 +43,20 @@ public class AcsTerminal extends AbstractTerminal {
 
 	private MfReaderWriter mfReaderWriter;
 
+	private Thread scanningThread;
+
 	@Override
 	public boolean canHandle(String terminalName) {
 		return terminalName.contains("ACS ACR122");
+	}
+
+	@Override
+	public void registerTagListener(TagListener tagListener) {
+		InitiatorTerminalTagScanner tagScanner = new InitiatorTerminalTagScanner(cardTerminal, statusListener,
+				tagListener);
+		scanningThread = new Thread(tagScanner);
+		scanningThread.setDaemon(true);
+		scanningThread.start();
 	}
 
 	@Override
