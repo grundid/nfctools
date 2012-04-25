@@ -26,12 +26,6 @@ package org.nfctools.ndef.ext;
 
 public class GeoRecord extends ExternalTypeRecord {
 
-	/**
-	 * A namespace indicating an Geo Record.
-	 */
-
-	public static final String NAMESPACE = "usingnfc.com:geo";
-
 	private Double latitude;
 	private Double longitude;
 	private Double altitude;
@@ -40,7 +34,7 @@ public class GeoRecord extends ExternalTypeRecord {
 
 	public GeoRecord() {
 	}
-	
+
 	public GeoRecord(String addressInformation) {
 		this.addressInformation = addressInformation;
 	}
@@ -66,7 +60,7 @@ public class GeoRecord extends ExternalTypeRecord {
 	public Double getLongitude() {
 		return longitude;
 	}
-	
+
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
@@ -111,16 +105,10 @@ public class GeoRecord extends ExternalTypeRecord {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime
-				* result
-				+ ((addressInformation == null) ? 0 : addressInformation
-						.hashCode());
-		result = prime * result
-				+ ((altitude == null) ? 0 : altitude.hashCode());
-		result = prime * result
-				+ ((latitude == null) ? 0 : latitude.hashCode());
-		result = prime * result
-				+ ((longitude == null) ? 0 : longitude.hashCode());
+		result = prime * result + ((addressInformation == null) ? 0 : addressInformation.hashCode());
+		result = prime * result + ((altitude == null) ? 0 : altitude.hashCode());
+		result = prime * result + ((latitude == null) ? 0 : latitude.hashCode());
+		result = prime * result + ((longitude == null) ? 0 : longitude.hashCode());
 		return result;
 	}
 
@@ -132,29 +120,32 @@ public class GeoRecord extends ExternalTypeRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GeoRecord other = (GeoRecord) obj;
+		GeoRecord other = (GeoRecord)obj;
 		if (addressInformation == null) {
 			if (other.addressInformation != null)
 				return false;
-		} else if (!addressInformation.equals(other.addressInformation))
+		}
+		else if (!addressInformation.equals(other.addressInformation))
 			return false;
 		if (altitude == null) {
 			if (other.altitude != null)
 				return false;
-		} else if (!altitude.equals(other.altitude))
+		}
+		else if (!altitude.equals(other.altitude))
 			return false;
 		if (latitude == null) {
 			if (other.latitude != null)
 				return false;
-		} else if (!latitude.equals(other.latitude))
+		}
+		else if (!latitude.equals(other.latitude))
 			return false;
 		if (longitude == null) {
 			if (other.longitude != null)
 				return false;
-		} else if (!longitude.equals(other.longitude))
+		}
+		else if (!longitude.equals(other.longitude))
 			return false;
 		return true;
 	}
-	
-	
+
 }

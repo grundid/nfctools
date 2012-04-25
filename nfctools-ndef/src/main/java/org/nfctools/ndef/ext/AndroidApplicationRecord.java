@@ -26,24 +26,19 @@ public class AndroidApplicationRecord extends ExternalTypeRecord {
 
 	private static final String JAVA_PACKAGE_CONVENSION = "^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$"; // http://checkstyle.sourceforge.net/config_naming.html
 
-	/**
-	 * A namespace indicating an Android Application Record.
-	 */
-	public static final String NAMESPACE = "android.com:pkg";
-	
 	private String packageName;
 
 	public AndroidApplicationRecord(String packageName) {
 		this.packageName = packageName;
 	}
-	
+
 	public AndroidApplicationRecord() {
 	}
 
 	public boolean hasPackageName() {
 		return packageName != null;
 	}
-	
+
 	public boolean matchesNamingConvension() {
 		return packageName.matches(JAVA_PACKAGE_CONVENSION);
 	}
@@ -52,8 +47,7 @@ public class AndroidApplicationRecord extends ExternalTypeRecord {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((packageName == null) ? 0 : packageName.hashCode());
+		result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
 		return result;
 	}
 
@@ -65,11 +59,12 @@ public class AndroidApplicationRecord extends ExternalTypeRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AndroidApplicationRecord other = (AndroidApplicationRecord) obj;
+		AndroidApplicationRecord other = (AndroidApplicationRecord)obj;
 		if (packageName == null) {
 			if (other.packageName != null)
 				return false;
-		} else if (!packageName.equals(other.packageName))
+		}
+		else if (!packageName.equals(other.packageName))
 			return false;
 		return true;
 	}
@@ -81,5 +76,5 @@ public class AndroidApplicationRecord extends ExternalTypeRecord {
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
 	}
-	
+
 }

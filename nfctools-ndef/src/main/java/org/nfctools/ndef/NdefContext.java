@@ -15,9 +15,6 @@
  */
 package org.nfctools.ndef;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.nfctools.ndef.ext.AndroidApplicationRecord;
 import org.nfctools.ndef.ext.AndroidApplicationRecordDecoder;
 import org.nfctools.ndef.ext.AndroidApplicationRecordEncoder;
@@ -28,7 +25,6 @@ import org.nfctools.ndef.ext.ExternalTypeRecordConfig;
 import org.nfctools.ndef.ext.GeoRecord;
 import org.nfctools.ndef.ext.GeoRecordDecoder;
 import org.nfctools.ndef.ext.GeoRecordEncoder;
-import org.nfctools.ndef.ext.UnsupportedExternalTypeRecord;
 import org.nfctools.ndef.wkt.WellKnownRecordConfig;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
@@ -122,8 +118,9 @@ public class NdefContext {
 				new CollisionResolutionRecordEncoder(), new CollisionResolutionRecordDecoder());
 
 		// Known External Type Records
-		registerExternalType(AndroidApplicationRecord.NAMESPACE, AndroidApplicationRecord.class, new AndroidApplicationRecordEncoder(), new AndroidApplicationRecordDecoder());
-		registerExternalType(GeoRecord.NAMESPACE, GeoRecord.class, new GeoRecordEncoder(), new GeoRecordDecoder());
+		registerExternalType("android.com:pkg", AndroidApplicationRecord.class, new AndroidApplicationRecordEncoder(),
+				new AndroidApplicationRecordDecoder());
+		registerExternalType("usingnfc.com:geo", GeoRecord.class, new GeoRecordEncoder(), new GeoRecordDecoder());
 
 	}
 
@@ -134,8 +131,8 @@ public class NdefContext {
 		ndefRecordDecoder.registerWellKnownRecordConfig(config);
 		ndefRecordEncoder.registerWellKnownRecordConfig(config);
 	}
-	
-	public static void registerExternalType(String namespace, Class<? extends ExternalTypeRecord> recordClass, 
+
+	public static void registerExternalType(String namespace, Class<? extends ExternalTypeRecord> recordClass,
 			ExternalTypeContentEncoder payloadEncoder, ExternalTypeContentDecoder payloadDecoder) {
 		ExternalTypeRecordConfig config = new ExternalTypeRecordConfig(namespace, recordClass, payloadEncoder,
 				payloadDecoder);
