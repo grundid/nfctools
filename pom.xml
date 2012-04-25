@@ -109,6 +109,10 @@
 				<version>1.9.0</version>
 				<configuration>
 					<header>etc/license-header.txt</header>
+					<validHeaders>
+						<validHeader>etc/license-header.txt</validHeader>
+						<validHeader>etc/license-header-2011.txt</validHeader>
+					</validHeaders>
 					<aggregate>true</aggregate>
 					<strictCheck>true</strictCheck>
 					<includes>
