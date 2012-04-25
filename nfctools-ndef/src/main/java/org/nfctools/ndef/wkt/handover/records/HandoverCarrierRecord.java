@@ -19,7 +19,7 @@ package org.nfctools.ndef.wkt.handover.records;
 import java.util.Arrays;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.ext.ExternalTypeRecord;
+import org.nfctools.ndef.ext.UnsupportedExternalTypeRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 /**
@@ -76,7 +76,7 @@ public class HandoverCarrierRecord extends WellKnownRecord {
 	 */
 	private byte[] carrierData;
 
-	public HandoverCarrierRecord(CarrierTypeFormat carrierTypeFormat, ExternalTypeRecord carrierType, byte[] carrierData) {
+	public HandoverCarrierRecord(CarrierTypeFormat carrierTypeFormat, UnsupportedExternalTypeRecord carrierType, byte[] carrierData) {
 		this.carrierTypeFormat = carrierTypeFormat;
 		this.carrierType = carrierType;
 		this.carrierData = carrierData;

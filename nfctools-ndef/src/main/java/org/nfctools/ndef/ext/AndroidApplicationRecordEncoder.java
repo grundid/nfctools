@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Adrian Stabiszewski, as@nfctools.org
+ * Copyright 2011-2012 Adrian Stabiszewski, as@nfctools.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef;
+package org.nfctools.ndef.ext;
+
+import org.nfctools.ndef.NdefEncoderException;
 
 /**
- * Encoder exception for determining the source of the exception. 
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
  */
+public class AndroidApplicationRecordEncoder implements ExternalTypeContentEncoder {
 
-public class NdefEncoderException extends NdefException {
-
-	private static final long serialVersionUID = 1L;
-	
-	private Record location;
-	
-	public NdefEncoderException(String message, Record location) {
-		super(message);
+	@Override
+	public String encodeContent(ExternalTypeRecord externalType) {
 		
-		this.location = location;
+		AndroidApplicationRecord androidApplicationRecord = (AndroidApplicationRecord)externalType;
+		
+		if(!androidApplicationRecord.hasPackageName()) {
+			throw new NdefEncoderException("Expected package name ", androidApplicationRecord);
+		}
+
+		return androidApplicationRecord.getPackageName();
 	}
 
-	public Record getLocation() {
-		return location;
-	}
-
-	
 }

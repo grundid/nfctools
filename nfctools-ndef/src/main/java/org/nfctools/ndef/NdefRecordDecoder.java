@@ -21,6 +21,7 @@ import java.util.List;
 import org.nfctools.ndef.auri.AbsoluteUriRecordDecoder;
 import org.nfctools.ndef.empty.EmptyRecordDecoder;
 import org.nfctools.ndef.ext.ExternalTypeDecoder;
+import org.nfctools.ndef.ext.ExternalTypeRecordConfig;
 import org.nfctools.ndef.mime.MimeRecordDecoder;
 import org.nfctools.ndef.unknown.UnknownRecordDecoder;
 import org.nfctools.ndef.unknown.unsupported.UnsupportedRecord;
@@ -32,13 +33,15 @@ public class NdefRecordDecoder {
 
 	private WellKnownRecordDecoder wellKnownRecordDecoder = new WellKnownRecordDecoder();
 
+	private ExternalTypeDecoder externalTypeDecoder = new ExternalTypeDecoder();
+	
 	private List<RecordDecoder<? extends Record>> recordDecoders = new ArrayList<RecordDecoder<? extends Record>>();
-
+	
 	public NdefRecordDecoder() {
 		recordDecoders.add(wellKnownRecordDecoder);
 		recordDecoders.add(new AbsoluteUriRecordDecoder());
 		recordDecoders.add(new MimeRecordDecoder());
-		recordDecoders.add(new ExternalTypeDecoder());
+		recordDecoders.add(externalTypeDecoder);
 		recordDecoders.add(new EmptyRecordDecoder());
 		recordDecoders.add(new UnknownRecordDecoder());
 	}
@@ -62,7 +65,13 @@ public class NdefRecordDecoder {
 		return new UnsupportedRecord(ndefRecord);
 	}
 
-	public void registerRecordConfig(WellKnownRecordConfig recordconfig) {
+	public void registerWellKnownRecordConfig(WellKnownRecordConfig recordconfig) {
 		wellKnownRecordDecoder.addRecordConfig(recordconfig);
 	}
+
+	public void registerExternalTypeRecordConfig(ExternalTypeRecordConfig recordconfig) {
+		externalTypeDecoder.addRecordConfig(recordconfig);
+	}
+
+	
 }

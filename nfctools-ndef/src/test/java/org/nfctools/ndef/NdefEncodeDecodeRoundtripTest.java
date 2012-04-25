@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.nfctools.ndef.auri.AbsoluteUriRecord;
 import org.nfctools.ndef.empty.EmptyRecord;
 import org.nfctools.ndef.ext.AndroidApplicationRecord;
+import org.nfctools.ndef.ext.GeoRecord;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.TextMimeRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
@@ -87,6 +88,9 @@ public class NdefEncodeDecodeRoundtripTest {
 	private static SignatureRecord signatureRecordMarker = new SignatureRecord(SignatureRecord.SignatureType.NOT_PRESENT);
 	
 	private static UnsupportedRecord unsupportedRecord = new UnsupportedRecord(NdefConstants.TNF_RESERVED, "abc".getBytes(), "id".getBytes(), "DEF".getBytes());
+	private static GeoRecord addressInformationGeoRecord = new GeoRecord("Oslo");
+	private static GeoRecord coordinatesGeoRecord = new GeoRecord(59.949444, 10.756389);
+	private static GeoRecord coordinatesAltitudeGeoRecord = new GeoRecord(59.949444, 10.756389, 100.0);
 	
 	public static Record[] records = new Record[] { absoluteUriRecord, actionRecord, androidApplicationRecord,
 			emptyRecord, textMimeRecord, binaryMimeRecord, smartPosterRecord, textRecord, unknownRecord, uriRecord,
@@ -95,8 +99,10 @@ public class NdefEncodeDecodeRoundtripTest {
 			
 			signatureRecordMarker, signatureRecord,
 			
-			unsupportedRecord
+			unsupportedRecord,
+			addressInformationGeoRecord, coordinatesGeoRecord, coordinatesAltitudeGeoRecord
 			};
+
 
 	static {
 		// handover request record requires at least on alternative carrier record
@@ -133,8 +139,6 @@ public class NdefEncodeDecodeRoundtripTest {
 			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
 
 			if(!record.equals(decodedRecord)) {
-				record.equals(decodedRecord);
-				
 				fail(record.getClass().getName());
 			}
 		}

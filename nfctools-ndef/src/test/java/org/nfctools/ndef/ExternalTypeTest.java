@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.nfctools.ndef.ext.ExternalTypeDecoder;
 import org.nfctools.ndef.ext.ExternalTypeEncoder;
-import org.nfctools.ndef.ext.ExternalTypeRecord;
+import org.nfctools.ndef.ext.UnsupportedExternalTypeRecord;
 
 public class ExternalTypeTest {
 
@@ -30,7 +30,7 @@ public class ExternalTypeTest {
 
 	@Test
 	public void testExternalTypeEncoder() throws Exception {
-		ExternalTypeRecord record = new ExternalTypeRecord("android.com:pkg", "demo.package");
+		UnsupportedExternalTypeRecord record = new UnsupportedExternalTypeRecord("android.com:pkg", "demo.package");
 		NdefRecord ndefRecord = encoder.encodeRecord(record, null);
 
 		assertEquals(NdefConstants.TNF_EXTERNAL_TYPE, ndefRecord.getTnf());
@@ -41,14 +41,15 @@ public class ExternalTypeTest {
 
 	@Test
 	public void testExternalTypeDecoder() throws Exception {
-		NdefRecord record = new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, "android.com:pkg".getBytes(), new byte[0],
+		String namespace = "nfctools.org";
+		NdefRecord record = new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, namespace.getBytes(), new byte[0],
 				"content".getBytes());
 
 		assertTrue(decoder.canDecode(record));
 
-		ExternalTypeRecord externalType = decoder.decodeRecord(record, null);
+		UnsupportedExternalTypeRecord externalType = (UnsupportedExternalTypeRecord) decoder.decodeRecord(record, null);
 
-		assertEquals("android.com:pkg", externalType.getNamespace());
+		assertEquals(namespace, externalType.getNamespace());
 		assertEquals("content", externalType.getContent());
 
 	}

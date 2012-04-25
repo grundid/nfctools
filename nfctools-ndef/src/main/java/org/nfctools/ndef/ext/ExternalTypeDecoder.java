@@ -15,13 +15,17 @@
  */
 package org.nfctools.ndef.ext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessageDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 
 public class ExternalTypeDecoder extends AbstractRecordDecoder<ExternalTypeRecord> {
+
+	private Map<String, ExternalTypeRecordConfig> recordDecoders = new HashMap<String, ExternalTypeRecordConfig>();
 
 	public ExternalTypeDecoder() {
 		super(NdefConstants.TNF_EXTERNAL_TYPE);
@@ -31,27 +35,17 @@ public class ExternalTypeDecoder extends AbstractRecordDecoder<ExternalTypeRecor
 	protected ExternalTypeRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
 		String namespace = new String(ndefRecord.getType(), NdefConstants.DEFAULT_CHARSET);
 		String content = new String(ndefRecord.getPayload(), NdefConstants.DEFAULT_CHARSET);
-		ExternalTypeRecord record = null;
-		if (NdefContext.getKnownExternalTypesByNamespace().containsKey(namespace)) {
-			record = createKnownExternalType(namespace, content);
+		
+		ExternalTypeRecordConfig config = recordDecoders.get(namespace);
+		if(config != null) {
+			return config.getContentDecoder().decodeContent(content);
+		} else {
+			// fall back to unsupported type
+			return new UnsupportedExternalTypeRecord(namespace, content);
 		}
-		else
-			record = new ExternalTypeRecord(namespace, content);
-		return record;
 	}
 
-	private ExternalTypeRecord createKnownExternalType(String namespace, String content) {
-
-		try {
-			Class<? extends ExternalTypeRecord> recordClass = NdefContext.getKnownExternalTypesByNamespace().get(
-					namespace);
-			ExternalTypeRecord record = recordClass.newInstance();
-			record.setContent(content);
-			record.setNamespace(namespace);
-			return record;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	public void addRecordConfig(ExternalTypeRecordConfig config) {
+		recordDecoders.put(config.getNamespace(), config);
 	}
 }

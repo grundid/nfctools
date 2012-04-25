@@ -15,11 +15,16 @@
  */
 package org.nfctools.ndef;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.nfctools.ndef.ext.AndroidApplicationRecord;
+import org.nfctools.ndef.ext.AndroidApplicationRecordDecoder;
+import org.nfctools.ndef.ext.AndroidApplicationRecordEncoder;
+import org.nfctools.ndef.ext.ExternalTypeContentDecoder;
+import org.nfctools.ndef.ext.ExternalTypeContentEncoder;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
+import org.nfctools.ndef.ext.ExternalTypeRecordConfig;
+import org.nfctools.ndef.ext.GeoRecord;
+import org.nfctools.ndef.ext.GeoRecordDecoder;
+import org.nfctools.ndef.ext.GeoRecordEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordConfig;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
@@ -81,8 +86,6 @@ public class NdefContext {
 	private static NdefMessageEncoder ndefMessageEncoder = new NdefMessageEncoder(ndefRecordEncoder);
 	private static NdefMessageDecoder ndefMessageDecoder = new NdefMessageDecoder(ndefRecordDecoder);
 
-	private static final Map<String, Class<? extends ExternalTypeRecord>> knownExternalTypesByNamespace = new HashMap<String, Class<? extends ExternalTypeRecord>>();
-
 	static {
 		registerWellKnownRecord(new RecordType("act"), ActionRecord.class, new ActionRecordEncoder(),
 				new ActionRecordDecoder());
@@ -115,7 +118,9 @@ public class NdefContext {
 				new CollisionResolutionRecordEncoder(), new CollisionResolutionRecordDecoder());
 
 		// Known External Type Records
-		knownExternalTypesByNamespace.put(AndroidApplicationRecord.TYPE, AndroidApplicationRecord.class);
+		registerExternalType("android.com:pkg", AndroidApplicationRecord.class, new AndroidApplicationRecordEncoder(),
+				new AndroidApplicationRecordDecoder());
+		registerExternalType("usingnfc.com:geo", GeoRecord.class, new GeoRecordEncoder(), new GeoRecordDecoder());
 
 	}
 
@@ -123,8 +128,16 @@ public class NdefContext {
 			WellKnownRecordPayloadEncoder payloadEncoder, WellKnownRecordPayloadDecoder payloadDecoder) {
 		WellKnownRecordConfig config = new WellKnownRecordConfig(recordType, recordClass, payloadEncoder,
 				payloadDecoder);
-		ndefRecordDecoder.registerRecordConfig(config);
-		ndefRecordEncoder.registerRecordConfig(config);
+		ndefRecordDecoder.registerWellKnownRecordConfig(config);
+		ndefRecordEncoder.registerWellKnownRecordConfig(config);
+	}
+
+	public static void registerExternalType(String namespace, Class<? extends ExternalTypeRecord> recordClass,
+			ExternalTypeContentEncoder payloadEncoder, ExternalTypeContentDecoder payloadDecoder) {
+		ExternalTypeRecordConfig config = new ExternalTypeRecordConfig(namespace, recordClass, payloadEncoder,
+				payloadDecoder);
+		ndefRecordDecoder.registerExternalTypeRecordConfig(config);
+		ndefRecordEncoder.registerExternalTypeRecordConfig(config);
 	}
 
 	public static NdefRecordDecoder getNdefRecordDecoder() {
@@ -143,7 +156,4 @@ public class NdefContext {
 		return ndefMessageEncoder;
 	}
 
-	public static Map<String, Class<? extends ExternalTypeRecord>> getKnownExternalTypesByNamespace() {
-		return knownExternalTypesByNamespace;
-	}
 }

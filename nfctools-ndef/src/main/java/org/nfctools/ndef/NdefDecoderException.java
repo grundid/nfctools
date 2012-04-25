@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package org.nfctools.ndef.wkt.handover.decoder;
-
-import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
-import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
-import org.nfctools.ndef.wkt.records.WellKnownRecord;
+package org.nfctools.ndef;
 
 /**
+ * Decoder exception for determining the source of the exception. 
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
  */
+public class NdefDecoderException extends NdefException {
 
-public class CollisionResolutionRecordDecoder implements WellKnownRecordPayloadDecoder {
-
-	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
-
-		CollisionResolutionRecord collisionResolutionRecord = new CollisionResolutionRecord();
-
-		collisionResolutionRecord.setRandomNumber(((payload[0] & 0xFF) << 8) | (payload[1] & 0xFF));
-
-		return collisionResolutionRecord;
+	private static final long serialVersionUID = 1L;
+	
+	private NdefRecord location;
+	
+	public NdefDecoderException(String message) {
+		super(message);
+	}
+	
+	public NdefDecoderException(String message, NdefRecord location) {
+		super(message);
+		
+		this.location = location;
 	}
 
+	public NdefRecord getLocation() {
+		return location;
+	}
 }
