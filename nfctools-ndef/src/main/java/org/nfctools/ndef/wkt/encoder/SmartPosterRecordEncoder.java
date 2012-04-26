@@ -15,10 +15,11 @@
  */
 package org.nfctools.ndef.wkt.encoder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
@@ -32,21 +33,17 @@ public class SmartPosterRecordEncoder implements WellKnownRecordPayloadEncoder {
 	}
 
 	private byte[] createPayload(NdefMessageEncoder messageEncoder, SmartPosterRecord myRecord) {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-			if (myRecord.getTitle() != null)
-				baos.write(messageEncoder.encodeSingle(myRecord.getTitle()));
-			if (myRecord.getUri() != null)
-				baos.write(messageEncoder.encodeSingle(myRecord.getUri()));
-			if (myRecord.getAction() != null)
-				baos.write(messageEncoder.encodeSingle(myRecord.getAction()));
+		List<Record> records = new ArrayList<Record>();
 
-			return baos.toByteArray();
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		if (myRecord.getTitle() != null)
+			records.add(myRecord.getTitle());
+		if (myRecord.getUri() != null)
+			records.add(myRecord.getUri());
+		if (myRecord.getAction() != null)
+			records.add(myRecord.getAction());
+
+		return messageEncoder.encode(records);
 	}
 
 }
