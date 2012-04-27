@@ -23,8 +23,13 @@ public abstract class TestConfigs {
 
 	public static final String[] TYPE2_BLANK_TAGS = { "mfulc_blank.txt", "mful_blank.txt" };
 
-	public static Type2NdefOperations getType2BlankTag() {
-		InMemoryUltralightTag tag = new InMemoryUltralightTag("mful_blank.txt");
-		return new Type2NdefOperations(MemoryLayout.ULTRALIGHT, new AcrMfUlReaderWriter(tag), false, true);
+	public static Type2NdefOperations getType2BlankTag(String fileName) {
+		return getType2BlankTag(fileName, false, true);
+	}
+
+	public static Type2NdefOperations getType2BlankTag(String fileName, boolean formatted, boolean writable) {
+		InMemoryTag tag = new InMemoryTag(FileMfUlReader.loadCardFromFile(fileName));
+		return new Type2NdefOperations(fileName.startsWith("mful_") ? MemoryLayout.ULTRALIGHT
+				: MemoryLayout.ULTRALIGHT_C, new AcrMfUlReaderWriter(tag), formatted, writable);
 	}
 }

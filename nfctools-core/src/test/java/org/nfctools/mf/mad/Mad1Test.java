@@ -18,20 +18,18 @@ package org.nfctools.mf.mad;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.nfctools.mf.Key;
-import org.nfctools.mf.MfConstants;
-import org.nfctools.mf.card.MfCard;
-import org.nfctools.spi.file.FileMfReaderWriter;
+import org.nfctools.mf.classic.MemoryLayout;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
 
 public class Mad1Test extends AbstractMadTests {
 
 	public Mad1Test() {
-		super("mfstd1k_00.txt", "mfstd1k_01.txt", 720, 96, 96);
+		super("mfstd1k_blank.txt", "mfstd1k_ndef.txt", 720, 96, 96, MemoryLayout.CLASSIC_1K);
 	}
 
 	@Test
 	public void testMadSpec() throws Exception {
-		Mad1 mad = new Mad1(null, null, null);
+		Mad1 mad = new Mad1(loadData(blankCard), MAD_KEY_CONFIG);
 		assertEquals(15, mad.getNumberOfSlots());
 		assertEquals(1, mad.getSectorIdForSlot(0));
 		assertEquals(15, mad.getSectorIdForSlot(14));
@@ -42,11 +40,9 @@ public class Mad1Test extends AbstractMadTests {
 
 	@Test
 	public void testMadAidSize() throws Exception {
+		MfClassicReaderWriter readerWriter = loadData(blankCard);
 
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(emptyCard);
-		ApplicationDirectory applicationDirectory = MadUtils.createApplicationDirectory(mfCard, mfReaderWriter, Key.A,
-				MfConstants.TRANSPORT_KEY, dummyKey);
+		ApplicationDirectory applicationDirectory = readerWriter.createApplicationDirectory(MAD_KEY_CONFIG);
 
 		assertEquals(1, applicationDirectory.getVersion());
 
@@ -58,10 +54,8 @@ public class Mad1Test extends AbstractMadTests {
 
 	@Test
 	public void testMadCrc() throws Exception {
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(cardWithMad);
-		Mad1 applicationDirectory = (Mad1)MadUtils
-				.getApplicationDirectory(mfCard, mfReaderWriter, MfConstants.NDEF_KEY);
+		MfClassicReaderWriter readerWriter = loadData(cardWithMad);
+		Mad1 applicationDirectory = (Mad1)readerWriter.getApplicationDirectory(MAD_KEY_CONFIG);
 		applicationDirectory.updateCrc();
 		assertEquals((byte)0xf3, applicationDirectory.madData[0]);
 

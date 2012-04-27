@@ -17,11 +17,28 @@ package org.nfctools.mf.block;
 
 import org.nfctools.mf.MfException;
 import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.MemoryLayout;
 
 public class BlockResolver {
 
-	public MfBlock resolveBlock(MfCard card, int sectorId, int blockId, byte[] data) throws MfException {
+	@Deprecated
+	public static MfBlock resolveBlock(MfCard card, int sectorId, int blockId, byte[] data) throws MfException {
 		if (card.isTrailerBlock(sectorId, blockId))
+			return new TrailerBlock(data);
+
+		if ((sectorId == 0) && (blockId == 0))
+			return new ManufacturerBlock(data);
+
+		if (ValueBlock.isValidValueBlock(data)) {
+			return new ValueBlock(data);
+		}
+		return new DataBlock(data);
+	}
+
+	// TODO move it to readerwriter
+	public static MfBlock resolveBlock(MemoryLayout memoryLayout, int sectorId, int blockId, byte[] data)
+			throws MfException {
+		if (memoryLayout.isTrailerBlock(sectorId, blockId))
 			return new TrailerBlock(data);
 
 		if ((sectorId == 0) && (blockId == 0))

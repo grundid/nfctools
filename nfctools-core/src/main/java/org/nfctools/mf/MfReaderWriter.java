@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.card.MfCard;
 
+@Deprecated
 public interface MfReaderWriter {
 
 	void setCardIntoHalt(MfCard mfCard) throws IOException;

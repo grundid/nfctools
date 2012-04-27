@@ -18,32 +18,56 @@ package org.nfctools.mf.mad;
 import java.io.IOException;
 
 import org.nfctools.mf.MfConstants;
-import org.nfctools.mf.MfReaderWriter;
+import org.nfctools.mf.MfException;
 import org.nfctools.mf.block.TrailerBlock;
-import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.Key;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
 
 public class Mad1 extends AbstractMad {
 
 	protected byte[] madData = new byte[32];
 
-	protected TrailerBlock trailerBlock;
-	private final int sectorId = 0;
+	private TrailerBlock trailerBlock;
+	private final int mad1SectorId = 0;
 
-	Mad1(MfReaderWriter readerWriter, MfCard mfCard, TrailerBlock trailerBlock) throws IOException {
-		this.readerWriter = readerWriter;
-		this.card = mfCard;
+	Mad1(MfClassicReaderWriter readerWriter, MadKeyConfig keyConfig) throws IOException {
+		super(readerWriter, keyConfig);
+	}
+
+	Mad1(MfClassicReaderWriter readerWriter, MadKeyConfig keyConfig, TrailerBlock trailerBlock) throws IOException {
+		super(readerWriter, keyConfig);
 		this.trailerBlock = trailerBlock;
 	}
 
-	@Override
-	protected void readMad() throws IOException {
-		readMad(madData, sectorId, 1, trailerBlock);
+	public void initMadTrailer(int madVersion) throws IOException {
+		trailerBlock = createTrailer(keyConfig.getWriteKeyValue());
+		trailerBlock.setGeneralPurposeByte((byte)(MadConstants.GPB_NDEF_CONFIG | madVersion));
+		writeTrailer(mad1SectorId, trailerBlock);
+	}
+
+	protected TrailerBlock createTrailer(byte[] writeKeyValue) throws MfException {
+		TrailerBlock trailerBlock = new TrailerBlock();
+		trailerBlock.setKey(Key.A, MadConstants.DEFAULT_MAD_KEY);
+		trailerBlock.setKey(Key.B, writeKeyValue);
+		trailerBlock.setAccessConditions(MadConstants.READ_WRITE_ACCESS_CONDITIONS);
+		return trailerBlock;
 	}
 
 	@Override
-	protected void writeMad() throws IOException {
+	public void readMad() throws IOException {
+		readMad(madData, mad1SectorId, 1, trailerBlock);
+	}
+
+	@Override
+	public void writeMad() throws IOException {
 		updateCrc();
-		writeMad(madData, sectorId, 1, trailerBlock);
+		writeMad(madData, mad1SectorId, 1, trailerBlock);
+	}
+
+	@Override
+	public void makeReadOnly() throws IOException {
+		trailerBlock.setAccessConditions(MfConstants.NDEF_READ_ONLY_ACCESS_CONDITIONS);
+		writeTrailer(mad1SectorId, trailerBlock);
 	}
 
 	protected void updateCrc() {

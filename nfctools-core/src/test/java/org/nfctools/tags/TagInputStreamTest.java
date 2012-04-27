@@ -21,13 +21,14 @@ import org.junit.Test;
 import org.nfctools.mf.ul.MemoryLayout;
 import org.nfctools.mf.ul.MfUlReaderWriter;
 import org.nfctools.spi.acs.AcrMfUlReaderWriter;
-import org.nfctools.test.InMemoryUltralightTag;
+import org.nfctools.test.FileMfUlReader;
+import org.nfctools.test.InMemoryTag;
 
 public class TagInputStreamTest {
 
 	@Test
 	public void testAvailable() throws Exception {
-		InMemoryUltralightTag tag = new InMemoryUltralightTag("mful_formatted.txt");
+		InMemoryTag tag = new InMemoryTag(FileMfUlReader.loadCardFromFile("mful_formatted.txt"));
 		MfUlReaderWriter readerWriter = new AcrMfUlReaderWriter(tag);
 
 		TagInputStream in = new TagInputStream(MemoryLayout.ULTRALIGHT, readerWriter);

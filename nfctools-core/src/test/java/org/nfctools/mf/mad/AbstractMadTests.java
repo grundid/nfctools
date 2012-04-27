@@ -17,14 +17,21 @@ package org.nfctools.mf.mad;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.nfctools.mf.Key;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.MfException;
 import org.nfctools.mf.block.TrailerBlock;
-import org.nfctools.mf.card.MfCard;
-import org.nfctools.spi.file.FileMfReaderWriter;
+import org.nfctools.mf.classic.Key;
+import org.nfctools.mf.classic.KeyValue;
+import org.nfctools.mf.classic.MemoryLayout;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
+import org.nfctools.mf.ul.MemoryMap;
+import org.nfctools.spi.acs.AcrMfClassicReaderWriter;
+import org.nfctools.test.FileMfClassicReader;
+import org.nfctools.test.InMemoryTag;
 
 public abstract class AbstractMadTests {
 
@@ -32,20 +39,28 @@ public abstract class AbstractMadTests {
 			MfConstants.NDEF_FUNCTION_CLUSTER_CODE);
 	private TrailerBlock testNdefTrailerBlock = new TrailerBlock();
 
+	public static final MadKeyConfig MAD_KEY_CONFIG = new MadKeyConfig(Key.A, MfConstants.TRANSPORT_KEY,
+			MfConstants.NDEF_KEY);
+
+	public static final KeyValue KEY_VALUE_A = new KeyValue(Key.A, MfConstants.NDEF_KEY);
+	public static final KeyValue KEY_VALUE_B = new KeyValue(Key.B, MfConstants.NDEF_KEY);
+
 	protected byte[] dummyKey = MfConstants.NDEF_KEY;
-	protected String emptyCard;
+	protected String blankCard;
 	protected String cardWithMad;
 	protected int maxFreeSpace;
 	protected int largeAppSize;
 	protected int existingAppSize;
+	protected MemoryLayout memoryLayout;
 
-	public AbstractMadTests(String emptyCard, String cardWithMad, int maxFreeSpace, int largeAppSize,
-			int existingAppSize) {
-		this.emptyCard = emptyCard;
+	public AbstractMadTests(String blankCard, String cardWithMad, int maxFreeSpace, int largeAppSize,
+			int existingAppSize, MemoryLayout memoryLayout) {
+		this.blankCard = blankCard;
 		this.cardWithMad = cardWithMad;
 		this.maxFreeSpace = maxFreeSpace;
 		this.largeAppSize = largeAppSize;
 		this.existingAppSize = existingAppSize;
+		this.memoryLayout = memoryLayout;
 	}
 
 	@Before
@@ -53,7 +68,7 @@ public abstract class AbstractMadTests {
 		try {
 			testNdefTrailerBlock.setKey(Key.A, MfConstants.NDEF_KEY);
 			testNdefTrailerBlock.setKey(Key.B, MfConstants.NDEF_KEY);
-			testNdefTrailerBlock.setGeneralPurposeByte(MfConstants.READ_WRITE_NDEF_GPB);
+			testNdefTrailerBlock.setGeneralPurposeByte(MfConstants.NDEF_GPB_V10_READ_WRITE);
 			testNdefTrailerBlock.setAccessConditions(MfConstants.NDEF_READ_WRITE_ACCESS_CONDITIONS);
 		}
 		catch (MfException e) {
@@ -61,71 +76,73 @@ public abstract class AbstractMadTests {
 		}
 	}
 
+	protected MfClassicReaderWriter loadData(String fileName) {
+		try {
+			MemoryMap memoryMap = FileMfClassicReader.loadCardFromFile(fileName);
+			InMemoryTag tag = new InMemoryTag(memoryMap);
+
+			AcrMfClassicReaderWriter mfClassicReaderWriter = new AcrMfClassicReaderWriter(tag, memoryLayout);
+			return mfClassicReaderWriter;
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Test
 	public void testMadApplicationSizes() throws Exception {
+		MfClassicReaderWriter readerWriter = loadData(blankCard);
 
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(emptyCard);
-		ApplicationDirectory applicationDirectory = MadUtils.createApplicationDirectory(mfCard, mfReaderWriter, Key.A,
-				MfConstants.TRANSPORT_KEY, dummyKey);
+		ApplicationDirectory applicationDirectory = readerWriter.createApplicationDirectory(MAD_KEY_CONFIG);
 		Application application = applicationDirectory.createApplication(testAppId, largeAppSize, dummyKey,
 				testNdefTrailerBlock);
 		assertArrayEquals(testAppId.getAid(), application.getApplicationId());
 		assertEquals(largeAppSize, application.getAllocatedSize());
-		byte[] readData = application.read(Key.A, dummyKey);
+		byte[] readData = application.read(KEY_VALUE_A);
 		assertEquals(largeAppSize, readData.length);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testMadApplicationTooBig() throws Exception {
-
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(emptyCard);
-		ApplicationDirectory applicationDirectory = MadUtils.createApplicationDirectory(mfCard, mfReaderWriter, Key.A,
-				MfConstants.TRANSPORT_KEY, dummyKey);
+		MfClassicReaderWriter readerWriter = loadData(blankCard);
+		ApplicationDirectory applicationDirectory = readerWriter.createApplicationDirectory(MAD_KEY_CONFIG);
 		applicationDirectory.createApplication(testAppId, maxFreeSpace + 1, dummyKey, testNdefTrailerBlock);
 	}
 
 	@Test
 	public void testMadOpenReadAid() throws Exception {
+		MfClassicReaderWriter readerWriter = loadData(cardWithMad);
 
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(cardWithMad);
-		ApplicationDirectory applicationDirectory = MadUtils.getApplicationDirectory(mfCard, mfReaderWriter);
+		ApplicationDirectory applicationDirectory = readerWriter.getApplicationDirectory();
 		Application application = applicationDirectory.openApplication(testAppId);
 		assertArrayEquals(testAppId.getAid(), application.getApplicationId());
 		assertEquals(existingAppSize, application.getAllocatedSize());
-		byte[] readData = application.read(Key.A, dummyKey);
+		byte[] readData = application.read(KEY_VALUE_A);
 		assertEquals(existingAppSize, readData.length);
 	}
 
 	@Test
 	public void testMadHasMad() throws Exception {
+		MfClassicReaderWriter readerWriter = loadData(cardWithMad);
+		assertTrue(readerWriter.hasApplicationDirectory());
 
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(cardWithMad);
-		assertTrue(MadUtils.hasApplicationDirectory(mfCard, mfReaderWriter));
-
-		MfCard mfCardEmpty = mfReaderWriter.loadCardFromFile(emptyCard);
-		assertFalse(MadUtils.hasApplicationDirectory(mfCardEmpty, mfReaderWriter));
+		MfClassicReaderWriter readerWriterBlank = loadData(blankCard);
+		assertFalse(readerWriterBlank.hasApplicationDirectory());
 	}
 
 	@Test
 	public void testMadCreate() throws Exception {
+		MfClassicReaderWriter readerWriter = loadData(blankCard);
 
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCardEmpty = mfReaderWriter.loadCardFromFile(emptyCard);
-		assertFalse(MadUtils.hasApplicationDirectory(mfCardEmpty, mfReaderWriter));
-		MadUtils.createApplicationDirectory(mfCardEmpty, mfReaderWriter, Key.A, MfConstants.TRANSPORT_KEY, dummyKey);
-		assertTrue(MadUtils.hasApplicationDirectory(mfCardEmpty, mfReaderWriter));
+		assertFalse(readerWriter.hasApplicationDirectory());
+		readerWriter.createApplicationDirectory(MAD_KEY_CONFIG);
+		assertTrue(readerWriter.hasApplicationDirectory());
 	}
 
 	@Test
 	public void testMadOpenWriteReadApplication() throws Exception {
-
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(cardWithMad);
-		ApplicationDirectory applicationDirectory = MadUtils.getApplicationDirectory(mfCard, mfReaderWriter);
+		MfClassicReaderWriter readerWriter = loadData(cardWithMad);
+		ApplicationDirectory applicationDirectory = readerWriter.getApplicationDirectory();
 		Application application = applicationDirectory.openApplication(testAppId);
 
 		assertEquals(existingAppSize, application.getAllocatedSize());
@@ -134,28 +151,30 @@ public abstract class AbstractMadTests {
 		for (int x = 0; x < content.length; x++)
 			content[x] = (byte)x;
 
-		application.write(Key.B, dummyKey, content);
+		application.write(KEY_VALUE_B, content);
 
-		byte[] readContent = application.read(Key.A, dummyKey);
+		byte[] readContent = application.read(KEY_VALUE_A);
 		assertArrayEquals(content, readContent);
 	}
 
 	@Test
 	public void testMadUpdateApplicationTrailer() throws Exception {
+		MfClassicReaderWriter readerWriter = loadData(cardWithMad);
 
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(cardWithMad);
-		ApplicationDirectory applicationDirectory = MadUtils.getApplicationDirectory(mfCard, mfReaderWriter);
+		ApplicationDirectory applicationDirectory = readerWriter.getApplicationDirectory();
 		Application application = applicationDirectory.openApplication(testAppId);
-		application.updateTrailer(Key.B, dummyKey, testNdefTrailerBlock);
+		application.updateTrailer(KEY_VALUE_B, testNdefTrailerBlock);
+
+		TrailerBlock readTrailer = application.readTrailer(KEY_VALUE_B);
+		assertArrayEquals(testNdefTrailerBlock.getAccessConditions(), readTrailer.getAccessConditions());
+
 	}
 
 	@Test
 	public void testMadDeleteApplication() throws Exception {
+		MfClassicReaderWriter readerWriter = loadData(cardWithMad);
 
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(cardWithMad);
-		ApplicationDirectory applicationDirectory = MadUtils.getApplicationDirectory(mfCard, mfReaderWriter, dummyKey);
+		ApplicationDirectory applicationDirectory = readerWriter.getApplicationDirectory(MAD_KEY_CONFIG);
 		applicationDirectory.deleteApplication(testAppId, dummyKey, testNdefTrailerBlock);
 
 		assertEquals(maxFreeSpace, applicationDirectory.getMaxContinousSize());
@@ -163,14 +182,11 @@ public abstract class AbstractMadTests {
 
 	@Test
 	public void testMadAllocateSpecifiedMemory() throws Exception {
+		MfClassicReaderWriter readerWriter = loadData(blankCard);
 
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(emptyCard);
-		ApplicationDirectory applicationDirectory = MadUtils.createApplicationDirectory(mfCard, mfReaderWriter, Key.A,
-				MfConstants.TRANSPORT_KEY, dummyKey);
+		ApplicationDirectory applicationDirectory = readerWriter.createApplicationDirectory(MAD_KEY_CONFIG);
 		Application application = applicationDirectory.createApplication(testAppId, 50, dummyKey, testNdefTrailerBlock);
 		assertEquals(96, application.getAllocatedSize());
 		assertEquals(maxFreeSpace - 96, applicationDirectory.getMaxContinousSize());
 	}
-
 }

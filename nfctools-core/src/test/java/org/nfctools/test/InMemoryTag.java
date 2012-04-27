@@ -19,20 +19,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.nfctools.api.ApduTag;
-import org.nfctools.api.Tag;
-import org.nfctools.api.TagType;
 import org.nfctools.mf.ul.MemoryMap;
 import org.nfctools.scio.Command;
 import org.nfctools.scio.Response;
 import org.nfctools.spi.acs.Apdu;
 
-public class InMemoryUltralightTag extends Tag implements ApduTag {
+public class InMemoryTag implements ApduTag {
 
 	private MemoryMap memoryMap;
 
-	public InMemoryUltralightTag(String fileName) {
-		super(TagType.MIFARE_ULTRALIGHT, null);
-		this.memoryMap = FileMfUlReader.loadCardFromFile(fileName);
+	public InMemoryTag(MemoryMap memoryMap) {
+		this.memoryMap = memoryMap;
 	}
 
 	public MemoryMap getMemoryMap() {
@@ -47,13 +44,19 @@ public class InMemoryUltralightTag extends Tag implements ApduTag {
 		else if (command.getInstruction() == Apdu.INS_UPDATE_BINARY) {
 			return writeBinary(command);
 		}
+		else if (command.getInstruction() == Apdu.INS_INTERNAL_AUTHENTICATE_ACS) {
+			return new Response(0x90, 0, null);
+		}
+		else if (command.getInstruction() == Apdu.INS_EXTERNAL_AUTHENTICATE) {
+			return new Response(0x90, 0, null);
+		}
 		throw new RuntimeException("Unknown command: " + command.getInstruction());
 	}
 
 	private Response writeBinary(Command command) {
 		byte[] data = command.getData();
 		int page = command.getP2();
-		for (int offset = 0; offset < data.length; offset = offset + 4) {
+		for (int offset = 0; offset < data.length; offset = offset + memoryMap.getBytesPerPage()) {
 			memoryMap.setPage(page, data, offset);
 			page++;
 		}
@@ -64,7 +67,7 @@ public class InMemoryUltralightTag extends Tag implements ApduTag {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			int dataRead = 0;
-			int page = command.getP2();
+			int page = command.getP2() & 0xFF;
 			while (dataRead < command.getLength()) {
 				byte[] data = memoryMap.getPage(page);
 				out.write(data);

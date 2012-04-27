@@ -20,10 +20,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nfctools.mf.Key;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.MfReaderWriter;
 import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.Key;
+import org.nfctools.mf.classic.KeyValue;
 import org.nfctools.mf.mad.Application;
 import org.nfctools.mf.mad.ApplicationDirectory;
 import org.nfctools.mf.mad.MadUtils;
@@ -39,6 +40,7 @@ import org.nfctools.utils.NfcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class MfNdefReader implements NdefReader<MfCard> {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
@@ -63,7 +65,7 @@ public class MfNdefReader implements NdefReader<MfCard> {
 
 			Application application = applicationDirectory.openApplication(MfNdefConstants.NDEF_APP_ID);
 
-			byte[] tlvWrappedNdefMessage = application.read(Key.A, MfConstants.NDEF_KEY);
+			byte[] tlvWrappedNdefMessage = application.read(new KeyValue(Key.A, MfConstants.NDEF_KEY));
 
 			if (log.isDebugEnabled())
 				log.debug(NfcUtils.convertBinToASCII(tlvWrappedNdefMessage));

@@ -17,7 +17,6 @@ package org.nfctools.mf.tools;
 
 import java.io.IOException;
 
-import org.nfctools.mf.Key;
 import org.nfctools.mf.MfAccess;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.MfLoginException;
@@ -27,6 +26,8 @@ import org.nfctools.mf.block.DataBlock;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.block.TrailerBlock;
 import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.Key;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
 import org.nfctools.utils.NfcUtils;
 
 public class CardCleaner extends AbstractCardTool {
@@ -76,6 +77,12 @@ public class CardCleaner extends AbstractCardTool {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void doWithCard(MfClassicReaderWriter readerWriter) throws IOException {
+		// TODO Auto-generated method stub
+
 	}
 
 }

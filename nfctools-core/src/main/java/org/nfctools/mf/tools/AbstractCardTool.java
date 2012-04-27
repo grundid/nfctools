@@ -22,6 +22,7 @@ import java.util.Collection;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.MfReaderWriter;
 import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
 import org.nfctools.mf.mad.MadConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,5 +45,7 @@ public abstract class AbstractCardTool {
 	}
 
 	public abstract void doWithCard(MfCard card, MfReaderWriter readerWriter) throws IOException;
+
+	public abstract void doWithCard(MfClassicReaderWriter readerWriter) throws IOException;
 
 }

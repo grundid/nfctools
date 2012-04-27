@@ -18,25 +18,14 @@ package org.nfctools.mf.ul;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.nfctools.test.InMemoryUltralightTag;
 import org.nfctools.test.TestConfigs;
 
 public class Type2NfcTagListenerTest {
 
-	private Type2NfcTagListener nfcTagListener = new Type2NfcTagListener();
-
-	@Test
-	public void testCanHandle() throws Exception {
-		for (String tagFileName : TestConfigs.TYPE2_BLANK_TAGS) {
-			assertTrue(nfcTagListener.canHandle(new InMemoryUltralightTag(tagFileName)));
-		}
-	}
-
 	@Test
 	public void testCreateNdefOperationsBlank() throws Exception {
 		for (String tagFileName : TestConfigs.TYPE2_BLANK_TAGS) {
-			InMemoryUltralightTag tag = new InMemoryUltralightTag(tagFileName);
-			Type2NdefOperations ndefOperations = nfcTagListener.createNdefOperations(tag);
+			Type2NdefOperations ndefOperations = TestConfigs.getType2BlankTag(tagFileName);
 			assertTrue(ndefOperations.isWritable());
 			assertFalse(ndefOperations.isFormatted());
 		}
@@ -44,16 +33,14 @@ public class Type2NfcTagListenerTest {
 
 	@Test
 	public void testCreateNdefOperationsFormatted() throws Exception {
-		InMemoryUltralightTag tag = new InMemoryUltralightTag("mful_formatted.txt");
-		Type2NdefOperations ndefOperations = nfcTagListener.createNdefOperations(tag);
+		Type2NdefOperations ndefOperations = TestConfigs.getType2BlankTag("mful_formatted.txt", true, true);
 		assertTrue(ndefOperations.isWritable());
 		assertTrue(ndefOperations.isFormatted());
 	}
 
 	@Test
 	public void testCreateNdefOperationsFormattedReadOnly() throws Exception {
-		InMemoryUltralightTag tag = new InMemoryUltralightTag("mful_formatted_readonly.txt");
-		Type2NdefOperations ndefOperations = nfcTagListener.createNdefOperations(tag);
+		Type2NdefOperations ndefOperations = TestConfigs.getType2BlankTag("mful_formatted_readonly.txt", true, false);
 		assertFalse(ndefOperations.isWritable());
 		assertTrue(ndefOperations.isFormatted());
 	}

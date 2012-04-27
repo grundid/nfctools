@@ -17,23 +17,27 @@ package org.nfctools.mf.mad;
 
 import java.io.IOException;
 
-import org.nfctools.mf.Key;
-import org.nfctools.mf.MfAccess;
 import org.nfctools.mf.MfConstants;
+import org.nfctools.mf.MfException;
 import org.nfctools.mf.MfLoginException;
-import org.nfctools.mf.MfReaderWriter;
 import org.nfctools.mf.NxpCrc;
 import org.nfctools.mf.block.DataBlock;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.block.TrailerBlock;
-import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.Key;
+import org.nfctools.mf.classic.KeyValue;
+import org.nfctools.mf.classic.MemoryLayout;
+import org.nfctools.mf.classic.MfClassicAccess;
+import org.nfctools.mf.classic.MfClassicConstants;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
 
 public abstract class AbstractMad implements ApplicationDirectory {
 
 	protected static final byte[] FREE_SLOT = { 0x00, 0x00 };
 
-	protected MfReaderWriter readerWriter;
-	protected MfCard card;
+	protected MadKeyConfig keyConfig;
+	protected MemoryLayout memoryLayout;
+	protected MfClassicReaderWriter readerWriter;
 	private boolean readonly;
 
 	protected class Space {
@@ -43,11 +47,20 @@ public abstract class AbstractMad implements ApplicationDirectory {
 		int continousSize;
 	}
 
+	public AbstractMad(MfClassicReaderWriter readerWriter, MadKeyConfig keyConfig) {
+		if (keyConfig == null)
+			throw new IllegalArgumentException("keyConfig cannot be null");
+		this.readerWriter = readerWriter;
+		this.keyConfig = keyConfig;
+		this.memoryLayout = readerWriter.getMemoryLayout();
+	}
+
 	protected void readMad(byte[] madData, int sectorId, int firstBlockId, TrailerBlock trailerBlock)
 			throws IOException {
 		int blocksToRead = madData.length / MfConstants.BYTES_PER_BLOCK;
-		MfBlock[] madBlocks = readerWriter.readBlock(new MfAccess(card, sectorId, firstBlockId, blocksToRead, Key.A,
-				trailerBlock.getKey(Key.A)));
+		MfClassicAccess access = new MfClassicAccess(new KeyValue(Key.A, trailerBlock.getKey(Key.A)), sectorId,
+				firstBlockId, blocksToRead);
+		MfBlock[] madBlocks = readerWriter.readBlock(access);
 		for (int x = 0; x < blocksToRead; x++) {
 			System.arraycopy(madBlocks[x].getData(), 0, madData, x * MfConstants.BYTES_PER_BLOCK,
 					MfConstants.BYTES_PER_BLOCK);
@@ -65,8 +78,9 @@ public abstract class AbstractMad implements ApplicationDirectory {
 			dataBlocks[x] = new DataBlock(writeBuffer);
 		}
 
-		MfAccess mfAccess = new MfAccess(card, sectorId, firstBlockId, Key.B, trailerBlock.getKey(Key.B));
-		readerWriter.writeBlock(mfAccess, dataBlocks);
+		MfClassicAccess access = new MfClassicAccess(new KeyValue(Key.B, trailerBlock.getKey(Key.B)), sectorId,
+				firstBlockId);
+		readerWriter.writeBlock(access, dataBlocks);
 	}
 
 	protected byte createCrc(byte[] madData) {
@@ -82,8 +96,15 @@ public abstract class AbstractMad implements ApplicationDirectory {
 		return crc.getCrc();
 	}
 
-	void setReadonly(boolean readonly) {
-		this.readonly = readonly;
+	protected void writeTrailer(int trailerSectorId, TrailerBlock trailerBlock) throws IOException {
+		MfClassicAccess accessTrailer = new MfClassicAccess(new KeyValue(keyConfig.getCreateKey(),
+				keyConfig.getCreateKeyValue()), trailerSectorId,
+				memoryLayout.getTrailerBlockNumberForSector(trailerSectorId));
+		readerWriter.writeBlock(accessTrailer, trailerBlock);
+	}
+
+	public void setReadonly() {
+		this.readonly = true;
 	}
 
 	/**
@@ -134,8 +155,7 @@ public abstract class AbstractMad implements ApplicationDirectory {
 	public Application openApplication(ApplicationId aId) {
 		Space space = getMaxContinousSpaceForAid(aId.getAid());
 		if (space.continousSize > 0)
-			return new ApplicationImpl(aId, space.continousSize, readerWriter, card, space.firstSlot, space.lastSlot,
-					this);
+			return new ApplicationImpl(aId, space.continousSize, readerWriter, space.firstSlot, space.lastSlot, this);
 		else
 			throw new IllegalArgumentException("aid not available");
 	}
@@ -191,7 +211,7 @@ public abstract class AbstractMad implements ApplicationDirectory {
 			}
 
 			writeMad();
-			return new ApplicationImpl(aId, allocatedSize, readerWriter, card, space.firstSlot, lastSlotAllocated, this);
+			return new ApplicationImpl(aId, allocatedSize, readerWriter, space.firstSlot, lastSlotAllocated, this);
 		}
 		else
 			throw new IllegalArgumentException("not enough space (" + space.continousSize + ")");
@@ -199,10 +219,11 @@ public abstract class AbstractMad implements ApplicationDirectory {
 
 	private void writeBlock(Key writeKey, byte[] writeKeyValue, TrailerBlock trailerBlock, int sectorId)
 			throws IOException {
-		MfAccess mfAccess = new MfAccess(card, sectorId, card.getTrailerBlockNumberForSector(sectorId), writeKey,
-				writeKeyValue);
 
-		readerWriter.writeBlock(mfAccess, trailerBlock);
+		MfClassicAccess access = new MfClassicAccess(new KeyValue(writeKey, writeKeyValue), sectorId,
+				memoryLayout.getTrailerBlockNumberForSector(sectorId));
+
+		readerWriter.writeBlock(access, trailerBlock);
 	}
 
 	@Override
@@ -216,4 +237,60 @@ public abstract class AbstractMad implements ApplicationDirectory {
 		return (space.continousSize > 0);
 	}
 
+	public static ApplicationDirectory initInstance(MfClassicReaderWriter readerWriter, MadKeyConfig keyConfig)
+			throws IOException {
+		byte[] writeKeyValue = keyConfig == null ? null : keyConfig.getWriteKeyValue();
+		MemoryLayout memoryLayout = readerWriter.getMemoryLayout();
+		MfClassicAccess accessTrailer = new MfClassicAccess(MfClassicConstants.MAD_KEY, 0,
+				memoryLayout.getTrailerBlockNumberForSector(0));
+		TrailerBlock madTrailer = (TrailerBlock)readerWriter.readBlock(accessTrailer)[0];
+
+		if ((madTrailer.getGeneralPurposeByte() & MadConstants.GPB_MAD_AVAILABLE) != 0) {
+			if ((madTrailer.getGeneralPurposeByte() & MadConstants.GPB_MAD_V1) == MadConstants.GPB_MAD_V1) {
+				madTrailer.setKey(Key.A, MadConstants.DEFAULT_MAD_KEY);
+				if (writeKeyValue != null)
+					madTrailer.setKey(Key.B, writeKeyValue);
+				Mad1 mad1 = new Mad1(readerWriter, keyConfig, madTrailer);
+				mad1.readMad();
+				if (writeKeyValue == null)
+					mad1.setReadonly();
+				return mad1;
+			}
+			else if ((madTrailer.getGeneralPurposeByte() & MadConstants.GPB_MAD_V2) == MadConstants.GPB_MAD_V2) {
+				madTrailer.setKey(Key.A, MadConstants.DEFAULT_MAD_KEY);
+				if (writeKeyValue != null)
+					madTrailer.setKey(Key.B, writeKeyValue);
+				Mad2 mad = new Mad2(readerWriter, keyConfig, madTrailer);
+				mad.readMad();
+				if (writeKeyValue == null)
+					mad.setReadonly();
+				return mad;
+			}
+			else {
+				throw new MfException("MAD version not supported");
+			}
+		}
+		else {
+			throw new MfException("MAD not available");
+		}
+	}
+
+	public static ApplicationDirectory createInstance(MfClassicReaderWriter readerWriter, MadKeyConfig keyConfig)
+			throws IOException {
+		MemoryLayout memoryLayout = readerWriter.getMemoryLayout();
+		if (memoryLayout.getMadVersion() == MadConstants.GPB_MAD_V1) {
+			Mad1 mad1 = new Mad1(readerWriter, keyConfig);
+			mad1.initMadTrailer(memoryLayout.getMadVersion());
+			mad1.writeMad();
+			return mad1;
+		}
+
+		if (memoryLayout.getMadVersion() == MadConstants.GPB_MAD_V2) {
+			Mad2 mad2 = new Mad2(readerWriter, keyConfig);
+			mad2.initMadTrailer(memoryLayout.getMadVersion());
+			mad2.writeMad();
+			return mad2;
+		}
+		throw new RuntimeException("Unsupported MAD version" + memoryLayout.getMadVersion());
+	}
 }

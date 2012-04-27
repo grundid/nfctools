@@ -17,6 +17,7 @@ package org.nfctools.mf.card;
 
 import org.nfctools.api.TagType;
 
+@Deprecated
 public class MfCard1k extends MfCard {
 
 	public MfCard1k(byte[] cardId, Object connectionToken) {

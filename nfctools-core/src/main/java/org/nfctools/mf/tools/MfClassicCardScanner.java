@@ -17,12 +17,16 @@ package org.nfctools.mf.tools;
 
 import java.io.IOException;
 
-import org.nfctools.mf.Key;
 import org.nfctools.mf.MfAccess;
 import org.nfctools.mf.MfLoginException;
 import org.nfctools.mf.MfReaderWriter;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.Key;
+import org.nfctools.mf.classic.KeyValue;
+import org.nfctools.mf.classic.MemoryLayout;
+import org.nfctools.mf.classic.MfClassicAccess;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
 import org.nfctools.utils.NfcUtils;
 
 public class CardScanner extends AbstractCardTool {
@@ -46,4 +50,28 @@ public class CardScanner extends AbstractCardTool {
 			}
 		}
 	}
+
+	@Override
+	public void doWithCard(MfClassicReaderWriter readerWriter) throws IOException {
+		MemoryLayout memoryLayout = readerWriter.getMemoryLayout();
+
+		for (int sectorId = 0; sectorId < memoryLayout.getSectors(); sectorId++) {
+			for (byte[] key : knownKeys) {
+				try {
+					MfClassicAccess access = new MfClassicAccess(new KeyValue(Key.A, key), sectorId, 0,
+							memoryLayout.getBlocksPerSector(sectorId));
+					MfBlock[] mfBlock = readerWriter.readBlock(access);
+					for (int blockId = 0; blockId < mfBlock.length; blockId++) {
+						System.out.println("S" + sectorId + "|B" + blockId + " Key: " + NfcUtils.convertBinToASCII(key)
+								+ " " + mfBlock[blockId]);
+					}
+					break;
+				}
+				catch (MfLoginException e) {
+					log.info("Cannot read sector: " + sectorId + " with key " + NfcUtils.convertBinToASCII(key));
+				}
+			}
+		}
+	}
+
 }

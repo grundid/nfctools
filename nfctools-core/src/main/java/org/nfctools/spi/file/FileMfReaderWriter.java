@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.nfctools.mf.Key;
 import org.nfctools.mf.MfAccess;
 import org.nfctools.mf.MfCardListener;
 import org.nfctools.mf.MfException;
@@ -38,6 +37,7 @@ import org.nfctools.mf.block.TrailerBlock;
 import org.nfctools.mf.card.MfCard;
 import org.nfctools.mf.card.MfCard1k;
 import org.nfctools.mf.card.MfCard4k;
+import org.nfctools.mf.classic.Key;
 import org.nfctools.utils.NfcUtils;
 
 public class FileMfReaderWriter implements MfReaderWriter {

@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nfctools.mf;
 
-import java.io.IOException;
 
-import org.nfctools.mf.block.TrailerBlock;
-import org.nfctools.mf.card.MfCard;
+package org.nfctools.mf.classic;
 
-public class MfUtils {
-
-	public static void initTransportConfig(MfReaderWriter readerWriter, MfCard card, int sector, Key key,
-			byte[] keyValue) throws IOException {
-		TrailerBlock transportTrailer = new TrailerBlock();
-		readerWriter.writeBlock(new MfAccess(card, sector, card.getTrailerBlockNumberForSector(sector), key, keyValue),
-				transportTrailer);
-	}
-
+public enum Key {
+	A, B
 }

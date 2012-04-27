@@ -16,7 +16,9 @@
 package org.nfctools.mf;
 
 import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.Key;
 
+@Deprecated
 public class MfAccess extends SimpleMfAccess {
 
 	private int sector;

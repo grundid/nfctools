@@ -19,6 +19,7 @@ import org.nfctools.api.Tag;
 import org.nfctools.api.TagType;
 import org.nfctools.utils.NfcUtils;
 
+@Deprecated
 public abstract class MfCard extends Tag {
 
 	private Object connectionToken;

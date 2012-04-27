@@ -17,8 +17,8 @@ package org.nfctools.mf.mad;
 
 import java.io.IOException;
 
-import org.nfctools.mf.Key;
 import org.nfctools.mf.block.TrailerBlock;
+import org.nfctools.mf.classic.KeyValue;
 
 public interface Application {
 
@@ -26,9 +26,15 @@ public interface Application {
 
 	int getAllocatedSize();
 
-	byte[] read(Key key, byte[] keyValue) throws IOException;
+	byte[] read(KeyValue keyValue) throws IOException;
 
-	void write(Key key, byte[] keyValue, byte[] content) throws IOException;
+	void write(KeyValue keyValue, byte[] content) throws IOException;
 
-	void updateTrailer(Key key, byte[] keyValue, TrailerBlock trailerBlock) throws IOException;
+	void updateTrailer(KeyValue keyValue, TrailerBlock trailerBlock) throws IOException;
+
+	TrailerBlock readTrailer(KeyValue keyValue) throws IOException;
+
+	void makeReadOnly(KeyValue keyValue) throws IOException;
+
+	ApplicationDirectory getApplicationDirectory();
 }

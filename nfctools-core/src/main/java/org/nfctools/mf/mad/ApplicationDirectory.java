@@ -43,4 +43,6 @@ public interface ApplicationDirectory {
 	boolean isReadonly();
 
 	boolean hasApplication(ApplicationId aId) throws IOException;
+
+	void makeReadOnly() throws IOException;
 }

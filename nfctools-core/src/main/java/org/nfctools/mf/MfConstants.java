@@ -15,9 +15,11 @@
  */
 package org.nfctools.mf;
 
-public class MfConstants {
+import org.nfctools.mf.classic.Key;
+import org.nfctools.mf.mad.ApplicationId;
+import org.nfctools.mf.mad.MadKeyConfig;
 
-	public static final byte READ_WRITE_NDEF_GPB = (byte)0x40;
+public class MfConstants {
 
 	public static final byte[] TRANSPORT_KEY = { (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF };
 	public static final byte[] TRANSPORT_ACCESS_CONDITIONS = { (byte)0xFF, 0x07, (byte)0x80 };
@@ -25,6 +27,7 @@ public class MfConstants {
 
 	public static final byte[] NDEF_KEY = { (byte)0xD3, (byte)0xF7, (byte)0xD3, (byte)0xF7, (byte)0xD3, (byte)0xF7 };
 	public static final byte[] NDEF_READ_WRITE_ACCESS_CONDITIONS = { 0x7F, 0x07, (byte)0x88 };
+	public static final byte[] NDEF_READ_ONLY_ACCESS_CONDITIONS = { 0x07, (byte)0x8f, 0x0f };
 	public static final byte NDEF_GPB_V10_READ_WRITE = 0x40;
 	public static final byte NDEF_GPB_V10_READ_ONLY = 0x43;
 
@@ -33,4 +36,8 @@ public class MfConstants {
 
 	public static final int BYTES_PER_BLOCK = 16;
 
+	public static final ApplicationId NDEF_APP_ID = new ApplicationId(MfConstants.NDEF_APPLICATION_CODE,
+			MfConstants.NDEF_FUNCTION_CLUSTER_CODE);
+
+	public static final MadKeyConfig NDEF_KEY_CONFIG = new MadKeyConfig(Key.A, TRANSPORT_KEY, NDEF_KEY);
 }

@@ -24,13 +24,15 @@ import org.nfctools.ndef.NotEnoughMemoryException;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.spi.acs.AcrMfUlReaderWriter;
-import org.nfctools.test.InMemoryUltralightTag;
+import org.nfctools.test.FileMfUlReader;
+import org.nfctools.test.InMemoryTag;
 
 public class Type2NdefOperationsTest {
 
-	private InMemoryUltralightTag tag;
+	private InMemoryTag tag;
 	private AcrMfUlReaderWriter readerWriter;
 	private Type2NdefOperations ndefOperations;
+	private InMemoryTag expectedTag;
 
 	private static class Config {
 
@@ -79,9 +81,11 @@ public class Type2NdefOperationsTest {
 			new Config("mfulc_formatted.txt", MemoryLayout.ULTRALIGHT_C, true, true, null) };
 
 	private void init(Config config) {
-		tag = new InMemoryUltralightTag(config.fileName);
+		tag = new InMemoryTag(FileMfUlReader.loadCardFromFile(config.fileName));
 		readerWriter = new AcrMfUlReaderWriter(tag);
 		ndefOperations = new Type2NdefOperations(config.memoryLayout, readerWriter, config.formatted, config.writeable);
+		if (config.expectedFileName != null)
+			expectedTag = new InMemoryTag(FileMfUlReader.loadCardFromFile(config.expectedFileName));
 	}
 
 	@Test
@@ -89,9 +93,7 @@ public class Type2NdefOperationsTest {
 		for (Config config : FORMAT_TEST) {
 			init(config);
 			ndefOperations.format();
-			InMemoryUltralightTag formattedTag = new InMemoryUltralightTag(config.expectedFileName);
-			assertArrayEquals(config.toString(), formattedTag.getMemoryMap().getMemory(), tag.getMemoryMap()
-					.getMemory());
+			assertArrayEquals(config.toString(), expectedTag.getMemoryMap().getMemory(), tag.getMemoryMap().getMemory());
 		}
 	}
 
@@ -101,9 +103,7 @@ public class Type2NdefOperationsTest {
 			init(config);
 
 			ndefOperations.formatReadOnly(new Record[0]);
-			InMemoryUltralightTag formattedTag = new InMemoryUltralightTag(config.expectedFileName);
-			assertArrayEquals(config.toString(), formattedTag.getMemoryMap().getMemory(), tag.getMemoryMap()
-					.getMemory());
+			assertArrayEquals(config.toString(), expectedTag.getMemoryMap().getMemory(), tag.getMemoryMap().getMemory());
 		}
 	}
 
@@ -116,8 +116,7 @@ public class Type2NdefOperationsTest {
 			ndefOperations.makeReadOnly();
 			assertFalse(ndefOperations.isWritable());
 
-			InMemoryUltralightTag formattedTag = new InMemoryUltralightTag(config.expectedFileName);
-			assertArrayEquals(formattedTag.getMemoryMap().getMemory(), tag.getMemoryMap().getMemory());
+			assertArrayEquals(expectedTag.getMemoryMap().getMemory(), tag.getMemoryMap().getMemory());
 		}
 	}
 
@@ -128,8 +127,7 @@ public class Type2NdefOperationsTest {
 
 			ndefOperations.writeNdefMessage(new UriRecord("http://example.com/some/more/more/1234/data.html"));
 
-			InMemoryUltralightTag formattedTag = new InMemoryUltralightTag(config.expectedFileName);
-			assertArrayEquals(formattedTag.getMemoryMap().getMemory(), tag.getMemoryMap().getMemory());
+			assertArrayEquals(expectedTag.getMemoryMap().getMemory(), tag.getMemoryMap().getMemory());
 		}
 	}
 

@@ -31,7 +31,7 @@ public class FileMfUlReader {
 	public static MemoryMap loadCardFromFile(String fileName) {
 		Collection<String> lines = readLinesFromFile(fileName);
 
-		MemoryMap memoryMap = new MemoryMap(lines.size());
+		MemoryMap memoryMap = new MemoryMap(lines.size(), 4);
 
 		Pattern pattern = Pattern.compile("\\[(..)\\]...(..).(..).(..).(..).*");
 		byte[] bytes = new byte[4];

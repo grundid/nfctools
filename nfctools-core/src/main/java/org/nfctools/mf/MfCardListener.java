@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.nfctools.mf.card.MfCard;
 
+@Deprecated
 public interface MfCardListener {
 
 	void cardDetected(MfCard mfCard, MfReaderWriter mfReaderWriter) throws IOException;

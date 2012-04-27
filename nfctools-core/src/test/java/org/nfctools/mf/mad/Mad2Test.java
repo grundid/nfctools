@@ -18,20 +18,18 @@ package org.nfctools.mf.mad;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.nfctools.mf.Key;
-import org.nfctools.mf.MfConstants;
-import org.nfctools.mf.card.MfCard;
-import org.nfctools.spi.file.FileMfReaderWriter;
+import org.nfctools.mf.classic.MemoryLayout;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
 
 public class Mad2Test extends AbstractMadTests {
 
 	public Mad2Test() {
-		super("mfstd4k_00.txt", "mfstd4k_01.txt", 3360, 2160, 3360);
+		super("mfstd4k_blank.txt", "mfstd4k_ndef.txt", 3360, 2160, 3360, MemoryLayout.CLASSIC_4K);
 	}
 
 	@Test
 	public void testMadSpec() throws Exception {
-		Mad2 mad2 = new Mad2(null, null, null);
+		Mad2 mad2 = new Mad2(loadData(blankCard), MAD_KEY_CONFIG);
 		assertEquals(38, mad2.getNumberOfSlots());
 		assertEquals(1, mad2.getSectorIdForSlot(0));
 		assertEquals(15, mad2.getSectorIdForSlot(14));
@@ -48,11 +46,8 @@ public class Mad2Test extends AbstractMadTests {
 
 	@Test
 	public void testMadAidSize() throws Exception {
-
-		FileMfReaderWriter mfReaderWriter = new FileMfReaderWriter();
-		MfCard mfCard = mfReaderWriter.loadCardFromFile(emptyCard);
-		ApplicationDirectory applicationDirectory = MadUtils.createApplicationDirectory(mfCard, mfReaderWriter, Key.A,
-				MfConstants.TRANSPORT_KEY, dummyKey);
+		MfClassicReaderWriter readerWriter = loadData(blankCard);
+		ApplicationDirectory applicationDirectory = readerWriter.createApplicationDirectory(MAD_KEY_CONFIG);
 
 		assertEquals(2, applicationDirectory.getVersion());
 

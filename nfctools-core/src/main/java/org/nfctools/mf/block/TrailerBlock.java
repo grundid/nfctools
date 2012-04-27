@@ -15,9 +15,9 @@
  */
 package org.nfctools.mf.block;
 
-import org.nfctools.mf.Key;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.MfException;
+import org.nfctools.mf.classic.Key;
 
 public class TrailerBlock extends Block {
 
@@ -44,6 +44,18 @@ public class TrailerBlock extends Block {
 		super(data, BLOCK_TYPE_TRAIL);
 		if (!validAccessConditions(getAccessConditions())) {
 			throw new MfException("illegal trailer block");
+		}
+	}
+
+	@Override
+	public TrailerBlock clone() {
+		try {
+			byte[] cloneData = new byte[data.length];
+			System.arraycopy(data, 0, cloneData, 0, data.length);
+			return new TrailerBlock(cloneData);
+		}
+		catch (MfException e) {
+			throw new RuntimeException(e);
 		}
 	}
 

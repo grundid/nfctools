@@ -18,18 +18,45 @@ package org.nfctools.mf.mad;
 import java.io.IOException;
 
 import org.nfctools.mf.MfConstants;
-import org.nfctools.mf.MfReaderWriter;
+import org.nfctools.mf.MfException;
 import org.nfctools.mf.block.TrailerBlock;
-import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.KeyValue;
+import org.nfctools.mf.classic.MfClassicAccess;
+import org.nfctools.mf.classic.MfClassicReaderWriter;
 
 public class Mad2 extends Mad1 {
 
 	protected byte[] mad2Data = new byte[48];
 
-	private final int sectorId2 = 0x10;
+	private TrailerBlock trailerBlock;
+	private final int mad2sectorId = 0x10;
 
-	Mad2(MfReaderWriter readerWriter, MfCard mfCard, TrailerBlock trailerBlock) throws IOException {
-		super(readerWriter, mfCard, trailerBlock);
+	Mad2(MfClassicReaderWriter readerWriter, MadKeyConfig keyConfig) throws IOException {
+		super(readerWriter, keyConfig);
+	}
+
+	Mad2(MfClassicReaderWriter readerWriter, MadKeyConfig keyConfig, TrailerBlock trailerBlock) throws IOException {
+		super(readerWriter, keyConfig, trailerBlock);
+		this.trailerBlock = trailerBlock.clone();
+		this.trailerBlock.setGeneralPurposeByte(MadConstants.GPB_MAD_2_TRAILER);
+	}
+
+	@Override
+	public void initMadTrailer(int madVersion) throws MfException, IOException {
+		super.initMadTrailer(madVersion);
+		trailerBlock = createTrailer(keyConfig.getWriteKeyValue());
+		trailerBlock.setGeneralPurposeByte(MadConstants.GPB_MAD_2_TRAILER);
+
+		MfClassicAccess accessTrailer = new MfClassicAccess(new KeyValue(keyConfig.getCreateKey(),
+				keyConfig.getCreateKeyValue()), 16, memoryLayout.getTrailerBlockNumberForSector(16));
+		readerWriter.writeBlock(accessTrailer, trailerBlock);
+	}
+
+	@Override
+	public void makeReadOnly() throws IOException {
+		super.makeReadOnly();
+		trailerBlock.setAccessConditions(MfConstants.NDEF_READ_ONLY_ACCESS_CONDITIONS);
+		writeTrailer(mad2sectorId, trailerBlock);
 	}
 
 	@Override
@@ -39,15 +66,15 @@ public class Mad2 extends Mad1 {
 	}
 
 	@Override
-	protected void readMad() throws IOException {
+	public void readMad() throws IOException {
 		super.readMad();
-		readMad(mad2Data, sectorId2, 0, trailerBlock);
+		readMad(mad2Data, mad2sectorId, 0, trailerBlock);
 	}
 
 	@Override
-	protected void writeMad() throws IOException {
+	public void writeMad() throws IOException {
 		super.writeMad();
-		writeMad(mad2Data, sectorId2, 0, trailerBlock);
+		writeMad(mad2Data, mad2sectorId, 0, trailerBlock);
 	}
 
 	@Override

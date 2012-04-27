@@ -17,15 +17,18 @@ package org.nfctools.mf.ul;
 
 import java.util.Arrays;
 
-import org.nfctools.mf.tlv.LockControlTlv;
-
 public class MemoryMap {
 
+	private int bytesPerPage;
 	private byte[][] memory;
-	private LockControlTlv dynamicLock;
 
-	public MemoryMap(int pages) {
-		memory = new byte[pages][4];
+	public MemoryMap(int pages, int bytesPerPage) {
+		memory = new byte[pages][bytesPerPage];
+		this.bytesPerPage = bytesPerPage;
+	}
+
+	public int getBytesPerPage() {
+		return bytesPerPage;
 	}
 
 	public void setPage(int pageNo, byte[] bytes) {
@@ -33,7 +36,7 @@ public class MemoryMap {
 	}
 
 	public void setPage(int pageNo, byte[] bytes, int offset) {
-		for (int x = 0; x < 4; x++)
+		for (int x = 0; x < bytesPerPage; x++)
 			memory[pageNo][x] = bytes[offset + x];
 	}
 
@@ -43,18 +46,6 @@ public class MemoryMap {
 
 	public byte[][] getMemory() {
 		return memory;
-	}
-
-	public LockControlTlv getDynamicLock() {
-		return dynamicLock;
-	}
-
-	public void setDynamicLock(LockControlTlv dynamicLock) {
-		this.dynamicLock = dynamicLock;
-	}
-
-	public boolean hasDynamicLock() {
-		return dynamicLock != null;
 	}
 
 	@Override

@@ -24,7 +24,6 @@ import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 
 import org.nfctools.io.NfcDevice;
-import org.nfctools.mf.Key;
 import org.nfctools.mf.MfAccess;
 import org.nfctools.mf.MfCardListener;
 import org.nfctools.mf.MfException;
@@ -35,6 +34,7 @@ import org.nfctools.mf.block.BlockResolver;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.block.TrailerBlock;
 import org.nfctools.mf.card.MfCard;
+import org.nfctools.mf.classic.Key;
 import org.nfctools.scio.CardTerminalToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

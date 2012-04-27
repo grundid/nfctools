@@ -16,38 +16,28 @@
 package org.nfctools.mf.ul;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.nfctools.NfcException;
 import org.nfctools.mf.block.MfBlock;
+import org.nfctools.mf.ndef.AbstractNdefOperations;
 import org.nfctools.mf.tlv.NdefMessageTlv;
-import org.nfctools.mf.tlv.Tlv;
 import org.nfctools.mf.tlv.TypeLengthValueReader;
 import org.nfctools.mf.tlv.TypeLengthValueWriter;
-import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefMessage;
-import org.nfctools.ndef.NdefMessageDecoder;
-import org.nfctools.ndef.NdefOperations;
 import org.nfctools.ndef.Record;
 import org.nfctools.tags.TagInputStream;
 import org.nfctools.tags.TagOutputStream;
 
-public class Type2NdefOperations implements NdefOperations {
+public class Type2NdefOperations extends AbstractNdefOperations {
 
 	private MemoryLayout memoryLayout;
 	private MfUlReaderWriter readerWriter;
-	private boolean formatted;
-	private boolean writable;
-	private List<Record> lastReadRecords;
 
 	public Type2NdefOperations(MemoryLayout memoryLayout, MfUlReaderWriter readerWriter, boolean formatted,
 			boolean writable) {
+		super(formatted, writable);
 		this.memoryLayout = memoryLayout;
 		this.readerWriter = readerWriter;
-		this.formatted = formatted;
-		this.writable = writable;
 	}
 
 	public MemoryLayout getMemoryLayout() {
@@ -60,46 +50,14 @@ public class Type2NdefOperations implements NdefOperations {
 	}
 
 	@Override
-	public boolean hasNdefMessage() {
-		if (lastReadRecords != null && !lastReadRecords.isEmpty())
-			return true;
-
-		Collection<Record> ndefMessage = readNdefMessage();
-		return !ndefMessage.isEmpty();
-	}
-
-	@Override
-	public boolean isFormatted() {
-		return formatted;
-	}
-
-	@Override
-	public boolean isWritable() {
-		return writable;
-	}
-
-	@Override
 	public List<Record> readNdefMessage() {
 		assertFormatted();
 		if (lastReadRecords != null) {
 			return lastReadRecords;
 		}
 		else {
-			NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
 			TypeLengthValueReader reader = new TypeLengthValueReader(new TagInputStream(memoryLayout, readerWriter));
-
-			lastReadRecords = new ArrayList<Record>();
-
-			while (reader.hasNext()) {
-				Tlv tlv = reader.next();
-				if (tlv instanceof NdefMessageTlv) {
-					NdefMessage ndefMessage = ndefMessageDecoder.decode(((NdefMessageTlv)tlv).getNdefMessage());
-					for (Record record : ndefMessageDecoder.decodeToRecords(ndefMessage)) {
-						lastReadRecords.add(record);
-					}
-				}
-			}
-
+			convertRecords(reader);
 			return lastReadRecords;
 		}
 	}
@@ -122,11 +80,6 @@ public class Type2NdefOperations implements NdefOperations {
 	}
 
 	@Override
-	public void format() {
-		format(new Record[0]);
-	}
-
-	@Override
 	public void format(Record... records) {
 		try {
 			formatCapabilityBlock();
@@ -135,12 +88,6 @@ public class Type2NdefOperations implements NdefOperations {
 		catch (IOException e) {
 			throw new NfcException(e);
 		}
-	}
-
-	@Override
-	public void formatReadOnly(Record... records) {
-		format(records);
-		makeReadOnly();
 	}
 
 	private byte[] convertNdefMessage(Record... records) {
@@ -152,14 +99,6 @@ public class Type2NdefOperations implements NdefOperations {
 		writer.write(new NdefMessageTlv(convertRecordsToBytes(records)));
 		writer.close();
 		return out.getBuffer();
-	}
-
-	private byte[] convertRecordsToBytes(Record[] records) {
-		if (records.length == 0)
-			return new byte[0];
-		else {
-			return NdefContext.getNdefMessageEncoder().encode(records);
-		}
 	}
 
 	private void writeBufferOnTag(byte[] buffer) {
@@ -203,15 +142,5 @@ public class Type2NdefOperations implements NdefOperations {
 		catch (IOException e) {
 			throw new NfcException(e);
 		}
-	}
-
-	private void assertWritable() {
-		if (!writable)
-			throw new IllegalStateException("Tag not writable");
-	}
-
-	private void assertFormatted() {
-		if (!formatted)
-			throw new IllegalStateException("Tag not formatted");
 	}
 }

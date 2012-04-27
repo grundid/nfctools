@@ -17,6 +17,7 @@ package org.nfctools.mf.card;
 
 import org.nfctools.api.TagType;
 
+@Deprecated
 public class MfCard4k extends MfCard {
 
 	private final int FOUR_BLOCK_SECTORS = 32;
