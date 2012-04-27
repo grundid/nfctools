@@ -30,7 +30,8 @@ public class InitiatorTerminalTagScanner implements Runnable {
 	private TerminalStatusListener statusListener;
 	private TagListener tagListener;
 
-	public InitiatorTerminalTagScanner(CardTerminal cardTerminal, TerminalStatusListener statusListener, TagListener tagListener) {
+	public InitiatorTerminalTagScanner(CardTerminal cardTerminal, TerminalStatusListener statusListener,
+			TagListener tagListener) {
 		this.cardTerminal = cardTerminal;
 		this.statusListener = statusListener;
 		this.tagListener = tagListener;
@@ -78,38 +79,8 @@ public class InitiatorTerminalTagScanner implements Runnable {
 	}
 
 	private void handleCard(Card card) {
-		TagType tagType = TagType.UKNOWN;
 		byte[] historicalBytes = card.getATR().getHistoricalBytes();
-
-		int tagId = historicalBytes[9] << 8 | historicalBytes[10];
-
-		switch (tagId) {
-			case 0x0001:
-				tagType = TagType.MIFARE_CLASSIC_1K;
-				break;
-			case 0x0002:
-				tagType = TagType.MIFARE_CLASSIC_4K;
-				break;
-			case 0x0003:
-				tagType = TagType.MIFARE_ULTRALIGHT;
-				break;
-			case 0x0026:
-				tagType = TagType.MIFARE_MINI;
-				break;
-			case 0xF004:
-				tagType = TagType.TOPAZ_JEWEL;
-				break;
-			case 0xF011:
-				tagType = TagType.FELICA_212K;
-				break;
-			case 0xF012:
-				tagType = TagType.FELICA_424K;
-				break;
-			case 0xFF40:
-				tagType = TagType.NFCIP;
-				break;
-		}
-
+		TagType tagType = AcsTagUtils.identifyTagType(historicalBytes);
 		tagListener.onTag(new AcsTag(tagType, historicalBytes, card));
 	}
 

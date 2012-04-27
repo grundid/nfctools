@@ -17,15 +17,13 @@ package org.nfctools.nfcip;
 
 import java.io.IOException;
 
-import org.nfctools.api.TargetListener;
-
 public interface NFCIPManager {
 
 	NFCIPConnection connectAsTarget() throws IOException;
 
 	NFCIPConnection connectAsInitiator() throws IOException;
 
-	void setTargetListener(TargetListener targetListener) throws IOException;
+	//	void setTargetListener(TargetListener targetListener) throws IOException;
 
 	void initAsTarget() throws IOException;
 

@@ -15,17 +15,16 @@
  */
 package org.nfctools.spi.tama.nfcip;
 
-import org.nfctools.api.Target;
 import org.nfctools.nfcip.NFCIPConnection;
 
 public abstract class AbstractNfcIpConnection implements NFCIPConnection {
 
 	private int mode;
-	protected Target target;
+	protected byte[] generalBytes;
 
-	protected AbstractNfcIpConnection(int mode, Target target) {
+	protected AbstractNfcIpConnection(int mode, byte[] generalBytes) {
 		this.mode = mode;
-		this.target = target;
+		this.generalBytes = generalBytes;
 	}
 
 	@Override
@@ -39,7 +38,7 @@ public abstract class AbstractNfcIpConnection implements NFCIPConnection {
 	}
 
 	@Override
-	public Target getTarget() {
-		return target;
+	public byte[] getGeneralBytes() {
+		return generalBytes;
 	}
 }

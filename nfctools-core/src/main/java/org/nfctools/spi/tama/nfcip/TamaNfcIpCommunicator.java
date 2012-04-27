@@ -18,9 +18,6 @@ package org.nfctools.spi.tama.nfcip;
 import java.io.IOException;
 
 import org.nfctools.NfcContext;
-import org.nfctools.SimpleNfcTarget;
-import org.nfctools.api.Target;
-import org.nfctools.api.TargetListener;
 import org.nfctools.io.ByteArrayReader;
 import org.nfctools.io.ByteArrayWriter;
 import org.nfctools.nfcip.NFCIPConnection;
@@ -32,7 +29,6 @@ import org.nfctools.spi.tama.request.InitTamaTargetReq;
 import org.nfctools.spi.tama.request.JumpForDepReq;
 import org.nfctools.spi.tama.request.ReleaseReq;
 import org.nfctools.spi.tama.request.RfCommunicationReq;
-import org.nfctools.spi.tama.request.SetParametersReq;
 import org.nfctools.spi.tama.response.InitTamaTargetResp;
 import org.nfctools.spi.tama.response.JumpForDepResp;
 import org.slf4j.Logger;
@@ -55,7 +51,7 @@ public class TamaNfcIpCommunicator extends AbstractTamaCommunicator implements N
 	private byte[] generalBytes;
 
 	private NFCIPConnectionListener connectionListener;
-	private TargetListener targetListener;
+	//	private TargetListener targetListener;
 
 	private Thread waitingThread;
 
@@ -92,8 +88,8 @@ public class TamaNfcIpCommunicator extends AbstractTamaCommunicator implements N
 		byte[] passiveInitiatorData = { 0x00, (byte)0xff, (byte)0xff, 0x00, 0x00 };
 		JumpForDepResp jumpForDepResp = sendMessage(new JumpForDepReq(activeInitiator, baudRateInitiator,
 				passiveInitiatorData, nfcId, generalBytes));
-		return new InitiatorNfcIpConnection(this, new SimpleNfcTarget(jumpForDepResp.getOptionalParametersTarget(),
-				jumpForDepResp.getNfcId(), jumpForDepResp.getGeneralBytes()), jumpForDepResp.getTargetId());
+
+		return new InitiatorNfcIpConnection(this, jumpForDepResp.getGeneralBytes(), jumpForDepResp.getTargetId());
 	}
 
 	public void releaseTargets() throws IOException {
@@ -107,15 +103,16 @@ public class TamaNfcIpCommunicator extends AbstractTamaCommunicator implements N
 
 		// FIXME Initiator Command is not really the nfcid. Must investigate. 
 		// FIXME Extract general Bytes
-		return new TargetNfcIpConnection(this, new SimpleNfcTarget(initTamaTargetResp.getMode(),
-				initTamaTargetResp.getInitiatorCommand(), new byte[0]));
+		byte[] generalBytes = initTamaTargetResp.getInitiatorCommand();
+
+		return new TargetNfcIpConnection(this, generalBytes);
 	}
 
-	@Override
-	public void setTargetListener(TargetListener targetListener) throws IOException {
-		sendMessage(new SetParametersReq().setAutomaticATR_RES(false));
-		this.targetListener = targetListener;
-	}
+	//	@Override
+	//	public void setTargetListener(TargetListener targetListener) throws IOException {
+	//		sendMessage(new SetParametersReq().setAutomaticATR_RES(false));
+	//		this.targetListener = targetListener;
+	//	}
 
 	@Override
 	public void setConnectionListener(NFCIPConnectionListener connectionListener) {
@@ -152,14 +149,14 @@ public class TamaNfcIpCommunicator extends AbstractTamaCommunicator implements N
 								passiveOnlyTarget, mifareParams, felicaParams, nfcId, generalBytes));
 						NfcContext nfcContext = new NfcContext();
 						nfcContext.setAttribute(NfcContext.KEY_COMMUNICATOR, TamaNfcIpCommunicator.this);
-						Target target = new SimpleNfcTarget(initTamaTargetResp.getMode(),
-								initTamaTargetResp.getInitiatorCommand(), new byte[0]);
-						if (targetListener != null) {
-							targetListener.onTarget(target, nfcContext);
-						}
+
+						byte[] generalBytes = initTamaTargetResp.getInitiatorCommand();
+						//						if (targetListener != null) {
+						//														targetListener.onTarget(target, nfcContext);
+						//						}
 						if (connectionListener != null) {
 							connectionListener.onConnection(new TargetNfcIpConnection(TamaNfcIpCommunicator.this,
-									target));
+									generalBytes));
 						}
 					}
 					catch (IOException e) {

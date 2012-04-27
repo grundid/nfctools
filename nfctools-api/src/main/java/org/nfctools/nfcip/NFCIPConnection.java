@@ -17,8 +17,6 @@ package org.nfctools.nfcip;
 
 import java.io.IOException;
 
-import org.nfctools.api.Target;
-
 public interface NFCIPConnection {
 
 	int MODE_INITIATOR = 1;
@@ -41,5 +39,5 @@ public interface NFCIPConnection {
 
 	void setTimeout(long millis);
 
-	Target getTarget();
+	byte[] getGeneralBytes();
 }

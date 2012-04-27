@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.nfctools.api.Target;
 import org.nfctools.spi.tama.request.DataExchangeReq;
 import org.nfctools.spi.tama.request.ReleaseReq;
 import org.nfctools.spi.tama.response.DataExchangeResp;
@@ -34,8 +33,8 @@ public class InitiatorNfcIpConnection extends AbstractNfcIpConnection {
 	private int targetId;
 	private ByteArrayOutputStream response = new ByteArrayOutputStream();
 
-	public InitiatorNfcIpConnection(TamaNfcIpCommunicator tamaCommunicator, Target target, int targetId) {
-		super(MODE_INITIATOR, target);
+	public InitiatorNfcIpConnection(TamaNfcIpCommunicator tamaCommunicator, byte[] generalBytes, int targetId) {
+		super(MODE_INITIATOR, generalBytes);
 		this.tamaCommunicator = tamaCommunicator;
 		this.targetId = targetId;
 	}

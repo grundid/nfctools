@@ -33,7 +33,6 @@ import org.nfctools.nfcip.NFCIPConnection;
 import org.nfctools.scio.AbstractTerminal;
 import org.nfctools.scio.TerminalStatus;
 import org.nfctools.spi.tama.nfcip.TamaNfcIpCommunicator;
-import org.nfctools.utils.NfcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,8 +126,7 @@ public class AcsTerminal extends AbstractTerminal {
 		nfcIpCommunicator.setGeneralBytes(LlcpConstants.initiatorGeneralBytes);
 		try {
 			NFCIPConnection nfcipConnection = nfcIpCommunicator.connectAsInitiator();
-			log.info("Connection: " + Integer.toHexString(nfcipConnection.getTarget().getMode()) + " NfcId: "
-					+ NfcUtils.convertBinToASCII(nfcipConnection.getTarget().getNfcId()));
+			log.info("Connection: " + nfcipConnection);
 			handleNfcipConnection(nfcipConnection);
 		}
 		finally {
@@ -183,8 +181,7 @@ public class AcsTerminal extends AbstractTerminal {
 		nfcIpCommunicator.setMifareParams(LlcpConstants.mifareParams);
 		nfcIpCommunicator.setGeneralBytes(LlcpConstants.generalBytes);
 		NFCIPConnection nfcipConnection = nfcIpCommunicator.connectAsTarget();
-		log.info("Connection: " + Integer.toHexString(nfcipConnection.getTarget().getMode()) + " NfcId: "
-				+ NfcUtils.convertBinToASCII(nfcipConnection.getTarget().getNfcId()));
+		log.info("Connection: " + nfcipConnection);
 
 		handleNfcipConnection(nfcipConnection);
 	}

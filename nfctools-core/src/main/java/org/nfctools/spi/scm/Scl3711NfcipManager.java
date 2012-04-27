@@ -18,7 +18,6 @@ package org.nfctools.spi.scm;
 import java.io.IOException;
 
 import org.nfctools.SimpleNfcTarget;
-import org.nfctools.api.TargetListener;
 import org.nfctools.llcp.LlcpConstants;
 import org.nfctools.nfcip.NFCIPConnection;
 import org.nfctools.nfcip.NFCIPConnectionListener;
@@ -61,12 +60,6 @@ public class Scl3711NfcipManager implements NFCIPManager {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public void setTargetListener(TargetListener targetListener) throws IOException {
-		throw new IllegalStateException("unsupported operation");
-
 	}
 
 	@Override

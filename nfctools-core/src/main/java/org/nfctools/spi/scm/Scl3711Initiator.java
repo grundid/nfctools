@@ -71,8 +71,7 @@ public class Scl3711Initiator implements NFCIPConnection {
 	}
 
 	@Override
-	public Target getTarget() {
-		return target;
+	public byte[] getGeneralBytes() {
+		return target.getGeneralBytes();
 	}
-
 }

@@ -46,9 +46,19 @@ public class AcsTag extends Tag implements ApduTag {
 	@Override
 	public Response transmit(Command command) {
 		try {
-			CommandAPDU commandAPDU = command.hasData() ? new CommandAPDU(Apdu.CLS_PTS, command.getInstruction(),
-					command.getP1(), command.getP2(), command.getData()) : new CommandAPDU(Apdu.CLS_PTS,
-					command.getInstruction(), command.getP1(), command.getP2(), command.getLength());
+			CommandAPDU commandAPDU = null;
+			if (command.isDataOnly()) {
+				commandAPDU = new CommandAPDU(0xff, 0, 0, 0, command.getData(), command.getOffset(),
+						command.getLength());
+			}
+			else if (command.hasData()) {
+				commandAPDU = new CommandAPDU(Apdu.CLS_PTS, command.getInstruction(), command.getP1(), command.getP2(),
+						command.getData());
+			}
+			else {
+				commandAPDU = new CommandAPDU(Apdu.CLS_PTS, command.getInstruction(), command.getP1(), command.getP2(),
+						command.getLength());
+			}
 			ResponseAPDU responseAPDU = cardChannel.transmit(commandAPDU);
 			return new Response(responseAPDU.getSW1(), responseAPDU.getSW2(), responseAPDU.getData());
 		}

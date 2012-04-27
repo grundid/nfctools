@@ -21,7 +21,16 @@ public class Command {
 	private int p1;
 	private int p2;
 	private int length;
+	private int offset;
 	private byte[] data;
+	private boolean dataOnly;
+
+	public Command(byte[] data, int offset, int length) {
+		this.data = data;
+		this.offset = offset;
+		this.length = length;
+		dataOnly = true;
+	}
 
 	public Command(int instruction, int p1, int p2, byte[] data) {
 		this.instruction = instruction;
@@ -61,4 +70,13 @@ public class Command {
 	public boolean hasData() {
 		return data != null;
 	}
+
+	public boolean isDataOnly() {
+		return dataOnly;
+	}
+
+	public int getOffset() {
+		return offset;
+	}
+
 }

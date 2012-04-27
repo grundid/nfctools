@@ -30,7 +30,7 @@ public class LlcpOverNfcip implements NFCIPConnectionListener {
 
 	@Override
 	public void onConnection(NFCIPConnection connection) throws IOException {
-		initFromGeneralBytes(connection.getTarget().getGeneralBytes());
+		initFromGeneralBytes(connection.getGeneralBytes());
 		try {
 			if (connection.isInitiator()) {
 				connection.send(pduDecoder.encode(new Symmetry().processPdu(connectionManager)));
