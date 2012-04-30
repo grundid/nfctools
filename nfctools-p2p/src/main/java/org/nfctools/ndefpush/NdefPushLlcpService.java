@@ -118,7 +118,7 @@ public class NdefPushLlcpService implements ServiceAccessPoint {
 	@Override
 	public boolean canAcceptConnection(Object[] parameters) {
 		boolean canAcceptConnection = ndefListener != null;
-		log.info("can connect: " + canAcceptConnection);
+		log.debug("can connect: " + canAcceptConnection);
 		return canAcceptConnection;
 	}
 

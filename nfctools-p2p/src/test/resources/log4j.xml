@@ -10,11 +10,18 @@
 		</layout>
 	</appender>
 	
+	<logger name="org.nfctools.test.NfcipConnectionDummy">
+		<level value="warn" />
+	</logger>
+	
 	<!-- Application Loggers -->
 	<logger name="org.nfctools">
 		<level value="warn" />
 	</logger>
 
+	<logger name="org.nfctools.ndefpush">
+		<level value="warn" />
+	</logger>
 
 
 	<!-- Root Logger -->
