@@ -30,7 +30,9 @@ import org.nfctools.mf.ndef.MfNdefReader;
 import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.Record;
 import org.nfctools.nfcip.NFCIPConnection;
+import org.nfctools.nfcip.NFCIPConnectionListener;
 import org.nfctools.scio.AbstractTerminal;
+import org.nfctools.scio.TerminalMode;
 import org.nfctools.scio.TerminalStatus;
 import org.nfctools.spi.tama.nfcip.TamaNfcIpCommunicator;
 import org.slf4j.Logger;
@@ -43,6 +45,7 @@ public class AcsTerminal extends AbstractTerminal {
 	private MfReaderWriter mfReaderWriter;
 
 	private Thread scanningThread;
+	private AbstractTerminalTagScanner tagScanner;
 
 	@Override
 	public boolean canHandle(String terminalName) {
@@ -51,11 +54,35 @@ public class AcsTerminal extends AbstractTerminal {
 
 	@Override
 	public void registerTagListener(TagListener tagListener) {
-		InitiatorTerminalTagScanner tagScanner = new InitiatorTerminalTagScanner(cardTerminal, statusListener,
-				tagListener);
+		tagScanner.setTagListener(tagListener);
+	}
+
+	@Override
+	public void setMode(TerminalMode terminalMode) {
+		if (TerminalMode.INITIATOR.equals(terminalMode))
+			tagScanner = new InitiatorTerminalTagScanner(cardTerminal);
+		else
+			tagScanner = new TargetTerminalTagScanner(cardTerminal);
 		scanningThread = new Thread(tagScanner);
 		scanningThread.setDaemon(true);
+	}
+
+	@Override
+	public void startListening() {
 		scanningThread.start();
+	}
+
+	@Override
+	public void stopListening() {
+		scanningThread.interrupt();
+	}
+
+	@Override
+	public void setNfcipConnectionListener(NFCIPConnectionListener nfcipConnectionListener) {
+		if (tagScanner != null)
+			tagScanner.setNfcipConnectionListener(nfcipConnectionListener);
+		else
+			super.setNfcipConnectionListener(nfcipConnectionListener);
 	}
 
 	@Override

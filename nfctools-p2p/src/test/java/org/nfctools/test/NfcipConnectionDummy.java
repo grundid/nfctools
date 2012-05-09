@@ -77,11 +77,6 @@ public class NfcipConnectionDummy implements NFCIPConnection {
 	}
 
 	@Override
-	public void setTimeout(long millis) {
-
-	}
-
-	@Override
 	public byte[] getGeneralBytes() {
 		return generalBytes;
 	}

@@ -65,10 +65,10 @@ public class Scl3711Initiator implements NFCIPConnection {
 		scl3711.disconnect();
 	}
 
-	@Override
-	public void setTimeout(long millis) {
-		throw new IllegalStateException();
-	}
+	//	@Override
+	//	public void setTimeout(long millis) {
+	//		throw new IllegalStateException();
+	//	}
 
 	@Override
 	public byte[] getGeneralBytes() {

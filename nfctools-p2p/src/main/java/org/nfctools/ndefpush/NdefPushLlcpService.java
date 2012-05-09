@@ -94,15 +94,15 @@ public class NdefPushLlcpService implements ServiceAccessPoint {
 			llcpSocket.sendMessage(messageBuffer);
 		}
 		else {
-			log.debug("Message send");
-			outgoingMessage.notifyFinishListenerSuccess();
-			outgoingMessage = null;
 			if (waitingMessages.isEmpty()) {
 				llcpSocket.disconnect();
 			}
 			else {
 				onConnectSucceeded(llcpSocket);
 			}
+			log.debug("Message send");
+			outgoingMessage.notifyFinishListenerSuccess();
+			outgoingMessage = null;
 		}
 	}
 

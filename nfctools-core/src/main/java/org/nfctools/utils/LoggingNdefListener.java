@@ -19,11 +19,12 @@ import java.util.Collection;
 
 import org.nfctools.ndef.NdefListener;
 import org.nfctools.ndef.NdefOperations;
+import org.nfctools.ndef.NdefOperationsListener;
 import org.nfctools.ndef.Record;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoggingNdefListener implements NdefListener {
+public class LoggingNdefListener implements NdefListener, NdefOperationsListener {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 

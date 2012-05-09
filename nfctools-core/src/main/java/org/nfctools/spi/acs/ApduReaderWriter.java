@@ -29,6 +29,7 @@ import org.nfctools.utils.NfcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class ApduReaderWriter implements ByteArrayReader, ByteArrayWriter {
 
 	private Logger log = LoggerFactory.getLogger(getClass());

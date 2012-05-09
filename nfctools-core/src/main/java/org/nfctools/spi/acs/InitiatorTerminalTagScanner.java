@@ -15,26 +15,23 @@
  */
 package org.nfctools.spi.acs;
 
+import java.io.IOException;
+
 import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 
-import org.nfctools.api.TagListener;
+import org.nfctools.api.ApduTag;
 import org.nfctools.api.TagType;
+import org.nfctools.llcp.LlcpConstants;
+import org.nfctools.nfcip.NFCIPConnection;
 import org.nfctools.scio.TerminalStatus;
-import org.nfctools.scio.TerminalStatusListener;
+import org.nfctools.spi.tama.nfcip.TamaNfcIpCommunicator;
 
-public class InitiatorTerminalTagScanner implements Runnable {
+public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner implements Runnable {
 
-	private CardTerminal cardTerminal;
-	private TerminalStatusListener statusListener;
-	private TagListener tagListener;
-
-	public InitiatorTerminalTagScanner(CardTerminal cardTerminal, TerminalStatusListener statusListener,
-			TagListener tagListener) {
-		this.cardTerminal = cardTerminal;
-		this.statusListener = statusListener;
-		this.tagListener = tagListener;
+	public InitiatorTerminalTagScanner(CardTerminal cardTerminal) {
+		super(cardTerminal);
 	}
 
 	@Override
@@ -52,28 +49,12 @@ public class InitiatorTerminalTagScanner implements Runnable {
 						e.printStackTrace();
 					}
 					finally {
-						if (card != null) {
-							card.disconnect(true);
-						}
-						try {
-							while (cardTerminal.isCardPresent()) {
-								try {
-									Thread.sleep(500);
-								}
-								catch (InterruptedException e) {
-									break;
-								}
-							}
-							cardTerminal.waitForCardAbsent(1000);
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-						}
-						notifyStatus(TerminalStatus.DISCONNECTED);
+						cleanupCard(card);
 					}
 				}
 			}
 			catch (CardException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -81,12 +62,27 @@ public class InitiatorTerminalTagScanner implements Runnable {
 	private void handleCard(Card card) {
 		byte[] historicalBytes = card.getATR().getHistoricalBytes();
 		TagType tagType = AcsTagUtils.identifyTagType(historicalBytes);
-		tagListener.onTag(new AcsTag(tagType, historicalBytes, card));
+		AcsTag acsTag = new AcsTag(tagType, historicalBytes, card);
+		if (tagType.equals(TagType.NFCIP)) {
+			connectAsInitiator(acsTag);
+		}
+		else {
+			tagListener.onTag(acsTag);
+		}
 	}
 
-	private void notifyStatus(TerminalStatus status) {
-		if (statusListener != null)
-			statusListener.onStatusChanged(status);
+	private void connectAsInitiator(ApduTag tag) {
+		ApduTagReaderWriter apduReaderWriter = new ApduTagReaderWriter(tag);
+
+		TamaNfcIpCommunicator nfcIpCommunicator = new TamaNfcIpCommunicator(apduReaderWriter, apduReaderWriter);
+		nfcIpCommunicator.setConnectionSetup(LlcpConstants.CONNECTION_SETUP);
+		try {
+			NFCIPConnection nfcipConnection = nfcIpCommunicator.connectAsInitiator();
+			handleNfcipConnection(nfcipConnection);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

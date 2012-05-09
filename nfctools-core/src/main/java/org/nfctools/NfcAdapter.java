@@ -22,7 +22,9 @@ import org.nfctools.api.NfcTagListener;
 import org.nfctools.api.Tag;
 import org.nfctools.api.TagListener;
 import org.nfctools.api.UnknownTagListener;
+import org.nfctools.nfcip.NFCIPConnectionListener;
 import org.nfctools.scio.Terminal;
+import org.nfctools.scio.TerminalMode;
 
 public class NfcAdapter implements TagListener {
 
@@ -37,9 +39,14 @@ public class NfcAdapter implements TagListener {
 		}
 	};
 
-	public void setTerminal(Terminal terminal) {
+	public NfcAdapter(Terminal terminal, TerminalMode terminalMode) {
 		this.terminal = terminal;
+		setMode(terminalMode);
 		terminal.registerTagListener(this);
+	}
+
+	public void setNfcipConnectionListener(NFCIPConnectionListener nfcipConnectionListener) {
+		terminal.setNfcipConnectionListener(nfcipConnectionListener);
 	}
 
 	public void registerTagListener(NfcTagListener nfcTagListener) {
@@ -48,6 +55,18 @@ public class NfcAdapter implements TagListener {
 
 	public void registerUnknownTagListerner(UnknownTagListener unknownTagListener) {
 		this.unknownTagListener = unknownTagListener;
+	}
+
+	public void setMode(TerminalMode terminalMode) {
+		terminal.setMode(terminalMode);
+	}
+
+	public void startListening() {
+		terminal.startListening();
+	}
+
+	public void stopListening() {
+		terminal.stopListening();
 	}
 
 	@Override

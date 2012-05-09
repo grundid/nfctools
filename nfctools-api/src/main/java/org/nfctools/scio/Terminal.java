@@ -30,6 +30,14 @@ public interface Terminal extends NfcDevice {
 
 	void setStatusListener(TerminalStatusListener statusListener);
 
+	void setNfcipConnectionListener(NFCIPConnectionListener nfcipConnectionListener);
+
+	void setMode(TerminalMode terminalMode);
+
+	void startListening();
+
+	void stopListening();
+
 	@Deprecated
 	boolean canHandle(String terminalName);
 
@@ -47,9 +55,6 @@ public interface Terminal extends NfcDevice {
 
 	@Deprecated
 	CardTerminal getCardTerminal();
-
-	@Deprecated
-	void setNfcipConnectionListener(NFCIPConnectionListener nfcipConnectionListener);
 
 	@Deprecated
 	void setNdefListener(NdefListener ndefListener);

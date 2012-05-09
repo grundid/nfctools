@@ -41,7 +41,8 @@ public class ApduTagReaderWriter implements ByteArrayReader, ByteArrayWriter {
 		responseData = response.getData();
 		if (!Apdu.isSuccess(response))
 			throw new ApduException("Error sending message [" + NfcUtils.convertBinToASCII(data) + "] (" + offset + ","
-					+ length + ") => [" + NfcUtils.convertBinToASCII(responseData) + "]");
+					+ length + ") => [SW1: " + response.getSw1() + ", SW2:" + response.getSw2() + ", Data: "
+					+ NfcUtils.convertBinToASCII(responseData) + "]");
 	}
 
 	@Override

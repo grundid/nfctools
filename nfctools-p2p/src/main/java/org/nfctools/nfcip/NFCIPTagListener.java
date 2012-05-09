@@ -31,10 +31,7 @@ public class NFCIPTagListener implements NfcTagListener {
 		ApduTagReaderWriter apduReaderWriter = new ApduTagReaderWriter((ApduTag)tag);
 
 		TamaNfcIpCommunicator nfcIpCommunicator = new TamaNfcIpCommunicator(apduReaderWriter, apduReaderWriter);
-		nfcIpCommunicator.setNfcId(LlcpConstants.nfcId3t);
-		nfcIpCommunicator.setFelicaParams(LlcpConstants.felicaParams);
-		nfcIpCommunicator.setMifareParams(LlcpConstants.mifareParams);
-		nfcIpCommunicator.setGeneralBytes(LlcpConstants.initiatorGeneralBytes);
+		nfcIpCommunicator.setConnectionSetup(LlcpConstants.CONNECTION_SETUP);
 		try {
 			NFCIPConnection nfcipConnection = nfcIpCommunicator.connectAsInitiator();
 			log.info("Connection: " + nfcipConnection);

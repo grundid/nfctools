@@ -10,17 +10,17 @@ import org.nfctools.api.TagType;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.mad.Application;
 import org.nfctools.mf.mad.ApplicationDirectory;
-import org.nfctools.ndef.NdefListener;
+import org.nfctools.ndef.NdefOperationsListener;
 import org.nfctools.spi.acs.AcrMfClassicReaderWriter;
 
 public class MfClassicNfcTagListener implements NfcTagListener {
 
-	private NdefListener ndefListener;
+	private NdefOperationsListener ndefListener;
 
 	public MfClassicNfcTagListener() {
 	}
 
-	public MfClassicNfcTagListener(NdefListener ndefListener) {
+	public MfClassicNfcTagListener(NdefOperationsListener ndefListener) {
 		this.ndefListener = ndefListener;
 	}
 

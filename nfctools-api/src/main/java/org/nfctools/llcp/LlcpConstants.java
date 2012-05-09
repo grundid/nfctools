@@ -15,6 +15,8 @@
  */
 package org.nfctools.llcp;
 
+import org.nfctools.api.ConnectionSetup;
+
 public class LlcpConstants {
 
 	public static final byte[] mifareParams = { 0x08, 0x00, 0x12, 0x34, 0x56, 0x40 };
@@ -28,5 +30,8 @@ public class LlcpConstants {
 	public static final int DEFAULT_MIU = 128;
 
 	public static final String COM_ANDROID_NPP = "com.android.npp";
+
+	public static final ConnectionSetup CONNECTION_SETUP = new ConnectionSetup(mifareParams, felicaParams, nfcId3t,
+			initiatorGeneralBytes);
 
 }

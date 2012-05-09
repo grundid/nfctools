@@ -3,7 +3,6 @@ package org.nfctools.test;
 import java.util.Collection;
 
 import org.nfctools.ndef.NdefListener;
-import org.nfctools.ndef.NdefOperations;
 import org.nfctools.ndef.Record;
 
 public class NotifyingNdefListener implements NdefListener {
@@ -21,12 +20,6 @@ public class NotifyingNdefListener implements NdefListener {
 		synchronized (objectToNotify) {
 			objectToNotify.notify();
 		}
-	}
-
-	@Override
-	public void onNdefOperations(NdefOperations ndefOperations) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public Collection<Record> getRecords() {

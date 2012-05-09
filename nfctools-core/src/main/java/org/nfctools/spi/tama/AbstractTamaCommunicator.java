@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.nfctools.io.ByteArrayReader;
 import org.nfctools.io.ByteArrayWriter;
+import org.nfctools.nfcip.NFCIPCommunicator;
 import org.nfctools.spi.tama.request.GetFirmwareVersionReq;
 import org.nfctools.spi.tama.request.GetGeneralStatusReq;
 import org.nfctools.spi.tama.request.TamaRequestEncoder;
@@ -29,7 +30,7 @@ import org.nfctools.utils.NfcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTamaCommunicator {
+public abstract class AbstractTamaCommunicator implements NFCIPCommunicator {
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -44,6 +45,7 @@ public abstract class AbstractTamaCommunicator {
 		this.writer = writer;
 	}
 
+	@Override
 	public <RESP, REQ> RESP sendMessage(REQ request) throws IOException {
 		if (log.isDebugEnabled())
 			log.debug("Sending message type:  " + request.getClass().getSimpleName());

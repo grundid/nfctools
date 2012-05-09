@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.nfctools.nfcip.NFCIPCommunicator;
 import org.nfctools.spi.tama.request.GetDepDataReq;
 import org.nfctools.spi.tama.request.SetDepDataReq;
 import org.nfctools.spi.tama.request.SetMetaDepDataReq;
@@ -31,16 +32,11 @@ public class TargetNfcIpConnection extends AbstractNfcIpConnection {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 
-	private TamaNfcIpCommunicator tamaCommunicator;
+	private NFCIPCommunicator tamaCommunicator;
 
 	public TargetNfcIpConnection(TamaNfcIpCommunicator tamaCommunicator, byte[] generalBytes) {
 		super(MODE_TARGET, generalBytes);
 		this.tamaCommunicator = tamaCommunicator;
-	}
-
-	@Override
-	public void setTimeout(long millis) {
-		tamaCommunicator.setTimeout(millis);
 	}
 
 	@Override

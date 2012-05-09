@@ -19,8 +19,5 @@ import java.util.Collection;
 
 public interface NdefListener {
 
-	@Deprecated
 	void onNdefMessages(Collection<Record> records);
-
-	void onNdefOperations(NdefOperations ndefOperations);
 }

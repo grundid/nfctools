@@ -18,6 +18,7 @@ package org.nfctools.spi.tama.nfcip;
 import java.io.IOException;
 
 import org.nfctools.NfcContext;
+import org.nfctools.api.ConnectionSetup;
 import org.nfctools.io.ByteArrayReader;
 import org.nfctools.io.ByteArrayWriter;
 import org.nfctools.nfcip.NFCIPConnection;
@@ -81,6 +82,13 @@ public class TamaNfcIpCommunicator extends AbstractTamaCommunicator implements N
 
 	public void setGeneralBytes(byte[] generalBytes) {
 		this.generalBytes = generalBytes;
+	}
+
+	public void setConnectionSetup(ConnectionSetup setup) {
+		setFelicaParams(setup.felicaParams);
+		setMifareParams(setup.mifareParams);
+		setNfcId(setup.nfcId3t);
+		setGeneralBytes(setup.generalBytes);
 	}
 
 	@Override

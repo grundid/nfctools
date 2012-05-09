@@ -23,21 +23,21 @@ import org.nfctools.api.NfcTagListener;
 import org.nfctools.api.Tag;
 import org.nfctools.api.TagType;
 import org.nfctools.mf.block.MfBlock;
-import org.nfctools.ndef.NdefListener;
+import org.nfctools.ndef.NdefOperationsListener;
 import org.nfctools.spi.acs.AcrMfUlReaderWriter;
 
 public class Type2NfcTagListener implements NfcTagListener {
 
-	private NdefListener ndefListener;
+	private NdefOperationsListener ndefListener;
 
 	public Type2NfcTagListener() {
 	}
 
-	public Type2NfcTagListener(NdefListener ndefListener) {
+	public Type2NfcTagListener(NdefOperationsListener ndefListener) {
 		this.ndefListener = ndefListener;
 	}
 
-	public void setNdefListener(NdefListener ndefListener) {
+	public void setNdefListener(NdefOperationsListener ndefListener) {
 		this.ndefListener = ndefListener;
 	}
 

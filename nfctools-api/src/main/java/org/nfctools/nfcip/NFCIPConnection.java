@@ -37,7 +37,5 @@ public interface NFCIPConnection {
 
 	void close() throws IOException;
 
-	void setTimeout(long millis);
-
 	byte[] getGeneralBytes();
 }
