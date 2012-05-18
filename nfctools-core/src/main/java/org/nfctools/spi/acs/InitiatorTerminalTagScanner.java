@@ -43,6 +43,7 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 					Card card = null;
 					try {
 						card = cardTerminal.connect("*");
+						notifyStatus(TerminalStatus.CONNECTED);
 						handleCard(card);
 					}
 					catch (Exception e) {

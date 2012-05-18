@@ -38,10 +38,8 @@ public interface Terminal extends NfcDevice {
 
 	void stopListening();
 
-	@Deprecated
 	boolean canHandle(String terminalName);
 
-	@Deprecated
 	String getTerminalName();
 
 	@Deprecated
