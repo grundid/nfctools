@@ -50,7 +50,7 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 						e.printStackTrace();
 					}
 					finally {
-						cleanupCard(card);
+						waitForCardAbsent();
 					}
 				}
 			}

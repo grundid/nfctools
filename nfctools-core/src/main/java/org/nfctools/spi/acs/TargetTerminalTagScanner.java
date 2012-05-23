@@ -51,7 +51,7 @@ public class TargetTerminalTagScanner extends AbstractTerminalTagScanner impleme
 					}
 				}
 				finally {
-					cleanupCard(card);
+					waitForCardAbsent();
 				}
 			}
 			catch (CardException e) {

@@ -2,7 +2,6 @@ package org.nfctools.spi.acs;
 
 import java.io.IOException;
 
-import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 
@@ -11,9 +10,12 @@ import org.nfctools.nfcip.NFCIPConnection;
 import org.nfctools.nfcip.NFCIPConnectionListener;
 import org.nfctools.scio.TerminalStatus;
 import org.nfctools.scio.TerminalStatusListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTerminalTagScanner implements Runnable {
 
+	protected Logger log = LoggerFactory.getLogger(getClass());
 	protected CardTerminal cardTerminal;
 	protected TerminalStatusListener statusListener;
 	protected TagListener tagListener;
@@ -28,24 +30,24 @@ public abstract class AbstractTerminalTagScanner implements Runnable {
 			statusListener.onStatusChanged(status);
 	}
 
-	protected void cleanupCard(Card card) throws CardException {
-		if (card != null) {
-			card.disconnect(true);
-		}
+	protected void waitForCardAbsent() throws CardException {
 		try {
 			while (cardTerminal.isCardPresent()) {
 				try {
+					log.debug("Waiting while card present");
 					Thread.sleep(500);
 				}
 				catch (InterruptedException e) {
 					break;
 				}
 			}
+			log.debug("Wait for card absent");
 			cardTerminal.waitForCardAbsent(1000);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		log.debug("Disconnected");
 		notifyStatus(TerminalStatus.DISCONNECTED);
 	}
 
