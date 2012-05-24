@@ -21,10 +21,11 @@ import org.nfctools.ndef.NdefListener;
 import org.nfctools.ndef.NdefOperations;
 import org.nfctools.ndef.NdefOperationsListener;
 import org.nfctools.ndef.Record;
+import org.nfctools.snep.Sneplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoggingNdefListener implements NdefListener, NdefOperationsListener {
+public class LoggingNdefListener implements NdefListener, NdefOperationsListener, Sneplet {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -45,6 +46,23 @@ public class LoggingNdefListener implements NdefListener, NdefOperationsListener
 		}
 		else
 			log.info("Empty tag. NOT formatted. Size: " + ndefOperations.getMaxSize() + " bytes");
+	}
+
+	@Override
+	public Collection<Record> doGet(Collection<Record> requestRecords) {
+		log.info("SNEP get");
+		onNdefMessages(requestRecords);
+		return null;
+	}
+
+	@Override
+	public void doPut(Collection<Record> requestRecords) {
+		log.info("SNEP put");
+		onNdefMessages(requestRecords);
+	}
+
+	@Override
+	public void onDisconnect() {
 	}
 
 }

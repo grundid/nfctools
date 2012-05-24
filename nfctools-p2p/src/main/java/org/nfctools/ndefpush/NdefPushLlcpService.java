@@ -129,7 +129,7 @@ public class NdefPushLlcpService implements ServiceAccessPoint {
 	}
 
 	@Override
-	public void onInformation(byte[] serviceDataUnit) {
+	public byte[] onInformation(byte[] serviceDataUnit) {
 		try {
 			incommingBuffer.write(serviceDataUnit);
 			try {
@@ -151,5 +151,6 @@ public class NdefPushLlcpService implements ServiceAccessPoint {
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		return null;
 	}
 }

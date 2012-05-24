@@ -45,7 +45,7 @@ public class LlcpConnectionManager implements Llcp {
 
 	private final int SERVICE_DISCOVERY_ADDRESS = 1;
 	private final int PREFERRED_MIUX = 120;
-	private final int MAX_CONNECT_WAIT = 100;
+	private final int MAX_CONNECT_WAIT = 200;
 	private static final int MAX_RETRIES = 4;
 
 	private static final byte VERSION_MAJOR = 1;
@@ -67,6 +67,10 @@ public class LlcpConnectionManager implements Llcp {
 
 	public void registerServiceAccessPoint(ServiceAccessPoint serviceAccessPoint) {
 		services.put(getFreeLocalServiceAddress(), serviceAccessPoint);
+	}
+
+	public void registerServiceAccessPoint(int serviceAddress, ServiceAccessPoint serviceAccessPoint) {
+		services.put(serviceAddress, serviceAccessPoint);
 	}
 
 	private Integer getFreeLocalServiceAddress() {
@@ -163,7 +167,7 @@ public class LlcpConnectionManager implements Llcp {
 	}
 
 	public AbstractProtocolDataUnit onConnectComplete(int remoteAddress, int localAddress, Object[] parameters) {
-		log.info("Remote: " + remoteAddress + " lA: " + localAddress);
+		log.info("connect complete, remote: " + remoteAddress + " lA: " + localAddress);
 
 		Integer pendingLocalAddress = Integer.valueOf(localAddress);
 		if (pendingConnections.containsKey(pendingLocalAddress)) {
@@ -195,6 +199,13 @@ public class LlcpConnectionManager implements Llcp {
 		pendingConnections.put(outgoingAddress, new PendingConnection(serviceAccessPoint, System.currentTimeMillis(),
 				connectPdu));
 		messageToSend = connectPdu;
+
+	}
+
+	@Override
+	public void connectToService(int serviceAddress, ServiceAccessPoint serviceAccessPoint) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
 
 	}
 

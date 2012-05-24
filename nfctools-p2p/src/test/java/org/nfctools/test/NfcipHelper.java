@@ -7,6 +7,9 @@ import org.nfctools.llcp.LlcpConstants;
 import org.nfctools.llcp.LlcpOverNfcip;
 import org.nfctools.ndef.NdefListener;
 import org.nfctools.ndefpush.NdefPushLlcpService;
+import org.nfctools.snep.SnepClient;
+import org.nfctools.snep.SnepConstants;
+import org.nfctools.snep.SnepServer;
 import org.nfctools.utils.LoggingNdefListener;
 
 public class NfcipHelper {
@@ -76,6 +79,17 @@ public class NfcipHelper {
 
 	public NdefPushLlcpService registerNPPOnTarget() {
 		return setupNpp(targetLlcp, new LoggingNdefListener());
+	}
+
+	public void registerSnepServerInitiator(SnepServer snepServer) {
+		LlcpConnectionManager connectionManager = initiatorLlcp.getConnectionManager();
+		connectionManager.registerWellKnownServiceAccessPoint(SnepConstants.SNEP_SERVICE_NAME, snepServer);
+		connectionManager.registerServiceAccessPoint(SnepConstants.SNEP_SERVICE_ADDRESS, snepServer);
+	}
+
+	public void registerSnepClientTarget(SnepClient snepClient) {
+		LlcpConnectionManager connectionManager = targetLlcp.getConnectionManager();
+		connectionManager.registerServiceAccessPoint(snepClient);
 	}
 
 	private NdefPushLlcpService setupNpp(LlcpOverNfcip llcpOverNfcip, NdefListener ndefListener) {

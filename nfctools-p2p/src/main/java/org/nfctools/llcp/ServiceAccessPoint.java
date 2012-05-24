@@ -29,7 +29,9 @@ public interface ServiceAccessPoint {
 
 	boolean canAcceptConnection(Object[] parameters);
 
-	void onInformation(byte[] serviceDataUnit);
+	byte[] onInformation(byte[] serviceDataUnit);
 
 	void onDisconnect();
+
+	//	void onParameterChange(Object[] parameters);
 }

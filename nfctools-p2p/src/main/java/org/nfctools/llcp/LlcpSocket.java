@@ -80,7 +80,7 @@ public class LlcpSocket {
 		serviceAccessPoint.onSendSucceeded(this);
 	}
 
-	public AbstractProtocolDataUnit getMessageToSend() {
+	protected AbstractProtocolDataUnit getMessageToSend() {
 		if (messageToSend == null)
 			return new Symmetry();
 		AbstractProtocolDataUnit pdu = messageToSend;
@@ -93,7 +93,6 @@ public class LlcpSocket {
 	}
 
 	public void disconnect() {
-
 		messageToSend = new Disconnect(addressPair.getRemote(), addressPair.getLocal());
 	}
 
@@ -102,12 +101,15 @@ public class LlcpSocket {
 			log.warn("sequences do not match myS: " + sendSequence + " myR: " + receivedSequence + " hisS: " + send
 					+ " Msg-Length: " + serviceDataUnit.length);
 
-		// TODO can you send and receive messages at the same time? can an I PDU be used as a confirm frame?
-
-		serviceAccessPoint.onInformation(serviceDataUnit);
+		byte[] information = serviceAccessPoint.onInformation(serviceDataUnit);
 
 		incReceivedSequence();
-		messageToSend = new ReceiveReady(addressPair.getRemote(), addressPair.getLocal(), getReceivedSequence());
+
+		if (information != null) {
+			sendMessage(information);
+		}
+		else
+			messageToSend = new ReceiveReady(addressPair.getRemote(), addressPair.getLocal(), getReceivedSequence());
 	}
 
 	public void onConnectSucceeded() {

@@ -80,8 +80,9 @@ public class DummyServiceAccessPoint implements ServiceAccessPoint {
 	}
 
 	@Override
-	public void onInformation(byte[] serviceDataUnit) {
+	public byte[] onInformation(byte[] serviceDataUnit) {
 		messageReceived = new String(serviceDataUnit);
+		return null;
 	}
 
 	public String getMessageReceived() {
