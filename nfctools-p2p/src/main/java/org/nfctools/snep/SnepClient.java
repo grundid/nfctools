@@ -6,11 +6,14 @@ import org.nfctools.llcp.Llcp;
 import org.nfctools.llcp.LlcpSocket;
 import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.Record;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SnepClient extends AbstractSnepImpl {
 
+	private Logger log = LoggerFactory.getLogger(getClass());
 	private SnepAgentListener snepAgentListener;
-	private GetResponseListener getResponseListener;
+	private SnepRequestContainer snepRequestContainer = new SnepRequestContainer();
 	private boolean connected = false;
 
 	public SnepClient() {
@@ -23,33 +26,48 @@ public class SnepClient extends AbstractSnepImpl {
 
 	@Override
 	public void onLlcpActive(Llcp llcp) {
-		if (snepAgentListener != null && !connected) {
+		if (snepAgentListener != null && snepAgentListener.hasDataToSend() && !connected) {
+			log.debug("Connecting to " + SnepConstants.SNEP_SERVICE_NAME);
 			llcp.connectToService(SnepConstants.SNEP_SERVICE_NAME, this);
 		}
 	}
 
 	@Override
-	public void onConnectSucceeded(LlcpSocket llcpSocket) {
-		connected = true;
-		SnepRequestContainer requestContainer = new SnepRequestContainer();
-		snepAgentListener.onSnepConnection(requestContainer);
+	public void onConnectionActive(LlcpSocket llcpSocket) {
+		if (snepAgentListener.hasDataToSend())
+			handleActiveConnection(llcpSocket);
+		else {
+			log.debug("No data to send, disconnecting...");
+			llcpSocket.disconnect();
+		}
+	}
 
-		if (requestContainer.hasRequest()) {
+	@Override
+	public void onConnectSucceeded(LlcpSocket llcpSocket) {
+		log.debug("Connection succeeded");
+		connected = true;
+		handleActiveConnection(llcpSocket);
+	}
+
+	private void handleActiveConnection(LlcpSocket llcpSocket) {
+		snepAgentListener.onSnepConnection(snepRequestContainer);
+
+		if (snepRequestContainer.hasRequest()) {
 			maxInformationUnit = llcpSocket.getMaximumInformationUnit();
-			byte[] responseMessage = processSnepRequestContainer(requestContainer);
+			byte[] responseMessage = processSnepRequestContainer();
 			llcpSocket.sendMessage(responseMessage);
 		}
 	}
 
 	@Override
 	public void onDisconnect() {
+		log.debug("Disconnect succeeded");
 		connected = false;
 	}
 
-	private byte[] processSnepRequestContainer(SnepRequestContainer requestContainer) {
-		getResponseListener = requestContainer.getGetResponseListener();
-		byte[] encodedRecords = NdefContext.getNdefMessageEncoder().encode(requestContainer.getRecords());
-		SnepMessage snepMessage = new SnepMessage(snepVersion, requestContainer.getRequest());
+	private byte[] processSnepRequestContainer() {
+		byte[] encodedRecords = NdefContext.getNdefMessageEncoder().encode(snepRequestContainer.getRecords());
+		SnepMessage snepMessage = new SnepMessage(snepVersion, snepRequestContainer.getRequest());
 		snepMessage.setInformation(encodedRecords);
 		fragmentIterator = new FragmentIterator(snepMessage.getBytes(), maxInformationUnit);
 		byte[] responseMessage = fragmentIterator.next();
@@ -77,12 +95,16 @@ public class SnepClient extends AbstractSnepImpl {
 		}
 		else if (snepMessage.getMessageCode() == Response.SUCCESS.getCode()) {
 			List<Record> records = NdefContext.getNdefMessageDecoder().decodeToRecords(snepMessage.getInformation());
-			if (getResponseListener != null) {
-				SnepRequestContainer requestContainer = new SnepRequestContainer();
-				getResponseListener.onGetResponse(records, requestContainer);
-				if (requestContainer.hasRequest()) {
-					return processSnepRequestContainer(requestContainer);
+			if (snepRequestContainer.hasRequest()) {
+				snepRequestContainer.handleSuccess(records);
+				if (snepRequestContainer.hasRequest()) {
+					return processSnepRequestContainer();
 				}
+			}
+		}
+		else {
+			if (snepRequestContainer.hasRequest()) {
+				snepRequestContainer.handleFailure();
 			}
 		}
 

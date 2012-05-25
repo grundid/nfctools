@@ -8,5 +8,5 @@ public interface SnepAgent {
 
 	void doGet(Collection<Record> records, GetResponseListener getResponseListener);
 
-	void doPut(Collection<Record> records);
+	void doPut(Collection<Record> records, PutResponseListener putResponseListener);
 }

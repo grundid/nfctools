@@ -61,8 +61,4 @@ public class LoggingNdefListener implements NdefListener, NdefOperationsListener
 		onNdefMessages(requestRecords);
 	}
 
-	@Override
-	public void onDisconnect() {
-	}
-
 }

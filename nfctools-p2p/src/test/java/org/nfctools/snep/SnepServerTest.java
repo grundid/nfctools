@@ -39,7 +39,12 @@ public class SnepServerTest {
 				List<Record> records = new ArrayList<Record>();
 				for (int x = 0; x < 50; x++)
 					records.add(new UriRecord("http://www.nfctools.org"));
-				snepAgent.doPut(records);
+				snepAgent.doPut(records, ndefListener);
+			}
+
+			@Override
+			public boolean hasDataToSend() {
+				return true;
 			}
 		});
 
@@ -48,6 +53,7 @@ public class SnepServerTest {
 		synchronized (this) {
 			wait(5000);
 		}
+		assertTrue(ndefListener.isSuccess());
 
 		Collection<Record> receivedRecords = ndefListener.getRecords();
 		assertEquals(50, receivedRecords.size());
@@ -73,6 +79,11 @@ public class SnepServerTest {
 				for (int x = 0; x < 50; x++)
 					records.add(new UriRecord("http://www.nfctools.org"));
 				snepAgent.doGet(records, ndefListener);
+			}
+
+			@Override
+			public boolean hasDataToSend() {
+				return true;
 			}
 		});
 

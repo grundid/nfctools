@@ -54,6 +54,12 @@ public class DummyServiceAccessPoint implements ServiceAccessPoint {
 	}
 
 	@Override
+	public void onConnectionActive(LlcpSocket llcpSocket) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public void onConnectSucceeded(LlcpSocket llcpSocket) {
 		connected = true;
 		llcpSocket.sendMessage(messageToSend.getBytes());

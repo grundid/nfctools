@@ -130,6 +130,7 @@ public class LlcpConnectionManager implements Llcp {
 	}
 
 	public AbstractProtocolDataUnit onLlcpActive() {
+		// TODO make messageToSend method local variable, implement Llcp interface similar to SnepAgent
 		messageToSend = new Symmetry();
 
 		handlePendingConnectionTimeout();
@@ -141,8 +142,14 @@ public class LlcpConnectionManager implements Llcp {
 				serviceAccessPoint.onLlcpActive(this);
 			}
 
+			if (messageToSend instanceof Symmetry) {
+				for (LlcpSocket llcpSocket : openConnections.values()) {
+					llcpSocket.onConnectionActive();
+					messageToSend = handleMessageToSend(llcpSocket);
+				}
+			}
 		}
-		// TODO check whether there is something to send and stop the iteration
+
 		return messageToSend;
 	}
 

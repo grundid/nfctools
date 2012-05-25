@@ -62,6 +62,14 @@ public class NdefPushLlcpService implements ServiceAccessPoint {
 	}
 
 	@Override
+	public void onConnectionActive(LlcpSocket llcpSocket) {
+		if (hasMessagesToSend())
+			handleActiveConnection(llcpSocket);
+		else
+			llcpSocket.disconnect();
+	}
+
+	@Override
 	public void onConnectFailed() {
 		log.debug("Connection failed");
 
@@ -69,6 +77,10 @@ public class NdefPushLlcpService implements ServiceAccessPoint {
 
 	@Override
 	public void onConnectSucceeded(LlcpSocket llcpSocket) {
+		handleActiveConnection(llcpSocket);
+	}
+
+	private void handleActiveConnection(LlcpSocket llcpSocket) {
 		outgoingMessage = new OutgoingNdefMessage();
 		while (waitingMessages.size() > 0) {
 			outgoingMessage.addWaitingNdefMessage(waitingMessages.poll());

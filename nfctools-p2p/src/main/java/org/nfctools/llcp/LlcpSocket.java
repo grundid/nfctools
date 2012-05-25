@@ -130,6 +130,10 @@ public class LlcpSocket {
 		serviceAccessPoint.onConnectFailed();
 	}
 
+	public void onConnectionActive() {
+		serviceAccessPoint.onConnectionActive(this);
+	}
+
 	public boolean equalsAddress(AddressPair addressPair) {
 		return this.addressPair.equals(addressPair);
 	}

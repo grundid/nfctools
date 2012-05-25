@@ -5,15 +5,19 @@ import java.util.Collection;
 import org.nfctools.ndef.NdefListener;
 import org.nfctools.ndef.Record;
 import org.nfctools.snep.GetResponseListener;
+import org.nfctools.snep.PutResponseListener;
 import org.nfctools.snep.SnepAgent;
 import org.nfctools.snep.Sneplet;
 
-public class NotifyingNdefListener implements NdefListener, Sneplet, GetResponseListener {
+public class NotifyingNdefListener implements NdefListener, Sneplet, GetResponseListener, PutResponseListener {
 
 	private Object objectToNotify;
 	private Collection<Record> records;
 	private Collection<Record> getResponseRecords;
 	private Collection<Record> receivedGetResponseRecords;
+
+	private boolean success = false;
+	private boolean failed = false;
 
 	public NotifyingNdefListener(Object objectToNotify) {
 		this.objectToNotify = objectToNotify;
@@ -43,13 +47,6 @@ public class NotifyingNdefListener implements NdefListener, Sneplet, GetResponse
 	@Override
 	public void doPut(Collection<Record> requestRecords) {
 		this.records = requestRecords;
-		synchronized (objectToNotify) {
-			objectToNotify.notify();
-		}
-	}
-
-	@Override
-	public void onDisconnect() {
 	}
 
 	@Override
@@ -64,4 +61,29 @@ public class NotifyingNdefListener implements NdefListener, Sneplet, GetResponse
 		return receivedGetResponseRecords;
 	}
 
+	@Override
+	public void onFailed() {
+		failed = true;
+	}
+
+	@Override
+	public void onSuccess() {
+		success = true;
+		synchronized (objectToNotify) {
+			objectToNotify.notify();
+		}
+	}
+
+	public void resetStatus() {
+		failed = false;
+		success = false;
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public boolean isFailed() {
+		return failed;
+	}
 }

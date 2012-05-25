@@ -39,6 +39,10 @@ public abstract class AbstractSnepImpl implements ServiceAccessPoint {
 	}
 
 	@Override
+	public void onConnectionActive(LlcpSocket llcpSocket) {
+	}
+
+	@Override
 	public byte[] onInformation(byte[] serviceDataUnit) {
 
 		reader.addFragment(serviceDataUnit);
