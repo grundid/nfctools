@@ -44,8 +44,6 @@ public class SmartPosterRecordEncoderTest {
 		smartPosterRecord.setTitle(new TextRecord("Test", Charset.forName("UTF8"), Locale.GERMAN));
 		smartPosterRecord.setUri(new UriRecord("sms:+491234567890?body=Hi!%20Wie%20geht%20es%20dir%3F"));
 		byte[] payload = messageEncoder.encodeSingle(smartPosterRecord);
-		System.out.println(innerSmartPoster);
-		System.out.println(NfcUtils.convertBinToASCII(payload));
 		assertEquals(innerSmartPoster, NfcUtils.convertBinToASCII(payload));
 	}
 
