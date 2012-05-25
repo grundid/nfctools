@@ -28,8 +28,11 @@ public class LlcpSocketTest {
 		llcpSocket.incSendSequence();
 		assertEquals(1, llcpSocket.getSendSequence());
 
-		assertEquals(0, llcpSocket.getReceivedSequence());
-		llcpSocket.incReceivedSequence();
-		assertEquals(1, llcpSocket.getReceivedSequence());
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 16; x++) {
+				assertEquals(x, llcpSocket.getReceivedSequence());
+				llcpSocket.incReceivedSequence();
+			}
+		}
 	}
 }

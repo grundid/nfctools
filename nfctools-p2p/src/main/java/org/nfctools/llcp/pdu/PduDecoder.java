@@ -51,7 +51,7 @@ public class PduDecoder {
 				return new DisconnectedMode(destination, source, reason);
 			case PduConstants.PDU_INFORMATION:
 				int received = pduData[2] & 0x0f;
-				int send = pduData[2] >>> 4;
+				int send = (pduData[2] >>> 4) & 0x0f;
 				byte[] informationData = new byte[pduData.length - 3];
 				System.arraycopy(pduData, 3, informationData, 0, informationData.length);
 				return new Information(destination, source, received, send, informationData);

@@ -51,7 +51,7 @@ public class SnepServerTest {
 		helper.launch();
 
 		synchronized (this) {
-			wait(5000);
+			wait(500000);
 		}
 		assertTrue(ndefListener.isSuccess());
 
