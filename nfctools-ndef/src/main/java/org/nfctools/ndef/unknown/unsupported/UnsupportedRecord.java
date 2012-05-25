@@ -31,13 +31,13 @@ import org.nfctools.ndef.Record;
 public class UnsupportedRecord extends Record {
 
 	private byte tnf;
-	
-	/** An identifier that indicates the type of the payload. This specification supports URIs
-	  *	[RFC 3986], MIME media type constructs [RFC 2616], as well as an NFC-specific
-	  *	record type as type identifiers. 
-	  */
+
+	/**
+	 * An identifier that indicates the type of the payload. This specification supports URIs [RFC 3986], MIME media
+	 * type constructs [RFC 2616], as well as an NFC-specific record type as type identifiers.
+	 */
 	private byte[] type;
-	
+
 	/** The application data carried within an NDEF record. */
 	private byte[] payload;
 
@@ -47,7 +47,7 @@ public class UnsupportedRecord extends Record {
 		this.id = id;
 		this.payload = payload;
 	}
-	
+
 	public UnsupportedRecord(NdefRecord record) {
 		this(record.getTnf(), record.getType(), record.getId(), record.getPayload());
 	}
@@ -94,7 +94,7 @@ public class UnsupportedRecord extends Record {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UnsupportedRecord other = (UnsupportedRecord) obj;
+		UnsupportedRecord other = (UnsupportedRecord)obj;
 		if (!Arrays.equals(payload, other.payload))
 			return false;
 		if (tnf != other.tnf)
@@ -104,5 +104,4 @@ public class UnsupportedRecord extends Record {
 		return true;
 	}
 
-	
 }
