@@ -79,18 +79,6 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<distributionManagement>
-		<repository>
-			<id>maven.grundid.de</id>
-			<url>scp://maven.grundid.de/repo/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>maven.grundid.de</id>
-			<url>scp://maven.grundid.de/repo/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
-
 	<build>
 		<extensions>
 			<extension>
@@ -134,8 +122,23 @@
 					</includes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<passphrase></passphrase>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
