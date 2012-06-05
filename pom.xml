@@ -95,7 +95,7 @@
 				<inherited>true</inherited>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<arguments>-Psonatype-oss-release -Darguments=-Dgpg.passphrase=</arguments>
+					<arguments>-Psonatype-oss-release -Dgpg.passphrase=</arguments>
 				</configuration>
 			</plugin>
 			<plugin>
