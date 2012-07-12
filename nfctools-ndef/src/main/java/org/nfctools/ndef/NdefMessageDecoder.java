@@ -256,7 +256,7 @@ public class NdefMessageDecoder {
 				
 				count += idLength;
 			} else {
-				id = new byte[]{};
+				id = NdefConstants.EMPTY_BYTE_ARRAY;
 			}
 			
 			if (count + payloadLength > offset + length) {
@@ -293,11 +293,21 @@ public class NdefMessageDecoder {
 			}
 
 			int payloadLength = getPayloadLength((header & NdefConstants.SR) != 0, in);
-			int idLength = getIdLength((header & NdefConstants.IL) != 0, in);
+			int idLength;
+			if((header & NdefConstants.IL) != 0) {
+				idLength = getIdLength(in);
+			} else {
+				idLength = 0;
+			}
 			boolean chunked = (header & NdefConstants.CF) != 0;
 
 			byte[] type = RecordUtils.readByteArray(in, typeLength);
-			byte[] id = RecordUtils.readByteArray(in, idLength);
+			byte[] id;
+			if(idLength > 0) {
+				id = RecordUtils.readByteArray(in, idLength);
+			} else {
+				id = NdefConstants.EMPTY_BYTE_ARRAY;
+			}
 			byte[] payload = RecordUtils.readByteArray(in, payloadLength);
 
 			records.add(new NdefRecord(tnf, chunked, type, id, payload));
@@ -308,23 +318,14 @@ public class NdefMessageDecoder {
 		}
 		return new NdefMessage(records.toArray(new NdefRecord[records.size()]));
 	}
-	
-	public static byte[] getBytesFromStream(int length, InputStream bais) {
-		try {
-			byte[] bytes = new byte[length];
-			bais.read(bytes, 0, bytes.length);
-			return bytes;
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
-	private int getIdLength(boolean idLengthPresent, InputStream bais) throws IOException {
-		if (idLengthPresent)
-			return bais.read();
-		else
-			return 0;
+	private int getIdLength(InputStream in) throws IOException {
+		int length = in.read();
+		
+		if (length < 0) {
+			throw new EOFException();
+		}
+		return length;
 	}
 
 	private int getPayloadLength(boolean shortRecord, InputStream in) throws IOException {
