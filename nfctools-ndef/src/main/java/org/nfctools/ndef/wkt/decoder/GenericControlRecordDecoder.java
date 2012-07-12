@@ -33,7 +33,9 @@ public class GenericControlRecordDecoder implements WellKnownRecordPayloadDecode
 	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 		byte configurationByte = payload[0];
 
-		NdefMessage payloadNdefMessage = messageDecoder.decode(payload, 1, payload.length - 1);
+		// the spec examples all have payload messages in which all messages have start and end flags,
+		// so we parse the payload fully, ignoring the flags.
+		NdefMessage payloadNdefMessage = messageDecoder.decodeFully(payload, 1, payload.length - 1);
 
 		GcTargetRecord target = null;
 		GcActionRecord action = null;

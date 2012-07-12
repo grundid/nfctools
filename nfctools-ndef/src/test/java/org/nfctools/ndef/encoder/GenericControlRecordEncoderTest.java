@@ -51,7 +51,7 @@ public class GenericControlRecordEncoderTest {
 
 		byte[] encodedGcr = messageEncoder.encodeSingle(gcr);
 
-		assertArrayEquals(GenericControlRecordDecoderTest.payload, encodedGcr);
+		assertArrayEquals(GenericControlRecordDecoderTest.specTable4, encodedGcr);
 	}
 
 	@Test

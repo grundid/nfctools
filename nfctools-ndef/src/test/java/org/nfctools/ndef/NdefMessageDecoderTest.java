@@ -32,7 +32,7 @@ public class NdefMessageDecoderTest {
 
 	// image/png IN HEX => 696D6167652F706E67
 	// my_id IN HEX => 6D795F6964
-	private String mimeMediaRecordWithLongPayloadAndId = "CB090000010005696D6167652F706E676D795F6964000000000000000000";
+	private String mimeMediaRecordWithLongPayloadAndId = "CB090000010005696D6167652F706E676D795F696400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
 	private NdefMessageDecoder decoder = NdefContext.getNdefMessageDecoder();
 
@@ -49,7 +49,7 @@ public class NdefMessageDecoderTest {
 		decoder.decode(data);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NdefException.class)
 	public void testEmptyRecordWithBeginingOnly() throws Exception {
 		byte[] data = NfcUtils.convertASCIIToBin(emptyRecordWithBeginingOnly);
 		decoder.decode(data);
@@ -64,7 +64,9 @@ public class NdefMessageDecoderTest {
 
 	@Test
 	public void testMimeMediaRecordWithLongPayloadAndId() throws Exception {
+		
 		byte[] data = NfcUtils.convertASCIIToBin(mimeMediaRecordWithLongPayloadAndId);
+		
 		NdefMessage ndefMessage = decoder.decode(data);
 		assertTrue(ndefMessage.getNdefRecords().length == 1);
 

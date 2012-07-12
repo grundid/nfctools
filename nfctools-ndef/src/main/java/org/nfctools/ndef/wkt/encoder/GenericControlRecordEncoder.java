@@ -30,6 +30,8 @@ public class GenericControlRecordEncoder implements WellKnownRecordPayloadEncode
 	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
 		GenericControlRecord myRecord = (GenericControlRecord)wellKnownRecord;
 
+		// the spec examples all have payload messages in which all messages have start and end flags,
+		// so encode one and one record
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			

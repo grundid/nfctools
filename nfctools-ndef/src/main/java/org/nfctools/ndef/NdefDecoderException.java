@@ -26,19 +26,12 @@ public class NdefDecoderException extends NdefException {
 
 	private static final long serialVersionUID = 1L;
 	
-	private NdefRecord location;
-	
 	public NdefDecoderException(String message) {
 		super(message);
 	}
 	
-	public NdefDecoderException(String message, NdefRecord location) {
-		super(message);
-		
-		this.location = location;
+	public NdefDecoderException(String message, Exception e) {
+		super(message, e);
 	}
 
-	public NdefRecord getLocation() {
-		return location;
-	}
 }
