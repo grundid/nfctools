@@ -29,9 +29,12 @@ public class GcDataRecordDecoder implements WellKnownRecordPayloadDecoder {
 	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
 		GcDataRecord dataRecord = new GcDataRecord();
 
-		List<Record> records = messageDecoder.decodeToRecords(payload);
-		for (Record record : records) {
-			dataRecord.add(record);
+		// zero or more records
+		if(payload.length > 0) {
+			List<Record> records = messageDecoder.decodeToRecords(payload);
+			for (Record record : records) {
+				dataRecord.add(record);
+			}
 		}
 		return dataRecord;
 	}
