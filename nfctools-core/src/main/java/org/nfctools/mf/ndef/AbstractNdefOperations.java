@@ -94,9 +94,14 @@ public abstract class AbstractNdefOperations implements NdefOperations {
 		while (reader.hasNext()) {
 			Tlv tlv = reader.next();
 			if (tlv instanceof NdefMessageTlv) {
-				NdefMessage ndefMessage = ndefMessageDecoder.decode(((NdefMessageTlv)tlv).getNdefMessage());
-				for (Record record : ndefMessageDecoder.decodeToRecords(ndefMessage)) {
-					lastReadRecords.add(record);
+				
+				byte[] payload = ((NdefMessageTlv)tlv).getNdefMessage();
+				
+				if(payload.length > 0) {
+					NdefMessage ndefMessage = ndefMessageDecoder.decode(payload);
+					for (Record record : ndefMessageDecoder.decodeToRecords(ndefMessage)) {
+						lastReadRecords.add(record);
+					}
 				}
 			}
 		}
