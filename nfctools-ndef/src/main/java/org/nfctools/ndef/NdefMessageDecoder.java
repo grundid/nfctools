@@ -36,7 +36,7 @@ public class NdefMessageDecoder {
 
 	public List<Record> decodeToRecords(InputStream in) {
 		try {
-			return decodeToRecords(decode(in));
+			return decodeToRecords(decode(in, false));
 		} catch (EOFException e) {
 			throw new NdefException("End of stream reached before 'Message End' record", e);
 		} catch (IOException e) {
@@ -162,14 +162,19 @@ public class NdefMessageDecoder {
 
 
 	public NdefMessage decode(byte[] ndefMessage, int offset, int length) {
+		return decode(ndefMessage, offset, length, false);
+	}
+	
+	public NdefMessage decode(byte[] ndefMessage, int offset, int length, boolean acceptEmpty) {
 		try {
-			return decode(new ByteArrayInputStream(ndefMessage, offset, length));
+			return decode(new ByteArrayInputStream(ndefMessage, offset, length), true);
 		} catch (EOFException e) {
 			throw new NdefException("End of stream reached before 'Message End' record", e);
 		} catch (IOException e) {
 			throw new NdefException("Problem decoding message", e);
 		}
 	}
+
 	
 	/**
 	 * 
@@ -273,11 +278,14 @@ public class NdefMessageDecoder {
 		return new NdefMessage(records.toArray(new NdefRecord[records.size()]));
 	}
 
-	public NdefMessage decode(InputStream in) throws IOException {
+	public NdefMessage decode(InputStream in, boolean acceptEmpty) throws IOException {
 		List<NdefRecord> records = new ArrayList<NdefRecord>();
 		while (true) {
 			int header = in.read();
 			if (header < 0) {
+				if(acceptEmpty && records.isEmpty()) {
+					break;
+				}
 				throw new EOFException();
 			}
 			
