@@ -43,7 +43,7 @@ public class AbstractMemoryTlv extends Tlv {
 	}
 
 	public int getPosition() {
-		return (int)Math.round(pageAddress * (int)Math.pow(2, bytesPerPage) + byteOffset);
+		return pageAddress * (int)Math.pow(2, bytesPerPage) + byteOffset;
 	}
 
 	public int getPageAddress() {

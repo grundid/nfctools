@@ -208,7 +208,7 @@ public class PduDecoder {
 	}
 
 	private byte createVersionByte(Version version) {
-		if (version.getMajor() > 15 | version.getMajor() < 1 | version.getMinor() > 15 | version.getMinor() < 0)
+		if (version.getMajor() > 15 || version.getMajor() < 1 || version.getMinor() > 15 || version.getMinor() < 0)
 			throw new IllegalArgumentException("Version out of range");
 		byte versionByte = (byte)((version.getMajor() << 4) | version.getMinor());
 		return versionByte;

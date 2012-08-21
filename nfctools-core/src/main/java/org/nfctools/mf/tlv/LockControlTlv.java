@@ -45,7 +45,12 @@ public class LockControlTlv extends AbstractMemoryTlv {
 	}
 
 	public int getSizeInBytes() {
-		return (int)Math.ceil(getSize() / 8);
+		int size = getSize();
+		
+		if(size % 8 == 0) {
+			return (size / 8);
+		}
+		return (size / 8) + 1;
 	}
 
 	/**

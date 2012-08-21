@@ -16,6 +16,7 @@
 package org.nfctools.spi.arygon;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.nfctools.mf.MfAccess;
 import org.nfctools.mf.MfCardListener;
@@ -121,7 +122,7 @@ public class ArygonReaderWriter implements MfReaderWriter {
 	@Override
 	public void setCardIntoHalt(MfCard card) throws IOException {
 		String targetId = "00";
-		log.debug("Halting Card " + card.getId() + " / TargetId: " + targetId);
+		log.debug("Halting Card " + Arrays.toString(card.getId()) + " / TargetId: " + targetId);
 		nfcReaderWriter.sendMessage(("0h" + targetId).getBytes());
 		ArygonMessage message = nfcReaderWriter.receiveMessage();
 		if (message.hasTamaErrorCode())

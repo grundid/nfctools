@@ -23,7 +23,7 @@ public class AcsTagUtils {
 	public static TagType identifyTagType(byte[] historicalBytes) {
 		TagType tagType = TagType.UKNOWN;
 		if (historicalBytes.length >= 11) {
-			int tagId = (historicalBytes[9] & 0xff) << 8 | historicalBytes[10];
+			int tagId = (historicalBytes[9] & 0xff) << 8 | (historicalBytes[10] & 0xff);
 
 			switch (tagId) {
 				case 0x0001:
