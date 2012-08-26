@@ -71,7 +71,7 @@ public class SignatureRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 					byte[] certificate = RecordUtils.readByteArray(bais, certificateSize);
 					
-					signatureRecord.add(certificate);
+					signatureRecord.addCertificate(certificate);
 				}
 				
 				if((certificateHeader & 0x80) != 0) { // has certificate uri
