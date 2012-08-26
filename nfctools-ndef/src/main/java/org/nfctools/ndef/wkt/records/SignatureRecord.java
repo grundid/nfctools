@@ -19,6 +19,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 
+ * Signature record. Consists of a signature (embedded or linked) and a certificate chain. Can also be used as a marker
+ * for what parts of the ndef message is signed.
+ * 
+ * @author Thomas Rørvik Skjølberg
+ *
+ */
 
 public class SignatureRecord extends WellKnownRecord {
 	
@@ -82,14 +90,22 @@ public class SignatureRecord extends WellKnownRecord {
 	
 	private SignatureType signatureType;
 
+	/** The actual signature (if no URI)*/
 	private byte[] signature;
 	
+	/** A reference to the location where the signature can be found (if no actual signature) */
 	private String signatureUri;
 	
 	private CertificateFormat certificateFormat;
 	
+	/** If present, the certificate URI is a reference to the next certificate in the chain following the last certificate contained in the Cert_Store. */
 	private String certificateUri;
-	
+
+	/**
+	If the number of certificates is greater than 0, then the first certificate SHALL be the
+	signer’s certificate and SHALL then be followed by zero or more certificates. Each following
+	certificate MUST directly certify the one preceding it.
+	*/
 	private List<byte[]> certificates = new ArrayList<byte[]>();
 
 	public SignatureRecord() {
@@ -211,7 +227,7 @@ public class SignatureRecord extends WellKnownRecord {
 		return certificateFormat != null;
 	}
 
-	public void add(byte[] certificate) {
+	public void addCertificate(byte[] certificate) {
 		this.certificates.add(certificate);
 	}
 
@@ -305,6 +321,17 @@ public class SignatureRecord extends WellKnownRecord {
 		}
 		return true;
 	}
+
+	public boolean hasCertificates() {
+		return certificates != null && !certificates.isEmpty();
+	}
 	
+	public void removeCertificate(int index) {
+		certificates.remove(index);
+	}
+
+	public byte[] getCertificate(int index) {
+		return certificates.get(index);
+	}
 	
 }

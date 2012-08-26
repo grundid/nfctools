@@ -121,7 +121,7 @@ public class NdefEncodeDecodeRoundtripTest {
 		handoverSelectRecord.setError(new ErrorRecord(ErrorReason.PermanenteMemoryConstraints, new Long(1L)));
 		
 		// add some certificates to signature
-		signatureRecord.add(new byte[]{0x00, 0x10, 0x11});
+		signatureRecord.addCertificate(new byte[]{0x00, 0x10, 0x11});
 		signatureRecord.setSignatureType(SignatureType.RSASSA_PSS_SHA_1);
 		signatureRecord.setSignature(new byte[]{0x01, 0x11, 0x12});
 	}
