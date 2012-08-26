@@ -57,6 +57,7 @@ public class TargetTerminalTagScanner extends AbstractTerminalTagScanner impleme
 					//					tagListener.onTag(new AcsTag(tagType, historicalBytes, card));
 				}
 				catch (Exception e1) {
+					card.disconnect(true);
 					e1.printStackTrace();
 					try {
 						Thread.sleep(1000);
