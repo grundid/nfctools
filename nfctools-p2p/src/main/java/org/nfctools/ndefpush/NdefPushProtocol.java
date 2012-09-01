@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.Record;
 
 /**
@@ -81,9 +81,9 @@ public class NdefPushProtocol {
 	public static byte[] toByteArray(Collection<Record> records) {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(1024);
 		DataOutputStream output = new DataOutputStream(buffer);
-		NdefMessageEncoder ndefMessageEncoder = NdefContext.getNdefMessageEncoder();
+		NdefEncoder ndefMessageEncoder = NdefContext.getNdefEncoder();
 		try {
-			byte[] bytes = ndefMessageEncoder.encode(records);
+			byte[] bytes = ndefMessageEncoder.encode(new ArrayList<Record>(records));
 			output.writeByte(VERSION);
 			output.writeInt(1);
 			output.writeByte(ACTION_IMMEDIATE);

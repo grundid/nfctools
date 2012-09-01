@@ -34,53 +34,45 @@ public class NdefMessageDecoderTest {
 	// my_id IN HEX => 6D795F6964
 	private String mimeMediaRecordWithLongPayloadAndId = "CB090000010005696D6167652F706E676D795F696400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
-	private NdefMessageDecoder decoder = NdefContext.getNdefMessageDecoder();
+	private NdefDecoder decoder = NdefContext.getNdefDecoder();
 
 	@Test
 	public void testEmptyRecord() throws Exception {
 		byte[] data = NfcUtils.convertASCIIToBin(emptyRecord);
-		NdefMessage ndefMessage = decoder.decode(data);
+		NdefMessage ndefMessage = decoder.getNdefMessageDecoder().decode(data);
 		assertTrue(ndefMessage.getNdefRecords().length == 1);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
 	public void testMixedUpRecords() throws Exception {
 		byte[] data = NfcUtils.convertASCIIToBin(twoEmptyRecordsMixedUp);
-		decoder.decode(data);
+		decoder.decodeToRecords(data);
 	}
 
-	@Test(expected = NdefException.class)
 	public void testEmptyRecordWithBeginingOnly() throws Exception {
 		byte[] data = NfcUtils.convertASCIIToBin(emptyRecordWithBeginingOnly);
-		decoder.decode(data);
+		decoder.decodeToRecords(data);
 	}
 
 	@Test
 	public void testTwoEmptyRecords() throws Exception {
 		byte[] data = NfcUtils.convertASCIIToBin(twoEmptyRecords);
-		NdefMessage ndefMessage = decoder.decode(data);
+		NdefMessage ndefMessage = decoder.getNdefMessageDecoder().decode(data);
 		assertTrue(ndefMessage.getNdefRecords().length == 2);
 	}
 
-	@Test
+	@Test(expected = NdefDecoderException.class)
 	public void testMimeMediaRecordWithLongPayloadAndId() throws Exception {
 		
 		byte[] data = NfcUtils.convertASCIIToBin(mimeMediaRecordWithLongPayloadAndId);
 		
-		NdefMessage ndefMessage = decoder.decode(data);
-		assertTrue(ndefMessage.getNdefRecords().length == 1);
-
-		NdefRecord ndefRecord = ndefMessage.getNdefRecords()[0];
-
-		assertArrayEquals("image/png".getBytes(), ndefRecord.getType());
-		assertArrayEquals("my_id".getBytes(), ndefRecord.getId());
+		NdefMessage ndefMessage = decoder.getNdefMessageDecoder().decode(data);
 	}
 
 	@Test
 	public void testDecodeExternalType() throws Exception {
 		byte[] data = NfcUtils.convertASCIIToBin("D40F13616E64726F69642E636F6D3A706B67"
 				+ "64652E6772756E6469642E7465737431323334");
-		NdefMessage ndefMessage = decoder.decode(data);
+		NdefMessage ndefMessage = decoder.getNdefMessageDecoder().decode(data);
 		assertTrue(ndefMessage.getNdefRecords().length == 1);
 
 		NdefRecord ndefRecord = ndefMessage.getNdefRecords()[0];

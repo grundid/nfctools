@@ -31,7 +31,7 @@ public class SmartPosterDecoderTest {
 
 	@Test
 	public void testDecode() throws Exception {
-		Record record = NdefContext.getNdefMessageDecoder().decodeToRecord(NfcUtils.convertASCIIToBin(smartPoster));
+		Record record = NdefContext.getNdefDecoder().decodeToRecord(NfcUtils.convertASCIIToBin(smartPoster));
 		assertTrue(record instanceof SmartPosterRecord);
 		SmartPosterRecord smartPosterRecord = (SmartPosterRecord)record;
 

@@ -16,6 +16,7 @@
 package org.nfctools.utils;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.tlv.NdefMessageTlv;
@@ -25,13 +26,13 @@ import org.nfctools.mf.ul.MemoryLayout;
 import org.nfctools.mf.ul.MfUlReaderWriter;
 import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessage;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.tags.TagInputStream;
 
 public class TagUtils {
 
-	private static NdefMessageDecoder decoder = NdefContext.getNdefMessageDecoder();
+	private static NdefDecoder decoder = NdefContext.getNdefDecoder();
 
 	public static void outputContents(MfUlReaderWriter readerWriter, MemoryLayout memoryLayout) throws IOException {
 		outputBinaryContent(readerWriter, memoryLayout);
@@ -58,8 +59,8 @@ public class TagUtils {
 		while (reader.hasNext()) {
 			Tlv tlv = reader.next();
 			if (tlv instanceof NdefMessageTlv) {
-				NdefMessage ndefMessage = decoder.decode(((NdefMessageTlv)tlv).getNdefMessage());
-				for (Record record : decoder.decodeToRecords(ndefMessage)) {
+				List<Record> records = decoder.decodeToRecords(((NdefMessageTlv)tlv).getNdefMessage());
+				for (Record record : records) {
 					System.out.println(record);
 				}
 			}

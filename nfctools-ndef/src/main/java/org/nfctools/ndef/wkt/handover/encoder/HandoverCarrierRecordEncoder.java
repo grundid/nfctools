@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord;
@@ -36,7 +36,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 
 		HandoverCarrierRecord handoverCarrierRecord = (HandoverCarrierRecord)wellKnownRecord;
 
@@ -60,7 +60,7 @@ public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncod
 					if (carrierType instanceof WellKnownRecord) {
 						WellKnownRecord abstractWellKnownRecord = (WellKnownRecord)carrierType;
 	
-						encoded = messageEncoder.encodeSingle(abstractWellKnownRecord);
+						encoded = messageEncoder.encode(abstractWellKnownRecord);
 	
 						break;
 					}
@@ -110,7 +110,7 @@ public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncod
 					if (carrierType instanceof ExternalTypeRecord) {
 						ExternalTypeRecord externalTypeRecord = (ExternalTypeRecord)carrierType;
 	
-						encoded = messageEncoder.encodeSingle(externalTypeRecord);
+						encoded = messageEncoder.encode(externalTypeRecord);
 	
 						break;
 					}

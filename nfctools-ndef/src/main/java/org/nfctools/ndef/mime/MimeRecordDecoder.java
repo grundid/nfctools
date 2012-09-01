@@ -16,7 +16,7 @@
 package org.nfctools.ndef.mime;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 
@@ -27,7 +27,7 @@ public class MimeRecordDecoder extends AbstractRecordDecoder<MimeRecord> {
 	}
 
 	@Override
-	protected MimeRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected MimeRecord createRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
 		String contentType = new String(ndefRecord.getType(), NdefConstants.DEFAULT_CHARSET); // http://www.ietf.org/rfc/rfc2046.txt
 
 		if (contentType.startsWith("text/")) {

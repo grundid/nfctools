@@ -17,7 +17,7 @@
 package org.nfctools.ndef.unknown;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 
@@ -34,7 +34,7 @@ public class UnknownRecordDecoder extends AbstractRecordDecoder<UnknownRecord> {
 	}
 
 	@Override
-	protected UnknownRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected UnknownRecord createRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
 
 		
 		/**

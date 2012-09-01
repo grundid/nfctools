@@ -18,7 +18,7 @@ package org.nfctools.ndef.wkt.encoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
@@ -27,12 +27,12 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class SmartPosterRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 		SmartPosterRecord myRecord = (SmartPosterRecord)wellKnownRecord;
 		return createPayload(messageEncoder, myRecord);
 	}
 
-	private byte[] createPayload(NdefMessageEncoder messageEncoder, SmartPosterRecord myRecord) {
+	private byte[] createPayload(NdefEncoder messageEncoder, SmartPosterRecord myRecord) {
 
 		List<Record> records = new ArrayList<Record>();
 

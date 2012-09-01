@@ -15,7 +15,7 @@
  */
 package org.nfctools.ndef.wkt.decoder;
 
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
@@ -26,7 +26,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class UriRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 		String prefix = "";
 		if (payload[0] >= UriRecord.abbreviableUris.length || payload[0] < 0) {
 			throw new IllegalArgumentException("Unkown abbreviation index " + payload[0]);

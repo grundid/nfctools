@@ -148,7 +148,7 @@ public class NdefPushLlcpService implements ServiceAccessPoint {
 				List<byte[]> ndefMessages = NdefPushProtocol.parse(incommingBuffer.toByteArray());
 				if (ndefMessages != null) {
 					for (byte[] ndef : ndefMessages) {
-						List<Record> records = NdefContext.getNdefMessageDecoder().decodeToRecords(ndef);
+						List<Record> records = NdefContext.getNdefDecoder().decodeToRecords(ndef);
 						if (ndefListener != null) {
 							ndefListener.onNdefMessages(records);
 						}

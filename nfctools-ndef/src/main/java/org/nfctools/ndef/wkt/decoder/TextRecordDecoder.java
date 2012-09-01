@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 import java.util.Locale;
 
 import org.nfctools.ndef.NdefDecoderException;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.RecordUtils;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
@@ -30,7 +30,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class TextRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(payload);
 		try {
 

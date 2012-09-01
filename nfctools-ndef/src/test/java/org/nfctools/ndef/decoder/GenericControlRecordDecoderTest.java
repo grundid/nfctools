@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.encoder.GenericControlRecordEncoderTest;
 import org.nfctools.ndef.wkt.records.GenericControlRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
@@ -30,7 +30,7 @@ import org.nfctools.utils.NfcUtils;
 
 public class GenericControlRecordDecoderTest {
 
-	private NdefMessageDecoder messageDecoder = NdefContext.getNdefMessageDecoder();
+	private NdefDecoder messageDecoder = NdefContext.getNdefDecoder();
 
 	public static final byte[] specTable4 = { (byte)0xD1, 0x02, 0x4A, /* Gc at 3 : */ 0x47, 0x63, 0x00, (byte)0xD1, 0x01, 0x22, /* t at 9 : */ 0x74, (byte)0xD1, 0x01, 0x1E, /* U at 13 : */ 0x55, 0x1D, /* localhost/Appli/CustomerBonus at 15 : */ 0x6C, 0x6F, 0x63, 0x61, 0x6C, 0x68, 0x6F, 0x73, 0x74, 0x2F, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x2F, 0x43, 0x75, 0x73, 0x74, 0x6F, 0x6D, 0x65, 0x72, 0x42, 0x6F, 0x6E, 0x75, 0x73, (byte)0xD1, 0x01, 0x0E, /* a at 47 : */ 0x61, 0x00, (byte)0xD1, 0x01, 0x09, /* T at 52 : */ 0x54, 0x05, /* en-US at 54 : */ 0x65, 0x6E, 0x2D, 0x55, 0x53, /* add at 59 : */ 0x61, 0x64, 0x64, (byte)0xD1, 0x01, 0x0D, /* d at 65 : */ 0x64, (byte)0xD1, 0x01, 0x09, /* T at 69 : */ 0x54, 0x05, /* en-US at 71 : */ 0x65, 0x6E, 0x2D, 0x55, 0x53, /* 500 at 76 : */ 0x35, 0x30, 0x30}; 
 
@@ -63,17 +63,17 @@ public class GenericControlRecordDecoderTest {
 
 	@Test
 	public void testDecodeGenericControlRecordFromSpecTable5() throws Exception {
-		GenericControlRecord gcr = messageDecoder.decodeToRecord(specTable5);
+		messageDecoder.decodeToRecord(specTable5);
 	}
 
 	@Test
 	public void testDecodeGenericControlRecordFromSpecTable6() throws Exception {
-		GenericControlRecord gcr = messageDecoder.decodeToRecord(specTable6);
+		messageDecoder.decodeToRecords(specTable6);
 	}
 
 	@Test
 	public void testDecodeGenericControlRecordFromSpecTable7() throws Exception {
-		GenericControlRecord gcr = messageDecoder.decodeToRecord(specTable7);
+		messageDecoder.decodeToRecord(specTable7);
 	}
 
 	@Test

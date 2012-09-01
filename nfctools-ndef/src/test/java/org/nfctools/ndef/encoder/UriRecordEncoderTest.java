@@ -19,14 +19,14 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.wkt.encoder.UriRecordEncoder;
 import org.nfctools.ndef.wkt.records.UriRecord;
 
 public class UriRecordEncoderTest {
 
 	private UriRecordEncoder encoder = new UriRecordEncoder();
-	private NdefMessageEncoder messageEncoder = NdefContext.getNdefMessageEncoder();
+	private NdefEncoder messageEncoder = NdefContext.getNdefEncoder();
 
 	@Test
 	public void testEncode() throws Exception {

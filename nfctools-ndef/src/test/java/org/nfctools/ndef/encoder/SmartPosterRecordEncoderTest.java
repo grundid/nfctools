@@ -22,7 +22,7 @@ import java.util.Locale;
 
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.decoder.SmartPosterDecoderTest;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
@@ -33,7 +33,7 @@ import org.nfctools.utils.NfcUtils;
 
 public class SmartPosterRecordEncoderTest {
 
-	private NdefMessageEncoder messageEncoder = NdefContext.getNdefMessageEncoder();
+	private NdefEncoder messageEncoder = NdefContext.getNdefEncoder();
 
 	private String innerSmartPoster = "D10245537091010754026465546573745101365500736D733A2B3439313233343536373839"
 			+ "303F626F64793D486921253230576965253230676568742532306573253230646972253346";
@@ -43,7 +43,7 @@ public class SmartPosterRecordEncoderTest {
 		SmartPosterRecord smartPosterRecord = new SmartPosterRecord();
 		smartPosterRecord.setTitle(new TextRecord("Test", Charset.forName("UTF8"), Locale.GERMAN));
 		smartPosterRecord.setUri(new UriRecord("sms:+491234567890?body=Hi!%20Wie%20geht%20es%20dir%3F"));
-		byte[] payload = messageEncoder.encodeSingle(smartPosterRecord);
+		byte[] payload = messageEncoder.encode(smartPosterRecord);
 		assertEquals(innerSmartPoster, NfcUtils.convertBinToASCII(payload));
 	}
 
@@ -53,7 +53,7 @@ public class SmartPosterRecordEncoderTest {
 		smartPosterRecord.setTitle(new TextRecord("Title", Charset.forName("UTF8"), Locale.GERMANY));
 		smartPosterRecord.setUri(new UriRecord("http://www.winfuture.de"));
 		smartPosterRecord.setAction(new ActionRecord(Action.DEFAULT_ACTION));
-		byte[] payload = messageEncoder.encodeSingle(smartPosterRecord);
+		byte[] payload = messageEncoder.encode(smartPosterRecord);
 		assertEquals(SmartPosterDecoderTest.smartPoster, NfcUtils.convertBinToASCII(payload));
 	}
 }

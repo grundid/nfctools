@@ -176,7 +176,7 @@ public class AcsTerminal extends AbstractTerminal {
 
 	@Override
 	public void cardDetected(MfCard mfCard, MfReaderWriter mfReaderWriter) throws IOException {
-		MfNdefReader ndefReader = new MfNdefReader(mfReaderWriter, NdefContext.getNdefMessageDecoder());
+		MfNdefReader ndefReader = new MfNdefReader(mfReaderWriter, NdefContext.getNdefDecoder());
 
 		List<Record> records = ndefReader.readNdefMessage(mfCard);
 

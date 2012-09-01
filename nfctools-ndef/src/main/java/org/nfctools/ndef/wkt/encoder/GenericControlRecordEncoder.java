@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GenericControlRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
@@ -27,7 +27,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class GenericControlRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 		GenericControlRecord myRecord = (GenericControlRecord)wellKnownRecord;
 
 		// the spec examples all have payload messages in which all messages have start and end flags,
@@ -40,12 +40,12 @@ public class GenericControlRecordEncoder implements WellKnownRecordPayloadEncode
 			if(!myRecord.hasTarget()) {
 				throw new NdefEncoderException("Expected target", myRecord);
 			}
-			baos.write(messageEncoder.encodeSingle(myRecord.getTarget()));
+			baos.write(messageEncoder.encode(myRecord.getTarget()));
 
 			if (myRecord.getAction() != null)
-				baos.write(messageEncoder.encodeSingle(myRecord.getAction()));
+				baos.write(messageEncoder.encode(myRecord.getAction()));
 			if (myRecord.getData() != null)
-				baos.write(messageEncoder.encodeSingle(myRecord.getData()));
+				baos.write(messageEncoder.encode(myRecord.getData()));
 
 			return baos.toByteArray();
 		}

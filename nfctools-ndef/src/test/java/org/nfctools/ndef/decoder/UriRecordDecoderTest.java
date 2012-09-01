@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.wkt.decoder.UriRecordDecoder;
 import org.nfctools.ndef.wkt.records.UriRecord;
 import org.nfctools.utils.NfcUtils;
@@ -28,7 +28,7 @@ import org.nfctools.utils.NfcUtils;
 public class UriRecordDecoderTest {
 
 	private UriRecordDecoder decoder = new UriRecordDecoder();
-	private NdefMessageDecoder messageDecoder = NdefContext.getNdefMessageDecoder();
+	private NdefDecoder messageDecoder = NdefContext.getNdefDecoder();
 
 	private String payloadUri = "016578616D706C652E636F6D";
 

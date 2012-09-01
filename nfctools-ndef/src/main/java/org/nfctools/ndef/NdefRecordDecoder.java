@@ -46,7 +46,7 @@ public class NdefRecordDecoder {
 		recordDecoders.add(new UnknownRecordDecoder());
 	}
 
-	public Record decode(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	public Record decode(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
 
 		if (ndefRecord.isChunked()) {
 			throw new IllegalArgumentException("Cannot decode chunked record");

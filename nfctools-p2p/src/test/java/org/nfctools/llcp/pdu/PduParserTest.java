@@ -64,7 +64,7 @@ public class PduParserTest {
 		List<byte[]> ndefMessages = NdefPushProtocol.parse(information.getServiceDataUnit());
 
 		for (byte[] ndef : ndefMessages) {
-			TextRecord record = NdefContext.getNdefMessageDecoder().decodeToRecord(ndef);
+			TextRecord record = NdefContext.getNdefDecoder().decodeToRecord(ndef);
 			assertEquals("NDEF Push Sample", record.getText());
 
 		}

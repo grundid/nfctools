@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
@@ -36,7 +36,7 @@ public class WellKnownRecordEncoder implements RecordEncoder {
 	}
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+	public NdefRecord encodeRecord(Record record, NdefEncoder messageEncoder) {
 
 		byte[] key = record.getId();
 		if(key != null) {

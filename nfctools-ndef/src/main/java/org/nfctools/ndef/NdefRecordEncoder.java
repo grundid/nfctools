@@ -46,7 +46,7 @@ public class NdefRecordEncoder {
 		knownRecordEncoders.add(new UnsupportedRecordEncoder());
 	}
 
-	public NdefRecord encode(Record record, NdefMessageEncoder messageEncoder) {
+	public NdefRecord encode(Record record, NdefEncoder messageEncoder) {
 		for (RecordEncoder encoder : knownRecordEncoders) {
 			if (encoder.canEncode(record)) {
 				return encoder.encodeRecord(record, messageEncoder);

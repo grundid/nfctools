@@ -16,7 +16,7 @@
 
 package org.nfctools.ndef.unknown.unsupported;
 
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
@@ -35,7 +35,7 @@ public class UnsupportedRecordEncoder implements RecordEncoder {
 	}
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+	public NdefRecord encodeRecord(Record record, NdefEncoder messageEncoder) {
 		UnsupportedRecord unsupportedRecord = (UnsupportedRecord)record;
 		
 		return new NdefRecord(unsupportedRecord.getTnf(), unsupportedRecord.getType(), unsupportedRecord.getId(), unsupportedRecord.getPayload());

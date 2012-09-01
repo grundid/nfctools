@@ -15,190 +15,51 @@
  */
 package org.nfctools.ndef;
 
-import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 
+ * NdefMessage decoder. 
+ * 
+ *
+ */
+
 public class NdefMessageDecoder {
-
-	private NdefRecordDecoder ndefRecordDecoder;
 	
-	public NdefMessageDecoder(NdefRecordDecoder ndefRecordDecoder) {
-		this.ndefRecordDecoder = ndefRecordDecoder;
-	}
+	/** Enforce message begin and message end flags in record tnf */
+	private boolean enforceMessageBeginAndEndFlags;
 
-	public List<Record> decodeToRecords(byte[] payload) {
-		return decodeToRecords(decode(payload));
-	}
-
-	public List<Record> decodeToRecords(InputStream in) {
-		try {
-			return decodeToRecords(decode(in, false));
-		} catch (EOFException e) {
-			throw new NdefException("End of stream reached before 'Message End' record", e);
-		} catch (IOException e) {
-			throw new NdefException("Problem decoding message", e);
-		}
-	}
-
-	public List<Record> decodeToRecords(NdefMessage ndefMessage) {
-		List<Record> records = new ArrayList<Record>();
-
-		NdefRecord[] ndefRecords = ndefMessage.getNdefRecords();
-
-		iterate: for (int i = 0; i < ndefRecords.length; i++) {
-
-			NdefRecord ndefRecord = ndefRecords[i];
-
-			if (ndefRecord.isChunked()) {
-				// Concatenate chunked records to get the whole payload
-
-				int payloadSize = ndefRecord.getPayloadSize();
-
-				/**
-				 * The value 0x06 (Unchanged) MUST be used in all middle record chunks and the terminating record chunk
-				 * used in chunked payloads (see section 2.3.3). It MUST NOT be used in any other record. When used, the
-				 * TYPE_LENGTH field MUST be zero and thus the TYPE field is omitted from the NDEF record.
-				 */
-
-				int k = i;
-				do {
-					k++;
-
-					NdefRecord next = ndefRecords[k];
-					if (next.getTnf() != NdefConstants.TNF_UNCHANGED) {
-						// no terminating chunk?
-						throw new IllegalArgumentException("Expected terminating 'unchanged' record type at " + i);
-					}
-
-					// check that type is zero length
-					byte[] type = ndefRecord.getType();
-					if (type != null && type.length > 0) {
-						throw new IllegalArgumentException("Expected no record type at " + i);
-					}
-
-					payloadSize += next.getPayloadSize();
-
-					if (!next.isChunked()) {
-						// terminating chunk
-
-						// concatenate chunked payloads into a single payload
-						byte[] payload = new byte[payloadSize];
-
-						int offset = 0;
-						for (int p = i; p <= k; p++) {
-							byte[] chunkPayload = ndefRecords[p].getPayload();
-
-							System.arraycopy(chunkPayload, 0, payload, offset, chunkPayload.length);
-
-							offset += chunkPayload.length;
-						}
-
-						// finally create unchunked record, copy tnf, type and id from first record
-						NdefRecord unchunkedNdefRecord = new NdefRecord(ndefRecord.getTnf(), ndefRecord.getType(),
-								ndefRecord.getId(), payload);
-
-						records.add(ndefRecordDecoder.decode(unchunkedNdefRecord, this));
-
-						// skip chunked packets
-						i = k;
-						// continue on to next record
-						continue iterate;
-					}
-					else {
-						// middle chunk
-					}
-				} while (i < ndefRecords.length);
-
-				// no terminating chunk
-				throw new IllegalArgumentException("Expected terminating 'unchanged' record type");
-			}
-			else {
-				records.add(ndefRecordDecoder.decode(ndefRecord, this));
-			}
-		}
-		return records;
-	}
-
-	public <T extends Record> T decodeToRecord(byte[] ndefMessage) {
-		return this.<T> decodeToRecord(ndefMessage, 0, ndefMessage.length);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Record> T decodeToRecord(byte[] ndefMessage, int offset, int length) {
-		NdefMessage message = decode(ndefMessage, offset, length);
-		List<Record> records = decodeToRecords(message);
-		if (records.size() == 1)
-			return (T)records.get(0);
-		else
-			throw new IllegalArgumentException("expected one record in payload but found: " + records.size());
+	public NdefMessageDecoder(boolean enforceMessageBeginAndEndFlags) {
+		super();
+		this.enforceMessageBeginAndEndFlags = enforceMessageBeginAndEndFlags;
 	}
 
 	/**
+	 * Decode to an {@link NdefMessage}. Must contain at least one record.
 	 * 
-	 * Decode all records in buffer, from start to end flag
-	 * 
+	 * @param ndefMessage
 	 * @return
 	 */
-
-
+	
 	public NdefMessage decode(byte[] ndefMessage) {
 		return decode(ndefMessage, 0, ndefMessage.length);
 	}
 	
 	/**
-	 * 
-	 * Decode all records in buffer, from start to end flag
+	 * Decode to an {@link NdefMessage}. Must contain at least one record.
 	 * 
 	 * @param ndefMessage
-	 * @param offset
-	 * @param length
-	 * 
 	 * @return
 	 */
-
 
 	public NdefMessage decode(byte[] ndefMessage, int offset, int length) {
-		return decode(ndefMessage, offset, length, false);
-	}
-	
-	public NdefMessage decode(byte[] ndefMessage, int offset, int length, boolean acceptEmpty) {
-		try {
-			return decode(new ByteArrayInputStream(ndefMessage, offset, length), true);
-		} catch (EOFException e) {
-			throw new NdefException("End of stream reached before 'Message End' record", e);
-		} catch (IOException e) {
-			throw new NdefException("Problem decoding message", e);
+		if(length <= 0) {
+			throw new IllegalArgumentException("Cannot decode message from " + length + " bytes");
 		}
-	}
-
-	
-	/**
-	 * 
-	 * Decode all records in buffer, regardless of start and end flags
-	 * 
-	 * @return
-	 */
-
-	public NdefMessage decodeFully(byte[] ndefMessage) {
-		return decodeFully(ndefMessage, 0, ndefMessage.length);
-	}
-
-	/**
-	 * 
-	 * Decode all records in buffer, regardless of start and end flags
-	 * 
-	 * @param ndefMessage
-	 * @param offset
-	 * @param length
-	 * @return
-	 */
-	
-	public NdefMessage decodeFully(byte[] ndefMessage, int offset, int length) {
-		
 		List<NdefRecord> records = new ArrayList<NdefRecord>();
 
 		int count = offset;
@@ -206,25 +67,29 @@ public class NdefMessageDecoder {
 
 			int header = ndefMessage[count++];
 			if (count > offset + length) {
-				throw new NdefException("Problem decoding message"); 
+				throw new NdefDecoderException("Problem decoding message"); 
 			}
 			
 			byte tnf = (byte)(header & NdefConstants.TNF_MASK);
 			
+			if (enforceMessageBeginAndEndFlags && records.isEmpty() && (header & NdefConstants.MB) == 0) {
+				throw new NdefDecoderException("No message begin in first record");
+			}
+			
 			int typeLength = ndefMessage[count++];
 			if (count > offset + length) {
-				throw new NdefException("Problem decoding message"); 
+				throw new NdefDecoderException("Problem decoding message"); 
 			}
 
 			int payloadLength;
 			if((header & NdefConstants.SR) != 0) {
 				payloadLength = ndefMessage[count++];
 				if (count > offset + length) {
-					throw new NdefException("Problem decoding message"); 
+					throw new NdefDecoderException("Problem decoding message"); 
 				}
 			} else {
 				if (count + 4 > offset + length) {
-					throw new NdefException("Problem decoding message"); 
+					throw new NdefDecoderException("Problem decoding message"); 
 				}
 				payloadLength = ((ndefMessage[count + 3] << 24) + (ndefMessage[count + 2] << 16) + (ndefMessage[count + 1] << 8) + (ndefMessage[count] << 0));
 				
@@ -235,7 +100,7 @@ public class NdefMessageDecoder {
 			if((header & NdefConstants.IL) != 0) {
 				idLength = ndefMessage[count++];
 				if (count > offset + length) {
-					throw new NdefException("Problem decoding message"); 
+					throw new NdefDecoderException("Problem decoding message"); 
 				}
 			} else {
 				idLength = 0;
@@ -243,7 +108,7 @@ public class NdefMessageDecoder {
 			boolean chunked = (header & NdefConstants.CF) != 0;
 
 			if (count + typeLength > offset + length) {
-				throw new NdefException("Problem decoding message"); 
+				throw new NdefDecoderException("Problem decoding message"); 
 			}
 			byte[] type = new byte[typeLength];
 			System.arraycopy(ndefMessage, count, type, 0, type.length);
@@ -254,7 +119,7 @@ public class NdefMessageDecoder {
 			if(idLength > 0) {
 
 				if (count + idLength > offset + length) {
-					throw new NdefException("Problem decoding message"); 
+					throw new NdefDecoderException("Problem decoding message"); 
 				}
 				id = new byte[idLength];
 				System.arraycopy(ndefMessage, count, id, 0, id.length);
@@ -265,7 +130,7 @@ public class NdefMessageDecoder {
 			}
 			
 			if (count + payloadLength > offset + length) {
-				throw new NdefException("Problem decoding message"); 
+				throw new NdefDecoderException("Problem decoding message, payload length exceeds array capacity by " + (count + payloadLength - (offset + length))); 
 			}
 			byte[] payload = new byte[payloadLength];
 			System.arraycopy(ndefMessage, count, payload, 0, payload.length);
@@ -273,24 +138,46 @@ public class NdefMessageDecoder {
 			count += payloadLength;
 			
 			records.add(new NdefRecord(tnf, chunked, type, id, payload));
+			
+			if (enforceMessageBeginAndEndFlags && (header & NdefConstants.ME) != 0) {
+				break;
+			}
+
+		}
+		
+		if(enforceMessageBeginAndEndFlags) {
+			if ((records.get(records.size() - 1).getTnf() & NdefConstants.ME) == 0) {
+				throw new NdefDecoderException("No message end in last record");
+			}
 		}
 		
 		return new NdefMessage(records.toArray(new NdefRecord[records.size()]));
 	}
 
-	public NdefMessage decode(InputStream in, boolean acceptEmpty) throws IOException {
+	/**
+	 * Decode to an {@link NdefMessage}. Must contain at least one record.
+	 * 
+	 * @param ndefMessage
+	 * @return
+	 */
+
+	public NdefMessage decode(InputStream in) throws IOException {
 		List<NdefRecord> records = new ArrayList<NdefRecord>();
 		while (true) {
 			int header = in.read();
 			if (header < 0) {
-				if(acceptEmpty && records.isEmpty()) {
+				if(records.isEmpty()) {
+					throw new IllegalArgumentException("Cannot decode message from zero bytes");
+				}
+				if(!enforceMessageBeginAndEndFlags) {
+					// read forever loops ends here
 					break;
 				}
-				throw new EOFException();
+				throw new NdefDecoderException("No message end in last record");
 			}
 			
-			if (records.isEmpty() && (header & NdefConstants.MB) == 0) {
-				throw new IllegalArgumentException("no Message Begin record at the begining");
+			if (enforceMessageBeginAndEndFlags && records.isEmpty() && (header & NdefConstants.MB) == 0) {
+				throw new NdefDecoderException("No message begin in first record");
 			}
 				
 			byte tnf = (byte)(header & NdefConstants.TNF_MASK);
@@ -320,10 +207,17 @@ public class NdefMessageDecoder {
 
 			records.add(new NdefRecord(tnf, chunked, type, id, payload));
 			
-			if ((header & NdefConstants.ME) != 0) {
+			if (enforceMessageBeginAndEndFlags && (header & NdefConstants.ME) != 0) {
 				break;
 			}
 		}
+		
+		if(enforceMessageBeginAndEndFlags) {
+			if ((records.get(records.size() - 1).getTnf() & NdefConstants.ME) == 0) {
+				throw new NdefDecoderException("No message end in last record");
+			}
+		}
+		
 		return new NdefMessage(records.toArray(new NdefRecord[records.size()]));
 	}
 
@@ -353,10 +247,6 @@ public class NdefMessageDecoder {
 	            throw new EOFException();
 	        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
 	    }
-	}
-
-	public List<Record> decodeToRecords(byte[] payload, int offset, int length) {
-		return decodeToRecords(decode(payload, offset, length));
 	}
 
 }

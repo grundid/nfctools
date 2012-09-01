@@ -23,7 +23,7 @@ import java.util.Locale;
 
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.wkt.encoder.TextRecordEncoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.utils.NfcUtils;
@@ -36,7 +36,7 @@ import org.nfctools.utils.NfcUtils;
 public class TextRecordEncoderTest {
 
 	private TextRecordEncoder encoder = new TextRecordEncoder();
-	private NdefMessageEncoder messageEncoder = NdefContext.getNdefMessageEncoder();
+	private NdefEncoder messageEncoder = NdefContext.getNdefEncoder();
 
 	private static String string = new String(new char[]{84, 101, 115, 116, 246, 228, 252, 223, 214, 196, 220, 63});
 	

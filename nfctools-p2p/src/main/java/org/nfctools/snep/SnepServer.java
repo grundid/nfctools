@@ -15,6 +15,7 @@
  */
 package org.nfctools.snep;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -49,18 +50,18 @@ public class SnepServer extends AbstractSnepImpl {
 	protected byte[] processMessage(SnepMessage snepMessage) {
 
 		if (snepMessage.getMessageCode() == Request.PUT.getCode()) {
-			List<Record> records = NdefContext.getNdefMessageDecoder().decodeToRecords(snepMessage.getInformation());
+			List<Record> records = NdefContext.getNdefDecoder().decodeToRecords(snepMessage.getInformation());
 			sneplet.doPut(records);
 			SnepMessage successMessage = new SnepMessage(snepVersion, Response.SUCCESS);
 			return successMessage.getBytes();
 		}
 		else if (snepMessage.getMessageCode() == Request.GET.getCode()) {
-			List<Record> records = NdefContext.getNdefMessageDecoder().decodeToRecords(snepMessage.getInformation());
+			List<Record> records = NdefContext.getNdefDecoder().decodeToRecords(snepMessage.getInformation());
 
 			Collection<Record> responseRecords = sneplet.doGet(records);
 
 			SnepMessage successMessage = new SnepMessage(snepVersion, Response.SUCCESS);
-			successMessage.setInformation(NdefContext.getNdefMessageEncoder().encode(responseRecords));
+			successMessage.setInformation(NdefContext.getNdefEncoder().encode(new ArrayList<Record>(responseRecords)));
 
 			fragmentIterator = new FragmentIterator(successMessage.getBytes(), maxInformationUnit);
 			return fragmentIterator.next();

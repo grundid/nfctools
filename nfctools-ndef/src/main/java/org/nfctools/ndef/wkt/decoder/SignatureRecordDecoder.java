@@ -19,7 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.RecordUtils;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.SignatureRecord;
@@ -30,7 +30,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class SignatureRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 		SignatureRecord signatureRecord = new SignatureRecord();
 		
 		try {

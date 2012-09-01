@@ -16,7 +16,7 @@
 
 package org.nfctools.ndef.wkt.handover.decoder;
 
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.handover.records.ErrorRecord;
 import org.nfctools.ndef.wkt.handover.records.ErrorRecord.ErrorReason;
@@ -31,7 +31,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class ErrorRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 		ErrorRecord errorRecord = new ErrorRecord();
 
 		ErrorReason errorReason = ErrorReason.toErrorReason(payload[0]);

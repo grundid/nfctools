@@ -15,6 +15,7 @@
  */
 package org.nfctools.snep;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.nfctools.llcp.Llcp;
@@ -81,7 +82,7 @@ public class SnepClient extends AbstractSnepImpl {
 	}
 
 	private byte[] processSnepRequestContainer() {
-		byte[] encodedRecords = NdefContext.getNdefMessageEncoder().encode(snepRequestContainer.getRecords());
+		byte[] encodedRecords = NdefContext.getNdefEncoder().encode(new ArrayList<Record>(snepRequestContainer.getRecords()));
 		SnepMessage snepMessage = new SnepMessage(snepVersion, snepRequestContainer.getRequest());
 		snepMessage.setInformation(encodedRecords);
 		fragmentIterator = new FragmentIterator(snepMessage.getBytes(), maxInformationUnit);
@@ -109,7 +110,13 @@ public class SnepClient extends AbstractSnepImpl {
 				return fragmentIterator.next();
 		}
 		else if (snepMessage.getMessageCode() == Response.SUCCESS.getCode()) {
-			List<Record> records = NdefContext.getNdefMessageDecoder().decodeToRecords(snepMessage.getInformation());
+			byte[] message = snepMessage.getInformation();
+			List<Record> records;
+			if(message.length > 0) {
+				records = NdefContext.getNdefDecoder().decodeToRecords(message);
+			} else {
+				records = new ArrayList<Record>();
+			}
 			if (snepRequestContainer.hasRequest()) {
 				snepRequestContainer.handleSuccess(records);
 				if (snepRequestContainer.hasRequest()) {

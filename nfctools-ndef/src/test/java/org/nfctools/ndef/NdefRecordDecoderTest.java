@@ -37,7 +37,7 @@ public class NdefRecordDecoderTest {
 
 		byte[] payload = NfcUtils.convertASCIIToBin(innerSmartPoster);
 
-		Record record = decoder.decodePayload(payload, NdefContext.getNdefMessageDecoder());
+		Record record = decoder.decodePayload(payload, NdefContext.getNdefDecoder());
 		assertTrue(record instanceof SmartPosterRecord);
 
 		SmartPosterRecord smartPosterRecord = (SmartPosterRecord)record;

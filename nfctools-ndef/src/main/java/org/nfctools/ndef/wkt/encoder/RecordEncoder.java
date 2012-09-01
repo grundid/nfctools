@@ -15,7 +15,7 @@
  */
 package org.nfctools.ndef.wkt.encoder;
 
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 
@@ -23,5 +23,5 @@ public interface RecordEncoder {
 
 	boolean canEncode(Record record);
 
-	NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder);
+	NdefRecord encodeRecord(Record record, NdefEncoder messageEncoder);
 }

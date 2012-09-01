@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 
@@ -32,7 +32,7 @@ public class ExternalTypeDecoder extends AbstractRecordDecoder<ExternalTypeRecor
 	}
 
 	@Override
-	protected ExternalTypeRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected ExternalTypeRecord createRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
 		String namespace = new String(ndefRecord.getType(), NdefConstants.DEFAULT_CHARSET);
 		String content = new String(ndefRecord.getPayload(), NdefConstants.DEFAULT_CHARSET);
 		

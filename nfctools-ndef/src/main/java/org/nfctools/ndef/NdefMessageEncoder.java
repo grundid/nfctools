@@ -16,65 +16,73 @@
 package org.nfctools.ndef;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.List;
 
+/**
+ * 
+ * NdefMessage encoder
+ *
+ */
 
 public class NdefMessageEncoder {
 
 	private static final int MAX_LENGTH_FOR_SHORT_RECORD = 255;
-	private NdefRecordEncoder ndefRecordEncoder;
 
-	public NdefMessageEncoder(NdefRecordEncoder ndefRecordEncoder) {
-		this.ndefRecordEncoder = ndefRecordEncoder;
+	public byte[] encode(NdefMessage message) {
+		return encode(Arrays.asList(message.getNdefRecords()));
 	}
 
-	public byte[] encodeSingle(Record record) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		encodeSingle(record, baos);
-		return baos.toByteArray();
+	public void encode(NdefMessage message, OutputStream out) throws IOException {
+		encode(Arrays.asList(message.getNdefRecords()), out);
+	}
+
+	public void encode(List<NdefRecord> ndefRecords, OutputStream out) throws IOException {
+
+		for(int i = 0; i < ndefRecords.size(); i++) {
+			byte header = 0;
+			if(i == 0) {
+				header |= (byte)NdefConstants.MB;
+			}
+			if(i == ndefRecords.size() - 1) {
+				header |= (byte)NdefConstants.ME;
+			}
+			writeNdefRecord(out, header, ndefRecords.get(i));
+		}
+
+	}
+
+	public void encode(NdefRecord ndefRecord, OutputStream out) throws IOException {
+		writeNdefRecord(out, (byte)(NdefConstants.ME | NdefConstants.MB), ndefRecord);
 	}
 	
-	public void encodeSingle(Record record, ByteArrayOutputStream out) {
-		byte header = (byte)(NdefConstants.MB | NdefConstants.ME);
-		NdefRecord ndefRecord = ndefRecordEncoder.encode(record, this);
-		writeNdefRecord(out, header, ndefRecord);
-	}
-
-	public byte[] encode(Record... records) {
-		return encode(Arrays.asList(records));
-	}
-
-	public byte[] encode(Iterable<? extends Record> records) {
-
+	public byte[] encode(NdefRecord ndefRecord) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		encode(records, baos);
-
+		try {
+			encode(ndefRecord, baos);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
 		return baos.toByteArray();
 	}
 
-	public void encode(Iterable<? extends Record> records, ByteArrayOutputStream baos) {
-		byte header = (byte)NdefConstants.MB;
-		for (Iterator<? extends Record> it = records.iterator(); it.hasNext();) {
-			Record record = it.next();
-			header = setMessageEndIfLastRecord(it, header);
+	public byte[] encode(List<NdefRecord> ndefRecords) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-			NdefRecord ndefRecord = ndefRecordEncoder.encode(record, this);
-
-			writeNdefRecord(baos, header, ndefRecord);
-			header = 0;
+		try {
+			encode(ndefRecords, baos);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-	}
-	
-	private byte setMessageEndIfLastRecord(Iterator<? extends Record> it, byte header) {
-		if (!it.hasNext()) {
-			header |= NdefConstants.ME;
-		}
-		return header;
+		
+		return baos.toByteArray();
 	}
 
-	private void writeNdefRecord(ByteArrayOutputStream baos, byte header, NdefRecord ndefRecord) {
+	private void writeNdefRecord(OutputStream baos, byte header, NdefRecord ndefRecord) throws IOException {
 		writeHeader(baos, header, ndefRecord);
 		baos.write(ndefRecord.getType().length);
 		writePayloadLength(baos, ndefRecord.getPayload().length);
@@ -84,7 +92,7 @@ public class NdefMessageEncoder {
 		writeBytes(baos, ndefRecord.getPayload());
 	}
 
-	private void writeHeader(ByteArrayOutputStream baos, byte header, NdefRecord ndefRecord) {
+	private void writeHeader(OutputStream baos, byte header, NdefRecord ndefRecord) throws IOException {
 		header = setShortRecord(header, ndefRecord);
 		header = setIdLength(header, ndefRecord);
 		header = setTypeNameFormat(header, ndefRecord);
@@ -110,16 +118,16 @@ public class NdefMessageEncoder {
 		return header;
 	}
 
-	private void writeBytes(ByteArrayOutputStream baos, byte[] bytes) {
+	private void writeBytes(OutputStream baos, byte[] bytes) throws IOException {
 		baos.write(bytes, 0, bytes.length);
 	}
 
-	private void writeIdLength(ByteArrayOutputStream baos, int length) {
+	private void writeIdLength(OutputStream baos, int length) throws IOException {
 		if (length > 0)
 			baos.write(length);
 	}
 
-	private void writePayloadLength(ByteArrayOutputStream baos, int length) {
+	private void writePayloadLength(OutputStream baos, int length) throws IOException {
 		if (length <= MAX_LENGTH_FOR_SHORT_RECORD) {
 			baos.write(length);
 		}

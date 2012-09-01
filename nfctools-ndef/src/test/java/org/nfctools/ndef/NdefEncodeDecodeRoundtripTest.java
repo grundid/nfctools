@@ -129,12 +129,12 @@ public class NdefEncodeDecodeRoundtripTest {
 	@Test
 	public void testEncodeDecodeRoundtrip() {
 
-		NdefMessageEncoder ndefMessageEncoder = NdefContext.getNdefMessageEncoder();
+		NdefEncoder ndefMessageEncoder = NdefContext.getNdefEncoder();
 
-		NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
+		NdefDecoder ndefMessageDecoder = NdefContext.getNdefDecoder();
 
 		for (Record record : records) {
-			byte[] ndef = ndefMessageEncoder.encodeSingle(record);
+			byte[] ndef = ndefMessageEncoder.encode(record);
 
 			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
 
