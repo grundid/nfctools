@@ -15,6 +15,7 @@
  */
 package org.nfctools.ndef;
 
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,7 +66,7 @@ public class NdefMessageDecoder {
 		int count = offset;
 		while(count < offset + length) {
 
-			int header = ndefMessage[count++];
+			int header = (ndefMessage[count++] & 0xff);
 			if (count > offset + length) {
 				throw new NdefDecoderException("Problem decoding message"); 
 			}
@@ -76,14 +77,14 @@ public class NdefMessageDecoder {
 				throw new NdefDecoderException("No message begin in first record");
 			}
 			
-			int typeLength = ndefMessage[count++];
+			int typeLength = (ndefMessage[count++] & 0xff);
 			if (count > offset + length) {
 				throw new NdefDecoderException("Problem decoding message"); 
 			}
-
+			
 			int payloadLength;
 			if((header & NdefConstants.SR) != 0) {
-				payloadLength = ndefMessage[count++];
+				payloadLength = (ndefMessage[count++] & 0xff);
 				if (count > offset + length) {
 					throw new NdefDecoderException("Problem decoding message"); 
 				}
@@ -91,20 +92,25 @@ public class NdefMessageDecoder {
 				if (count + 4 > offset + length) {
 					throw new NdefDecoderException("Problem decoding message"); 
 				}
-				payloadLength = ((ndefMessage[count + 3] << 24) + (ndefMessage[count + 2] << 16) + (ndefMessage[count + 1] << 8) + (ndefMessage[count] << 0));
+				payloadLength = (((ndefMessage[count] & 0xff) << 24) + ((ndefMessage[count + 1]  & 0xff) << 16) + ((ndefMessage[count + 2]  & 0xff) << 8) + ((ndefMessage[count+3]  & 0xff) << 0)); // strictly speaking this is a unsigned int
 				
+				if(payloadLength < 0) { // MSB == 1.
+					throw new NdefDecoderException("Payload lengths above " + Integer.MAX_VALUE + " not supported");
+				}
+								
 				count += 4;
 			}
 			
 			int idLength;
 			if((header & NdefConstants.IL) != 0) {
-				idLength = ndefMessage[count++];
+				idLength = (ndefMessage[count++] & 0xff);
 				if (count > offset + length) {
 					throw new NdefDecoderException("Problem decoding message"); 
 				}
 			} else {
 				idLength = 0;
 			}
+			
 			boolean chunked = (header & NdefConstants.CF) != 0;
 
 			if (count + typeLength > offset + length) {
@@ -130,7 +136,7 @@ public class NdefMessageDecoder {
 			}
 			
 			if (count + payloadLength > offset + length) {
-				throw new NdefDecoderException("Problem decoding message, payload length exceeds array capacity by " + (count + payloadLength - (offset + length))); 
+				throw new NdefDecoderException("Problem decoding message, payload length exceeds source array capacity by " + (count + payloadLength - (offset + length))); 
 			}
 			byte[] payload = new byte[payloadLength];
 			System.arraycopy(ndefMessage, count, payload, 0, payload.length);
@@ -163,8 +169,9 @@ public class NdefMessageDecoder {
 
 	public NdefMessage decode(InputStream in) throws IOException {
 		List<NdefRecord> records = new ArrayList<NdefRecord>();
+		DataInputStream din = new DataInputStream(in);
 		while (true) {
-			int header = in.read();
+			int header = din.read();
 			if (header < 0) {
 				if(records.isEmpty()) {
 					throw new IllegalArgumentException("Cannot decode message from zero bytes");
@@ -182,29 +189,40 @@ public class NdefMessageDecoder {
 				
 			byte tnf = (byte)(header & NdefConstants.TNF_MASK);
 
-			int typeLength = in.read();
+			int typeLength = din.readUnsignedByte();
 			if (typeLength < 0) {
 				throw new EOFException();
 			}
 
-			int payloadLength = getPayloadLength((header & NdefConstants.SR) != 0, in);
+			int payloadLength;
+			if((header & NdefConstants.SR) != 0) {
+				payloadLength = din.readUnsignedByte();
+			} else {
+				payloadLength = din.readInt(); // strictly speaking this is a unsigned int
+				if(payloadLength < 0) { // MSB == 1.
+					throw new NdefDecoderException("Payload lengths above " + Integer.MAX_VALUE + " not supported");
+				}
+			}
 			int idLength;
 			if((header & NdefConstants.IL) != 0) {
-				idLength = getIdLength(in);
+				idLength = din.readUnsignedByte();
 			} else {
 				idLength = 0;
 			}
 			boolean chunked = (header & NdefConstants.CF) != 0;
 
-			byte[] type = RecordUtils.readByteArray(in, typeLength);
+			byte[] type = new byte[typeLength]; 
+			din.readFully(type);
 			byte[] id;
 			if(idLength > 0) {
-				id = RecordUtils.readByteArray(in, idLength);
+				id = new byte[idLength];
+				din.readFully(id);
 			} else {
 				id = NdefConstants.EMPTY_BYTE_ARRAY;
 			}
-			byte[] payload = RecordUtils.readByteArray(in, payloadLength);
-
+			byte[] payload = new byte[payloadLength];
+			din.readFully(payload);
+			
 			records.add(new NdefRecord(tnf, chunked, type, id, payload));
 			
 			if (enforceMessageBeginAndEndFlags && (header & NdefConstants.ME) != 0) {
@@ -219,34 +237,6 @@ public class NdefMessageDecoder {
 		}
 		
 		return new NdefMessage(records.toArray(new NdefRecord[records.size()]));
-	}
-
-	private int getIdLength(InputStream in) throws IOException {
-		int length = in.read();
-		
-		if (length < 0) {
-			throw new EOFException();
-		}
-		return length;
-	}
-
-	private int getPayloadLength(boolean shortRecord, InputStream in) throws IOException {
-		if (shortRecord) {
-			int length = in.read();
-			
-			if (length < 0) {
-				throw new EOFException();
-			}
-			return length;
-		} else {
-	        int ch1 = in.read();
-	        int ch2 = in.read();
-	        int ch3 = in.read();
-	        int ch4 = in.read();
-	        if ((ch1 | ch2 | ch3 | ch4) < 0)
-	            throw new EOFException();
-	        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
-	    }
 	}
 
 }

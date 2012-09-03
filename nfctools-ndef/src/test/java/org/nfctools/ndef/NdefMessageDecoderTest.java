@@ -60,12 +60,19 @@ public class NdefMessageDecoderTest {
 		assertTrue(ndefMessage.getNdefRecords().length == 2);
 	}
 
-	@Test(expected = NdefDecoderException.class)
 	public void testMimeMediaRecordWithLongPayloadAndId() throws Exception {
 		
 		byte[] data = NfcUtils.convertASCIIToBin(mimeMediaRecordWithLongPayloadAndId);
 		
 		NdefMessage ndefMessage = decoder.getNdefMessageDecoder().decode(data);
+		
+		assertTrue(ndefMessage.getNdefRecords().length == 1);
+
+		NdefRecord ndefRecord = ndefMessage.getNdefRecords()[0];
+
+		assertArrayEquals("image/png".getBytes(), ndefRecord.getType());
+		assertArrayEquals("my_id".getBytes(), ndefRecord.getId());
+
 	}
 
 	@Test

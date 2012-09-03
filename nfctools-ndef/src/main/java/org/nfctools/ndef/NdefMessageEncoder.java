@@ -40,22 +40,79 @@ public class NdefMessageEncoder {
 	}
 
 	public void encode(List<NdefRecord> ndefRecords, OutputStream out) throws IOException {
-
 		for(int i = 0; i < ndefRecords.size(); i++) {
-			byte header = 0;
-			if(i == 0) {
-				header |= (byte)NdefConstants.MB;
-			}
-			if(i == ndefRecords.size() - 1) {
-				header |= (byte)NdefConstants.ME;
-			}
-			writeNdefRecord(out, header, ndefRecords.get(i));
+			write(ndefRecords.get(i), i == 0, i == ndefRecords.size() - 1, out);
 		}
+	}
 
+	private void write(NdefRecord ndefRecord, boolean first, boolean last, OutputStream out) throws IOException {
+		
+		// configure header
+		int header = 0;
+		if(first) {
+			header |= NdefConstants.MB;
+		}
+		if(last) {
+			header |= NdefConstants.ME;
+		}
+		
+		byte[] payload = ndefRecord.getPayload();
+		
+		// short record?
+		if (payload.length <= MAX_LENGTH_FOR_SHORT_RECORD) {
+			header |= NdefConstants.SR;
+		}
+		
+		// id present
+		byte[] id = ndefRecord.getId();
+		if (id.length > 0) {
+			if(id.length > 255) {
+				throw new IllegalArgumentException("Id length exceeds maximum length of 255 by " + (id.length - 255));
+			}
+
+			header |= NdefConstants.IL;
+		}
+		
+		int tnf = ndefRecord.getTnf();
+		if(tnf > 0x7) {
+			throw new IllegalArgumentException("Tnf is limited to 0x0 -> 0x7 range");
+		}
+		header |= tnf;
+		
+		// write header
+		out.write(header);
+		
+		// write type length
+		byte[] type = ndefRecord.getType();
+		if(type.length > 255) {
+			throw new IllegalArgumentException("Type length exceeds maximum length of 255 by " + (type.length - 255));
+		}
+		out.write((type.length >>>  0) & 0xFF);
+		
+		// write payload length
+		if (payload.length <= MAX_LENGTH_FOR_SHORT_RECORD) {
+			out.write((payload.length >>>  0) & 0xFF);
+		} else {
+			// note: not supporting longer payload than max int in java
+			out.write((payload.length >>> 24) & 0xFF);
+			out.write((payload.length >>> 16) & 0xFF);
+			out.write((payload.length >>>  8) & 0xFF);
+			out.write((payload.length >>>  0) & 0xFF);
+		}
+		
+		// write id length if present
+		if (id.length > 0) {
+			out.write((id.length >>>  0) & 0xFF);
+		}
+		
+		// write contents
+		out.write(type);
+		out.write(id);
+		out.write(payload);
 	}
 
 	public void encode(NdefRecord ndefRecord, OutputStream out) throws IOException {
-		writeNdefRecord(out, (byte)(NdefConstants.ME | NdefConstants.MB), ndefRecord);
+		write(ndefRecord, true, true, out);
 	}
 	
 	public byte[] encode(NdefRecord ndefRecord) {
@@ -82,62 +139,4 @@ public class NdefMessageEncoder {
 		return baos.toByteArray();
 	}
 
-	private void writeNdefRecord(OutputStream baos, byte header, NdefRecord ndefRecord) throws IOException {
-		writeHeader(baos, header, ndefRecord);
-		baos.write(ndefRecord.getType().length);
-		writePayloadLength(baos, ndefRecord.getPayload().length);
-		writeIdLength(baos, ndefRecord.getId().length);
-		writeBytes(baos, ndefRecord.getType());
-		writeBytes(baos, ndefRecord.getId());
-		writeBytes(baos, ndefRecord.getPayload());
-	}
-
-	private void writeHeader(OutputStream baos, byte header, NdefRecord ndefRecord) throws IOException {
-		header = setShortRecord(header, ndefRecord);
-		header = setIdLength(header, ndefRecord);
-		header = setTypeNameFormat(header, ndefRecord);
-		baos.write(header);
-	}
-
-	private byte setShortRecord(byte header, NdefRecord ndefRecord) {
-		if (ndefRecord.getPayload().length <= MAX_LENGTH_FOR_SHORT_RECORD) {
-			header |= NdefConstants.SR;
-		}
-		return header;
-	}
-
-	private byte setIdLength(byte header, NdefRecord ndefRecord) {
-		if (ndefRecord.getId().length > 0) {
-			header |= NdefConstants.IL;
-		}
-		return header;
-	}
-
-	private byte setTypeNameFormat(byte header, NdefRecord ndefRecord) {
-		header |= ndefRecord.getTnf();
-		return header;
-	}
-
-	private void writeBytes(OutputStream baos, byte[] bytes) throws IOException {
-		baos.write(bytes, 0, bytes.length);
-	}
-
-	private void writeIdLength(OutputStream baos, int length) throws IOException {
-		if (length > 0)
-			baos.write(length);
-	}
-
-	private void writePayloadLength(OutputStream baos, int length) throws IOException {
-		if (length <= MAX_LENGTH_FOR_SHORT_RECORD) {
-			baos.write(length);
-		}
-		else {
-			byte[] payloadLengthArray = new byte[4];
-			payloadLengthArray[0] = (byte)(length >>> 24);
-			payloadLengthArray[1] = (byte)(length >>> 16);
-			payloadLengthArray[2] = (byte)(length >>> 8);
-			payloadLengthArray[3] = (byte)(length & 0xff);
-			baos.write(payloadLengthArray, 0, payloadLengthArray.length);
-		}
-	}
 }

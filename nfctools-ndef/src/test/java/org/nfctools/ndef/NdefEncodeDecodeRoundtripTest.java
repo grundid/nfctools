@@ -33,22 +33,22 @@ import org.nfctools.ndef.mime.TextMimeRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
 import org.nfctools.ndef.unknown.unsupported.UnsupportedRecord;
 import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord.CarrierPowerState;
 import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
 import org.nfctools.ndef.wkt.handover.records.ErrorRecord;
+import org.nfctools.ndef.wkt.handover.records.ErrorRecord.ErrorReason;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
 import org.nfctools.ndef.wkt.handover.records.HandoverRequestRecord;
 import org.nfctools.ndef.wkt.handover.records.HandoverSelectRecord;
-import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord.CarrierPowerState;
-import org.nfctools.ndef.wkt.handover.records.ErrorRecord.ErrorReason;
-import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
 import org.nfctools.ndef.wkt.records.SignatureRecord;
+import org.nfctools.ndef.wkt.records.SignatureRecord.CertificateFormat;
+import org.nfctools.ndef.wkt.records.SignatureRecord.SignatureType;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
-import org.nfctools.ndef.wkt.records.SignatureRecord.CertificateFormat;
-import org.nfctools.ndef.wkt.records.SignatureRecord.SignatureType;
 
 /**
  * 
