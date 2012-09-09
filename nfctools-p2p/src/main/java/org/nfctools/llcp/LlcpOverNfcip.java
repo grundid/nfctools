@@ -32,17 +32,15 @@ public class LlcpOverNfcip implements NFCIPConnectionListener {
 	public void onConnection(NFCIPConnection connection) throws IOException {
 		initFromGeneralBytes(connection.getGeneralBytes());
 		try {
-			if (connection.isInitiator()) {
-				connection.send(pduDecoder.encode(new Symmetry().processPdu(connectionManager)));
-			}
+			byte[] data = connection.isInitiator() ? pduDecoder.encode(new Symmetry()) : connection.receive();
 
 			while (!Thread.interrupted()) {
-				byte[] data = connection.receive();
 				AbstractProtocolDataUnit requestPdu = pduDecoder.decode(data);
 
 				AbstractProtocolDataUnit responsePdu = requestPdu.processPdu(connectionManager);
 				byte[] pdu = pduDecoder.encode(responsePdu);
 				connection.send(pdu);
+				data = connection.receive();
 			}
 		}
 		finally {
