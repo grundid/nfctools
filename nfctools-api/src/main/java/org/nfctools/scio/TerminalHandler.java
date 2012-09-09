@@ -32,15 +32,21 @@ public class TerminalHandler {
 	}
 
 	public Terminal getAvailableTerminal() {
+		return getAvailableTerminal(null);
+	}
+
+	public Terminal getAvailableTerminal(String preferredTerminalName) {
 		try {
 			TerminalFactory terminalFactory = TerminalFactory.getDefault();
 
 			List<CardTerminal> terminals = terminalFactory.terminals().list();
 			for (CardTerminal terminal : terminals) {
-				for (Terminal knownTerminal : knownTerminals) {
-					if (knownTerminal.canHandle(terminal.getName())) {
-						knownTerminal.setCardTerminal(terminal);
-						return knownTerminal;
+				if (preferredTerminalName == null || preferredTerminalName.equals(terminal.getName())) {
+					for (Terminal knownTerminal : knownTerminals) {
+						if (knownTerminal.canHandle(terminal.getName())) {
+							knownTerminal.setCardTerminal(terminal);
+							return knownTerminal;
+						}
 					}
 				}
 			}
