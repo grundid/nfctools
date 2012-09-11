@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.nfctools.llcp.parameter.LinkTimeOut;
 import org.nfctools.llcp.parameter.Miux;
+import org.nfctools.llcp.parameter.Option;
+import org.nfctools.llcp.parameter.ReceiveWindowSize;
 import org.nfctools.llcp.parameter.ServiceName;
 import org.nfctools.llcp.parameter.Version;
 import org.nfctools.llcp.parameter.WellKnownServiceList;
@@ -168,6 +170,12 @@ public class PduDecoder {
 					break;
 				case PduConstants.PARAM_LTO:
 					params.add(new LinkTimeOut(pduData[offset + 2] & 0xFF));
+					break;
+				case PduConstants.PARAM_RW:
+					params.add(new ReceiveWindowSize(pduData[offset + 2] & 0x0F));
+					break;
+				case PduConstants.PARAM_OPT:
+					params.add(new Option(pduData[offset + 2] & 0x01));
 					break;
 
 				default:

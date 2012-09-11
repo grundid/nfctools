@@ -23,12 +23,14 @@ import java.util.List;
 import org.junit.Test;
 import org.nfctools.llcp.parameter.LinkTimeOut;
 import org.nfctools.llcp.parameter.Miux;
+import org.nfctools.llcp.parameter.ReceiveWindowSize;
 import org.nfctools.llcp.parameter.ServiceName;
 import org.nfctools.llcp.parameter.Version;
 import org.nfctools.llcp.parameter.WellKnownServiceList;
 import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndefpush.NdefPushProtocol;
+import org.nfctools.utils.NfcUtils;
 
 public class PduParserTest {
 
@@ -114,6 +116,24 @@ public class PduParserTest {
 
 		ServiceName serviceName = (ServiceName)parameter[pId++];
 		assertEquals("com.android.npp", serviceName.getName());
+
+	}
+
+	@Test
+	public void testDecodeAllParamsWindows8() throws Exception {
+		byte[] data = NfcUtils.convertASCIIToBin("052002020380050105060F75726E3A6E66633A736E3A736E6570");
+
+		AbstractProtocolDataUnit dataUnit = pduDecoder.decode(data);
+		assertNotNull(dataUnit);
+		assertTrue(dataUnit instanceof Connect);
+		Connect connect = (Connect)dataUnit;
+
+		Object[] parameter = connect.getParameter();
+		assertEquals(3, parameter.length);
+
+		assertEquals(896, ((Miux)parameter[0]).getValue());
+		assertEquals(5, ((ReceiveWindowSize)parameter[1]).getSize());
+		assertEquals("urn:nfc:sn:snep", ((ServiceName)parameter[2]).getName());
 
 	}
 
