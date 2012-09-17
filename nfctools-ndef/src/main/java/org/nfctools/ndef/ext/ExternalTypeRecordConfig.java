@@ -40,7 +40,7 @@ public class ExternalTypeRecordConfig {
 		this.contentDecoder = contentDecoder;
 	}
 
-	public String getNamespace() {
+	public String getDomainAndType() {
 		return namespace;
 	}
 	public Class<? extends Record> getRecordClass() {

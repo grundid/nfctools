@@ -68,7 +68,7 @@ public class NdefMessageEncoderTest {
 
 	@Test
 	public void testEncodeExternalType() throws Exception {
-		byte[] single = encoder.encode(new UnsupportedExternalTypeRecord("android.com:pkg", "de.grundid.test1234"));
+		byte[] single = encoder.encode(new UnsupportedExternalTypeRecord("android.com", "pkg", "de.grundid.test1234".getBytes()));
 		assertEquals("D40F13616E64726F69642E636F6D3A706B6764652E6772756E6469642E7465737431323334",
 				NfcUtils.convertBinToASCII(single));
 	}

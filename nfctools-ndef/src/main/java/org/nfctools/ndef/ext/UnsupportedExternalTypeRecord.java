@@ -18,79 +18,58 @@ package org.nfctools.ndef.ext;
 
 public class UnsupportedExternalTypeRecord extends ExternalTypeRecord {
 
-	private String content;
+	protected byte[] data;
+	protected String domain;
+	protected String type;
 
-	protected String namespace;
-
-	public UnsupportedExternalTypeRecord(String namespace, String content) {
-		this.namespace = namespace;
-		this.content = content;
+	public UnsupportedExternalTypeRecord(String domain, String type, byte[] data) {
+		this.domain = domain;
+		this.type = type;
+		this.data = data;
 	}
 
 	public UnsupportedExternalTypeRecord() {
 	}
 
-	public String getNamespace() {
-		return namespace;
+	public String getDomain() {
+		return domain;
 	}
 
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
+	public void setDomain(String domain) {
+		this.domain = domain;
 	}
 
-	public boolean hasNamespace() {
-		return namespace != null;
+	public boolean hasDomain() {
+		return domain != null;
 	}
 
-	public String getContent() {
-		return content;
+	public byte[] getData() {
+		return data;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setData(byte[] data) {
+		this.data = data;
 	}
 
 	@Override
 	public String toString() {
-		return "Namespace: [" + namespace + "] Content: [" + content + "]";
+		return "Domain: [" + domain + "] Type: [" + type + "] Data: [" + (data != null ? data.length : 0) + "]";
 	}
 
-	public boolean hasContent() {
-		return content != null;
+	public boolean hasData() {
+		return data != null;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((content == null) ? 0 : content.hashCode());
-		result = prime * result
-				+ ((namespace == null) ? 0 : namespace.hashCode());
-		return result;
+	public String getType() {
+		return type;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		UnsupportedExternalTypeRecord other = (UnsupportedExternalTypeRecord) obj;
-		if (content == null) {
-			if (other.content != null)
-				return false;
-		} else if (!content.equals(other.content))
-			return false;
-		if (namespace == null) {
-			if (other.namespace != null)
-				return false;
-		} else if (!namespace.equals(other.namespace))
-			return false;
-		return true;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	
+	public boolean hasType() {
+		return type != null;
+	}
 
 }

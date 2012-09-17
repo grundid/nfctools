@@ -33,19 +33,35 @@ public class ExternalTypeDecoder extends AbstractRecordDecoder<ExternalTypeRecor
 
 	@Override
 	protected ExternalTypeRecord createRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
-		String namespace = new String(ndefRecord.getType(), NdefConstants.DEFAULT_CHARSET);
-		String content = new String(ndefRecord.getPayload(), NdefConstants.DEFAULT_CHARSET);
+		String domainAndType = new String(ndefRecord.getType(), NdefConstants.UTF_8_CHARSET);
+		byte[] content = ndefRecord.getPayload();
 		
-		ExternalTypeRecordConfig config = recordDecoders.get(namespace);
+		ExternalTypeRecordConfig config = recordDecoders.get(domainAndType);
 		if(config != null) {
 			return config.getContentDecoder().decodeContent(content);
 		} else {
 			// fall back to unsupported type
-			return new UnsupportedExternalTypeRecord(namespace, content);
+			int colon = domainAndType.lastIndexOf(':');
+			
+			String type;
+			String domain;
+			if(colon == -1) {
+				domain = domainAndType;
+				type = null;
+			} else {
+				domain = domainAndType.substring(0, colon);
+				if(colon + 1 < domainAndType.length()) {
+					type = domainAndType.substring(colon + 1);
+				} else {
+					type = "";
+				}
+			}
+			
+			return new UnsupportedExternalTypeRecord(domain, type, content);
 		}
 	}
 
 	public void addRecordConfig(ExternalTypeRecordConfig config) {
-		recordDecoders.put(config.getNamespace(), config);
+		recordDecoders.put(config.getDomainAndType(), config);
 	}
 }
