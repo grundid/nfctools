@@ -15,10 +15,10 @@
  */
 package org.nfctools.ndef.wkt;
 
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
 
 public interface WellKnownRecordPayloadDecoder {
 
-	WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder);
+	WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder);
 }

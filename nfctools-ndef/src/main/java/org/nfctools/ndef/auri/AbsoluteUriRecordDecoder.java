@@ -17,7 +17,7 @@
 package org.nfctools.ndef.auri;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.AbstractTypeRecordDecoder;
 
@@ -33,7 +33,7 @@ public class AbsoluteUriRecordDecoder extends AbstractTypeRecordDecoder<Absolute
 	}
 
 	@Override
-	protected AbsoluteUriRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected AbsoluteUriRecord createRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
 		String uri = new String(ndefRecord.getPayload(), NdefConstants.DEFAULT_CHARSET);
 		return new AbsoluteUriRecord(uri);
 	}

@@ -15,7 +15,7 @@
  */
 package org.nfctools.ndef.wkt.decoder;
 
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 
@@ -23,5 +23,5 @@ public interface RecordDecoder<T extends Record> {
 
 	boolean canDecode(NdefRecord ndefRecord);
 
-	T decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder);
+	T decodeRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder);
 }

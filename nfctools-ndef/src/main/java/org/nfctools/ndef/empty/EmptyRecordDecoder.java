@@ -17,7 +17,7 @@
 package org.nfctools.ndef.empty;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.wkt.decoder.AbstractRecordDecoder;
 
@@ -34,7 +34,7 @@ public class EmptyRecordDecoder extends AbstractRecordDecoder<EmptyRecord> {
 	}
 
 	@Override
-	protected EmptyRecord createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	protected EmptyRecord createRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
 		return new EmptyRecord();
 	}
 

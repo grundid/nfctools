@@ -63,6 +63,12 @@ public class AcsTerminal extends AbstractTerminal {
 			tagScanner = new InitiatorTerminalTagScanner(cardTerminal);
 		else
 			tagScanner = new TargetTerminalTagScanner(cardTerminal);
+		
+		// forward listener if present
+		if(statusListener != null) {
+			tagScanner.setStatusListener(statusListener);
+		}
+		
 		scanningThread = new Thread(tagScanner);
 		scanningThread.setDaemon(true);
 	}
@@ -92,7 +98,15 @@ public class AcsTerminal extends AbstractTerminal {
 			log.info("Waiting...");
 			notifyStatus(TerminalStatus.WAITING);
 			try {
-				if (cardTerminal.waitForCardPresent(500)) {
+				boolean cardPresent;
+				try {
+					cardPresent = cardTerminal.waitForCardPresent(500);
+				} catch (CardException e) {
+					notifyStatus(TerminalStatus.CLOSED);
+					
+					break;
+				}
+				if (cardPresent) {
 					Card card = null;
 					try {
 						card = cardTerminal.connect("*");
@@ -162,7 +176,7 @@ public class AcsTerminal extends AbstractTerminal {
 
 	@Override
 	public void cardDetected(MfCard mfCard, MfReaderWriter mfReaderWriter) throws IOException {
-		MfNdefReader ndefReader = new MfNdefReader(mfReaderWriter, NdefContext.getNdefMessageDecoder());
+		MfNdefReader ndefReader = new MfNdefReader(mfReaderWriter, NdefContext.getNdefDecoder());
 
 		List<Record> records = ndefReader.readNdefMessage(mfCard);
 

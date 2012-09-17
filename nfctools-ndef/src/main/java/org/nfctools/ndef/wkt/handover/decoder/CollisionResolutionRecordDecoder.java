@@ -16,7 +16,7 @@
 
 package org.nfctools.ndef.wkt.handover.decoder;
 
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
@@ -30,7 +30,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class CollisionResolutionRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 
 		CollisionResolutionRecord collisionResolutionRecord = new CollisionResolutionRecord();
 

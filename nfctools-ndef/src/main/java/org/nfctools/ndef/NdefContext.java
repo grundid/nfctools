@@ -83,8 +83,12 @@ public class NdefContext {
 
 	private static NdefRecordEncoder ndefRecordEncoder = new NdefRecordEncoder();
 	private static NdefRecordDecoder ndefRecordDecoder = new NdefRecordDecoder();
-	private static NdefMessageEncoder ndefMessageEncoder = new NdefMessageEncoder(ndefRecordEncoder);
-	private static NdefMessageDecoder ndefMessageDecoder = new NdefMessageDecoder(ndefRecordDecoder);
+
+	private static NdefMessageEncoder ndefMessageEncoder = new NdefMessageEncoder();
+	private static NdefMessageDecoder ndefMessageDecoder = new NdefMessageDecoder(false);
+
+	private static NdefEncoder ndefEncoder = new NdefEncoder(ndefRecordEncoder, ndefMessageEncoder);
+	private static NdefDecoder ndefDecoder = new NdefDecoder(ndefRecordDecoder, ndefMessageDecoder);
 
 	static {
 		registerWellKnownRecord(new RecordType("act"), ActionRecord.class, new ActionRecordEncoder(),
@@ -148,6 +152,14 @@ public class NdefContext {
 		return ndefRecordEncoder;
 	}
 
+	public static NdefDecoder getNdefDecoder() {
+		return ndefDecoder;
+	}
+
+	public static NdefEncoder getNdefEncoder() {
+		return ndefEncoder;
+	}
+	
 	public static NdefMessageDecoder getNdefMessageDecoder() {
 		return ndefMessageDecoder;
 	}
@@ -155,5 +167,4 @@ public class NdefContext {
 	public static NdefMessageEncoder getNdefMessageEncoder() {
 		return ndefMessageEncoder;
 	}
-
 }

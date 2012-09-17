@@ -30,7 +30,7 @@ import org.nfctools.utils.NfcUtils;
 
 public class NdefMessageEncoderTest {
 
-	private NdefMessageEncoder encoder = NdefContext.getNdefMessageEncoder();
+	private NdefEncoder encoder = NdefContext.getNdefEncoder();
 
 	@Test(expected = RuntimeException.class)
 	public void testEncoderWithUnkownRecord() throws Exception {
@@ -49,7 +49,7 @@ public class NdefMessageEncoderTest {
 	@Test
 	public void testEncodeSingle() throws Exception {
 
-		byte[] single = encoder.encodeSingle(new UriRecord(
+		byte[] single = encoder.encode(new UriRecord(
 				"http://www.verylongurl.com/aljhsldfkjhasldfkhjaljhsldfkjhasldf"
 						+ "khjaljhsldfkjhasldfkhjaljhsldfkjhasldfkhjaljhsldfkjhasldfkhjaljhsldfkjhasldfkhjal"
 						+ "jhsldfkjhasldfkhjaljhsldfkjhasldfkhjaljhsldfkjhasldfkhjaljhsldfkjhasldfkhjaljhsldf"
@@ -68,7 +68,7 @@ public class NdefMessageEncoderTest {
 
 	@Test
 	public void testEncodeExternalType() throws Exception {
-		byte[] single = encoder.encodeSingle(new UnsupportedExternalTypeRecord("android.com:pkg", "de.grundid.test1234"));
+		byte[] single = encoder.encode(new UnsupportedExternalTypeRecord("android.com", "pkg", "de.grundid.test1234".getBytes()));
 		assertEquals("D40F13616E64726F69642E636F6D3A706B6764652E6772756E6469642E7465737431323334",
 				NfcUtils.convertBinToASCII(single));
 	}

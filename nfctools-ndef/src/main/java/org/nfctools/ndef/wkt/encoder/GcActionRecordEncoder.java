@@ -16,7 +16,7 @@
 package org.nfctools.ndef.wkt.encoder;
 
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
@@ -24,7 +24,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class GcActionRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 
 		GcActionRecord actionRecord = (GcActionRecord)wellKnownRecord;
 		byte[] payload = null;
@@ -39,7 +39,7 @@ public class GcActionRecordEncoder implements WellKnownRecordPayloadEncoder {
 			payload[1] = (byte)actionRecord.getAction().getValue();
 		}
 		else if (actionRecord.hasActionRecord()) {
-			byte[] subPayload = messageEncoder.encodeSingle(actionRecord.getActionRecord());
+			byte[] subPayload = messageEncoder.encode(actionRecord.getActionRecord());
 			payload = new byte[subPayload.length + 1];
 			payload[0] = 0;
 			System.arraycopy(subPayload, 0, payload, 1, subPayload.length);

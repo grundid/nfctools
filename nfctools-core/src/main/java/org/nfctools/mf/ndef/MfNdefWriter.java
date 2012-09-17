@@ -30,7 +30,7 @@ import org.nfctools.mf.mad.ApplicationDirectory;
 import org.nfctools.mf.mad.MadUtils;
 import org.nfctools.mf.tlv.NdefMessageTlv;
 import org.nfctools.mf.tlv.TypeLengthValueWriter;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.NdefWriter;
 import org.nfctools.ndef.Record;
 import org.nfctools.tags.TagOutputStream;
@@ -44,13 +44,13 @@ public class MfNdefWriter implements NdefWriter<MfCard> {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	private MfReaderWriter readerWriter;
-	private NdefMessageEncoder ndefMessageEncoder;
+	private NdefEncoder ndefMessageEncoder;
 	private Key createKey = Key.A;
 	private byte[] createKeyValue = MfConstants.TRANSPORT_KEY;
 	private byte[] writeKeyValue = MfConstants.NDEF_KEY;
 	private byte[] deleteKeyValue = MfConstants.NDEF_KEY;
 
-	public MfNdefWriter(MfReaderWriter readerWriter, NdefMessageEncoder ndefMessageEncoder) {
+	public MfNdefWriter(MfReaderWriter readerWriter, NdefEncoder ndefMessageEncoder) {
 		this.readerWriter = readerWriter;
 		this.ndefMessageEncoder = ndefMessageEncoder;
 	}

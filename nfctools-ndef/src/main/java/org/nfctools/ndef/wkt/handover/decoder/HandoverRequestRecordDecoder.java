@@ -18,7 +18,7 @@ package org.nfctools.ndef.wkt.handover.decoder;
 
 import java.util.List;
 
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord;
@@ -35,7 +35,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class HandoverRequestRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 
 		HandoverRequestRecord handoverRequestRecord = new HandoverRequestRecord();
 

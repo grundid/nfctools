@@ -33,22 +33,22 @@ import org.nfctools.ndef.mime.TextMimeRecord;
 import org.nfctools.ndef.unknown.UnknownRecord;
 import org.nfctools.ndef.unknown.unsupported.UnsupportedRecord;
 import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord.CarrierPowerState;
 import org.nfctools.ndef.wkt.handover.records.CollisionResolutionRecord;
 import org.nfctools.ndef.wkt.handover.records.ErrorRecord;
+import org.nfctools.ndef.wkt.handover.records.ErrorRecord.ErrorReason;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord;
+import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
 import org.nfctools.ndef.wkt.handover.records.HandoverRequestRecord;
 import org.nfctools.ndef.wkt.handover.records.HandoverSelectRecord;
-import org.nfctools.ndef.wkt.handover.records.AlternativeCarrierRecord.CarrierPowerState;
-import org.nfctools.ndef.wkt.handover.records.ErrorRecord.ErrorReason;
-import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
 import org.nfctools.ndef.wkt.records.Action;
 import org.nfctools.ndef.wkt.records.ActionRecord;
 import org.nfctools.ndef.wkt.records.SignatureRecord;
+import org.nfctools.ndef.wkt.records.SignatureRecord.CertificateFormat;
+import org.nfctools.ndef.wkt.records.SignatureRecord.SignatureType;
 import org.nfctools.ndef.wkt.records.SmartPosterRecord;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.UriRecord;
-import org.nfctools.ndef.wkt.records.SignatureRecord.CertificateFormat;
-import org.nfctools.ndef.wkt.records.SignatureRecord.SignatureType;
 
 /**
  * 
@@ -121,7 +121,7 @@ public class NdefEncodeDecodeRoundtripTest {
 		handoverSelectRecord.setError(new ErrorRecord(ErrorReason.PermanenteMemoryConstraints, new Long(1L)));
 		
 		// add some certificates to signature
-		signatureRecord.add(new byte[]{0x00, 0x10, 0x11});
+		signatureRecord.addCertificate(new byte[]{0x00, 0x10, 0x11});
 		signatureRecord.setSignatureType(SignatureType.RSASSA_PSS_SHA_1);
 		signatureRecord.setSignature(new byte[]{0x01, 0x11, 0x12});
 	}
@@ -129,12 +129,12 @@ public class NdefEncodeDecodeRoundtripTest {
 	@Test
 	public void testEncodeDecodeRoundtrip() {
 
-		NdefMessageEncoder ndefMessageEncoder = NdefContext.getNdefMessageEncoder();
+		NdefEncoder ndefMessageEncoder = NdefContext.getNdefEncoder();
 
-		NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
+		NdefDecoder ndefMessageDecoder = NdefContext.getNdefDecoder();
 
 		for (Record record : records) {
-			byte[] ndef = ndefMessageEncoder.encodeSingle(record);
+			byte[] ndef = ndefMessageEncoder.encode(record);
 
 			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
 

@@ -68,4 +68,6 @@ public abstract class MimeRecord extends Record {
 		return true;
 	}
 
+	public abstract boolean hasContent();
+
 }

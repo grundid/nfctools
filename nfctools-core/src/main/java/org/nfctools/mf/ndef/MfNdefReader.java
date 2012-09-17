@@ -33,7 +33,7 @@ import org.nfctools.mf.tlv.Tlv;
 import org.nfctools.mf.tlv.TypeLengthValueReader;
 import org.nfctools.ndef.NdefException;
 import org.nfctools.ndef.NdefMessage;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefReader;
 import org.nfctools.ndef.Record;
 import org.nfctools.utils.NfcUtils;
@@ -46,9 +46,9 @@ public class MfNdefReader implements NdefReader<MfCard> {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	private MfReaderWriter readerWriter;
-	private NdefMessageDecoder ndefMessageDecoder;
+	private NdefDecoder ndefMessageDecoder;
 
-	public MfNdefReader(MfReaderWriter readerWriter, NdefMessageDecoder ndefMessageDecoder) {
+	public MfNdefReader(MfReaderWriter readerWriter, NdefDecoder ndefMessageDecoder) {
 		this.readerWriter = readerWriter;
 		this.ndefMessageDecoder = ndefMessageDecoder;
 	}
@@ -78,8 +78,8 @@ public class MfNdefReader implements NdefReader<MfCard> {
 			while (lengthValueReader.hasNext()) {
 				Tlv tlv = lengthValueReader.next();
 				if (tlv instanceof NdefMessageTlv) {
-					NdefMessage ndefMessage = ndefMessageDecoder.decode(((NdefMessageTlv)tlv).getNdefMessage());
-					for (Record record : ndefMessageDecoder.decodeToRecords(ndefMessage)) {
+					List<Record> messageRecords = ndefMessageDecoder.decodeToRecords(((NdefMessageTlv)tlv).getNdefMessage());
+					for (Record record : messageRecords) {
 						records.add(record);
 					}
 				}

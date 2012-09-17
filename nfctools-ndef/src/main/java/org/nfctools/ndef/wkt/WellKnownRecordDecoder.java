@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.RecordType;
 import org.nfctools.ndef.wkt.decoder.RecordDecoder;
@@ -38,7 +38,7 @@ public class WellKnownRecordDecoder implements RecordDecoder<WellKnownRecord> {
 	}
 
 	@Override
-	public WellKnownRecord decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodeRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
 		WellKnownRecordConfig config = recordDecoders.get(new RecordType(ndefRecord.getType()));
 		if (config != null) {
 			WellKnownRecordPayloadDecoder payloadDecoder = config.getPayloadDecoder();

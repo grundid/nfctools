@@ -15,7 +15,7 @@
  */
 package org.nfctools.ndef.wkt.decoder;
 
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 
@@ -32,10 +32,10 @@ public abstract class AbstractRecordDecoder<T extends Record> implements RecordD
 		return ndefRecord.getTnf() == tnf;
 	}
 
-	protected abstract T createRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder);
+	protected abstract T createRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder);
 
 	@Override
-	public T decodeRecord(NdefRecord ndefRecord, NdefMessageDecoder messageDecoder) {
+	public T decodeRecord(NdefRecord ndefRecord, NdefDecoder messageDecoder) {
 		T record = createRecord(ndefRecord, messageDecoder);
 		record.setId(ndefRecord.getId());
 		return record;

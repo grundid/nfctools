@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
 import java.util.Locale;
 
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
@@ -28,7 +28,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class TextRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 
 		TextRecord textRecord = (TextRecord)wellKnownRecord;
 

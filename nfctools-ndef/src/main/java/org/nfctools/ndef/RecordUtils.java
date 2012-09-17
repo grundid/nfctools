@@ -81,18 +81,7 @@ public class RecordUtils {
 		}
 		return true;
 	}
-
-	public static byte[] getBytesFromStream(int length, InputStream bais) {
-		try {
-			byte[] bytes = new byte[length];
-			bais.read(bytes, 0, bytes.length);
-			return bytes;
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
+	
 	public static int readUnsignedShort(InputStream in) throws IOException {
 		int ch1 = in.read();
 		int ch2 = in.read();
@@ -109,10 +98,11 @@ public class RecordUtils {
 		while (n < len) {
 			int count = in.read(buffer, n, len - n);
 			if (count < 0)
-				throw new EOFException();
+				throw new EOFException("Unable to read more than " + n + "/" + len);
 			n += count;
 		}
 
 		return buffer;
 	}
+
 }

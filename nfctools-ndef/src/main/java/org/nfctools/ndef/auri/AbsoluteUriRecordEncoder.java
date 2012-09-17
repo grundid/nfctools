@@ -18,7 +18,7 @@ package org.nfctools.ndef.auri;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
@@ -37,7 +37,7 @@ public class AbsoluteUriRecordEncoder implements RecordEncoder {
 	}
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+	public NdefRecord encodeRecord(Record record, NdefEncoder messageEncoder) {
 		AbsoluteUriRecord absoluteUriRecord = (AbsoluteUriRecord)record;
 		
 		if(!absoluteUriRecord.hasUri()) {

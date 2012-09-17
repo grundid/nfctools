@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.SignatureRecord;
 import org.nfctools.ndef.wkt.records.SignatureRecord.CertificateFormat;
@@ -30,12 +30,12 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class SignatureRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 		SignatureRecord myRecord = (SignatureRecord )wellKnownRecord;
 		return createPayload(messageEncoder, myRecord);
 	}
 
-	private byte[] createPayload(NdefMessageEncoder messageEncoder, SignatureRecord signatureRecord) {
+	private byte[] createPayload(NdefEncoder messageEncoder, SignatureRecord signatureRecord) {
 		if(signatureRecord.isStartMarker()) {
 			return new byte[]{0x01, 0x00};// version 1 and type 0
 		} else {

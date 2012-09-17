@@ -16,11 +16,12 @@
 package org.nfctools.ndef.wkt.decoder;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.EOFException;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoderException;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.RecordUtils;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.TextRecord;
@@ -29,22 +30,25 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class TextRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(payload);
-
-		int status = bais.read();
-		byte languageCodeLength = (byte)(status & TextRecord.LANGUAGE_CODE_MASK);
-		String languageCode = new String(RecordUtils.getBytesFromStream(languageCodeLength, bais));
-
-		byte[] textData = RecordUtils.getBytesFromStream(payload.length - languageCodeLength - 1, bais);
-		Charset textEncoding = ((status & 0x80) != 0) ? TextRecord.UTF16 : TextRecord.UTF8;
-
 		try {
+
+			int status = bais.read();
+			if(status < 0) {
+				throw new EOFException();
+			}
+			byte languageCodeLength = (byte)(status & TextRecord.LANGUAGE_CODE_MASK);
+			String languageCode = new String(RecordUtils.readByteArray(bais, languageCodeLength));
+	
+			byte[] textData = RecordUtils.readByteArray(bais, payload.length - languageCodeLength - 1);
+			Charset textEncoding = ((status & 0x80) != 0) ? TextRecord.UTF16 : TextRecord.UTF8;
+
 			String text = new String(textData, textEncoding.name());
 			return new TextRecord(text, textEncoding, new Locale(languageCode));
 		}
-		catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+		catch (Exception e) {
+			throw new NdefDecoderException("Text Record cannot be decoded", e);
 		}
 	}
 }

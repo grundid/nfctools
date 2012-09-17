@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.nfctools.ndef.NdefContext;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.mime.BinaryMimeRecord;
 import org.nfctools.ndef.mime.MimeRecord;
@@ -41,7 +41,7 @@ public class HandoverDecoderTest {
 			+ "6F6E2F766E642E626F6775732E6F6F62"
 			+ "30003101078080bfA1040D080620110E01020304050607080910111213141516110F01020304050607080910111213141516";
 
-	private NdefMessageDecoder decoder = NdefContext.getNdefMessageDecoder();
+	private NdefDecoder decoder = NdefContext.getNdefDecoder();
 
 	@Test
 	public void testBluetoothHandoverRequest10() throws Exception {
@@ -93,8 +93,6 @@ public class HandoverDecoderTest {
 
 	@Test
 	public void testBluetoothHandoverSelect12() throws Exception {
-		//File file = new File("../../nfctools-fork2/nfctools-ndef/src/test/main/resources/handover/1.2/BluetoothHandoverRequestMessage.bin");
-
 		byte[] message = getResource("/handover/1.2/BluetoothHandoverSelectMessage.bin");
 
 		List<Record> records = decoder.decodeToRecords(message);

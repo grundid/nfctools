@@ -20,9 +20,8 @@ import java.io.ByteArrayOutputStream;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.ext.ExternalTypeRecord;
-import org.nfctools.ndef.ext.UnsupportedExternalTypeRecord;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord.CarrierTypeFormat;
@@ -37,7 +36,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 
 		HandoverCarrierRecord handoverCarrierRecord = (HandoverCarrierRecord)wellKnownRecord;
 
@@ -56,48 +55,75 @@ public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncod
 		switch (carrierTypeFormat) {
 			case WellKnown: {
 				// NFC Forum well-known type [NFC RTD]
-				if (carrierType instanceof WellKnownRecord) {
-					WellKnownRecord abstractWellKnownRecord = (WellKnownRecord)carrierType;
-
-					encoded = messageEncoder.encodeSingle(abstractWellKnownRecord);
-
-					break;
+				if(carrierType != null) {
+	
+					if (carrierType instanceof WellKnownRecord) {
+						WellKnownRecord abstractWellKnownRecord = (WellKnownRecord)carrierType;
+	
+						encoded = messageEncoder.encode(abstractWellKnownRecord);
+	
+						break;
+					}
+					else {
+						throw new NdefEncoderException("Expected well-known record to be of supertype " + WellKnownRecord.class.getName(), handoverCarrierRecord);
+					}
+				} else {
+					throw new NdefEncoderException("Expected carrier-type well-known record for " + carrierTypeFormat + " carrier type format", handoverCarrierRecord);
 				}
-				else {
-					throw new NdefEncoderException("Expected well-known record to be of supertype " + WellKnownRecord.class.getName(), handoverCarrierRecord);
-				}
+					
 			}
 			case Media: {
 				// Media-type as defined in RFC 2046 [RFC 2046]
-				String string = (String)carrierType;
-
-				encoded = string.getBytes(NdefConstants.DEFAULT_CHARSET);
-
-				break;
+				if(carrierType != null) {
+					if(carrierType instanceof String) {
+						String string = (String)carrierType;
+		
+						encoded = string.getBytes(NdefConstants.DEFAULT_CHARSET);
+		
+						break;
+					} else {
+						throw new NdefEncoderException("Expected media-type to be of type " + String.class.getName(), handoverCarrierRecord);
+					}
+				} else {
+					throw new NdefEncoderException("Expected media-type for '" + carrierTypeFormat + "' carrier type format", handoverCarrierRecord);
+				}						
 			}
 			case AbsoluteURI: {
 				// Absolute URI as defined in RFC 3986 [RFC 3986]
-				String string = (String)carrierType;
-
-				encoded = string.getBytes(NdefConstants.DEFAULT_CHARSET);
-
-				break;
+				if(carrierType != null) {
+					if(carrierType instanceof String) {
+						String string = (String)carrierType;
+		
+						encoded = string.getBytes(NdefConstants.DEFAULT_CHARSET);
+		
+						break;
+					} else {
+						throw new NdefEncoderException("Expected absolute uri to be of type " + String.class.getName(), handoverCarrierRecord);
+					}
+				} else {
+					throw new NdefEncoderException("Expected absolute uri for '" + carrierTypeFormat + "' carrier type format", handoverCarrierRecord);
+				}						
 			}
 			case External: {
 				// NFC Forum external type [NFC RTD]
-				if (carrierType instanceof ExternalTypeRecord) {
-					ExternalTypeRecord externalTypeRecord = (ExternalTypeRecord)carrierType;
-
-					encoded = messageEncoder.encodeSingle(externalTypeRecord);
-
-					break;
+				if(carrierType != null) {
+					if (carrierType instanceof ExternalTypeRecord) {
+						ExternalTypeRecord externalTypeRecord = (ExternalTypeRecord)carrierType;
+	
+						encoded = messageEncoder.encode(externalTypeRecord);
+	
+						break;
+					}
+					else {
+						throw new NdefEncoderException("Expected external type record to be of supertype " + ExternalTypeRecord.class.getName(), handoverCarrierRecord);
+					}
 				}
 				else {
-					throw new NdefEncoderException("Expected external type record to be of supertype " + ExternalTypeRecord.class.getName(), handoverCarrierRecord);
-				}
+					throw new NdefEncoderException("Expected carrier-type external type record for '" + carrierTypeFormat + "' carrier type format", handoverCarrierRecord);
+				}			
 			}
 			default: {
-				throw new RuntimeException();
+				throw new NdefEncoderException("Carrier type format '" + carrierTypeFormat + "' not supported", handoverCarrierRecord);
 			}
 		}
 

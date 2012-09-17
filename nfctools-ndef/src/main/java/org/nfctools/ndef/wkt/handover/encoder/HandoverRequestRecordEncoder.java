@@ -17,11 +17,12 @@
 package org.nfctools.ndef.wkt.handover.encoder;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.handover.records.HandoverRequestRecord;
@@ -36,7 +37,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class HandoverRequestRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 
 		HandoverRequestRecord handoverRequestRecord = (HandoverRequestRecord)wellKnownRecord;
 
@@ -62,7 +63,11 @@ public class HandoverRequestRecordEncoder implements WellKnownRecordPayloadEncod
 		// n alternative carrier records
 		records.addAll(handoverRequestRecord.getAlternativeCarriers());
 
-		messageEncoder.encode(records, payload);
+		try {
+			messageEncoder.encode(records, payload);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		return payload.toByteArray();
 	}

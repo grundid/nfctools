@@ -16,6 +16,10 @@
 
 package org.nfctools.ndef.ext;
 
+import java.nio.charset.Charset;
+
+import org.nfctools.ndef.NdefConstants;
+
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
@@ -24,9 +28,9 @@ package org.nfctools.ndef.ext;
 public class AndroidApplicationRecordDecoder implements ExternalTypeContentDecoder {
 
 	@Override
-	public ExternalTypeRecord decodeContent(String content) {
-		
-		return new AndroidApplicationRecord(content);
+	public ExternalTypeRecord decodeContent(byte[] data) {
+		 
+		return new AndroidApplicationRecord(new String(data, NdefConstants.UTF_8_CHARSET));
 		
 	}
 

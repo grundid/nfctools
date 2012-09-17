@@ -24,7 +24,7 @@ import org.nfctools.mf.tlv.Tlv;
 import org.nfctools.mf.tlv.TypeLengthValueReader;
 import org.nfctools.ndef.NdefContext;
 import org.nfctools.ndef.NdefMessage;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.NdefOperations;
 import org.nfctools.ndef.Record;
 
@@ -83,20 +83,25 @@ public abstract class AbstractNdefOperations implements NdefOperations {
 		if (records.length == 0)
 			return new byte[0];
 		else {
-			return NdefContext.getNdefMessageEncoder().encode(records);
+			return NdefContext.getNdefEncoder().encode(records);
 		}
 	}
 
 	protected void convertRecords(TypeLengthValueReader reader) {
 		lastReadRecords = new ArrayList<Record>();
 
-		NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
+		NdefDecoder ndefMessageDecoder = NdefContext.getNdefDecoder();
 		while (reader.hasNext()) {
 			Tlv tlv = reader.next();
 			if (tlv instanceof NdefMessageTlv) {
-				NdefMessage ndefMessage = ndefMessageDecoder.decode(((NdefMessageTlv)tlv).getNdefMessage());
-				for (Record record : ndefMessageDecoder.decodeToRecords(ndefMessage)) {
-					lastReadRecords.add(record);
+				
+				byte[] payload = ((NdefMessageTlv)tlv).getNdefMessage();
+				
+				if(payload.length > 0) {
+					List<Record> records = ndefMessageDecoder.decodeToRecords(payload);
+					for (Record record : records) {
+						lastReadRecords.add(record);
+					}
 				}
 			}
 		}

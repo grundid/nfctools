@@ -19,7 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.nfctools.ndef.NdefConstants;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.RecordUtils;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.SignatureRecord;
@@ -30,7 +30,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class SignatureRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 		SignatureRecord signatureRecord = new SignatureRecord();
 		
 		try {
@@ -71,7 +71,7 @@ public class SignatureRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 					byte[] certificate = RecordUtils.readByteArray(bais, certificateSize);
 					
-					signatureRecord.add(certificate);
+					signatureRecord.addCertificate(certificate);
 				}
 				
 				if((certificateHeader & 0x80) != 0) { // has certificate uri

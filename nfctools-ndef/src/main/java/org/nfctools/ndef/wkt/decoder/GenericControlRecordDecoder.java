@@ -18,7 +18,7 @@ package org.nfctools.ndef.wkt.decoder;
 import java.util.List;
 
 import org.nfctools.ndef.NdefMessage;
-import org.nfctools.ndef.NdefMessageDecoder;
+import org.nfctools.ndef.NdefDecoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadDecoder;
 import org.nfctools.ndef.wkt.records.GcActionRecord;
@@ -30,16 +30,16 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class GenericControlRecordDecoder implements WellKnownRecordPayloadDecoder {
 
 	@Override
-	public WellKnownRecord decodePayload(byte[] payload, NdefMessageDecoder messageDecoder) {
+	public WellKnownRecord decodePayload(byte[] payload, NdefDecoder messageDecoder) {
 		byte configurationByte = payload[0];
 
-		NdefMessage payloadNdefMessage = messageDecoder.decode(payload, 1, payload.length - 1);
-
+		// the spec examples all have payload messages in which all messages have start and end flags,
+		// so we parse the payload fully, ignoring the flags.
 		GcTargetRecord target = null;
 		GcActionRecord action = null;
 		GcDataRecord data = null;
 
-		List<Record> subRecords = messageDecoder.decodeToRecords(payloadNdefMessage);
+		List<Record> subRecords = messageDecoder.decodeToRecords(payload, 1, payload.length - 1);
 		for (Record record : subRecords) {
 			if (record instanceof GcTargetRecord)
 				target = (GcTargetRecord)record;

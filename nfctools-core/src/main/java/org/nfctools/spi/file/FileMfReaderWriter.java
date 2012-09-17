@@ -53,7 +53,7 @@ public class FileMfReaderWriter implements MfReaderWriter {
 		if (mfCard == null)
 			throw new MfException("unknown card. lines " + lines.size());
 
-		BlockResolver blockResolver = new BlockResolver();
+		//BlockResolver blockResolver = new BlockResolver();
 
 		Map<Integer, MfBlock> blockMap = new HashMap<Integer, MfBlock>();
 		int blockNumber = 0;
@@ -68,7 +68,7 @@ public class FileMfReaderWriter implements MfReaderWriter {
 				byte[] keyA = NfcUtils.convertASCIIToBin(matcher.group(3));
 				byte[] blockData = NfcUtils.convertASCIIToBin(matcher.group(4));
 
-				MfBlock resolvedBlock = blockResolver.resolveBlock(mfCard, sectorId, blockId, blockData);
+				MfBlock resolvedBlock = BlockResolver.resolveBlock(mfCard, sectorId, blockId, blockData);
 				if (mfCard.isTrailerBlock(sectorId, blockId))
 					System.arraycopy(keyA, 0, blockData, 0, 6);
 				blockMap.put(blockNumber, resolvedBlock);

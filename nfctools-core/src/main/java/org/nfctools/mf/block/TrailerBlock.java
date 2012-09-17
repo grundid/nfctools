@@ -19,7 +19,7 @@ import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.MfException;
 import org.nfctools.mf.classic.Key;
 
-public class TrailerBlock extends Block {
+public class TrailerBlock extends Block implements Cloneable {
 
 	private static final int KEY_LENGTH = 6;
 

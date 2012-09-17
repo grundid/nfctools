@@ -46,7 +46,7 @@ public class TagInputStream extends InputStream {
 			currentByte = 0;
 		}
 		catch (IOException e) {
-			new NfcException(e);
+			throw new NfcException(e);
 		}
 	}
 

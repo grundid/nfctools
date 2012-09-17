@@ -119,4 +119,9 @@ public class TextMimeRecord extends MimeRecord {
 		return true;
 	}
 
+	@Override
+	public boolean hasContent() {
+		return content != null;
+	}
+
 }

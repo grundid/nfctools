@@ -38,8 +38,16 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 	public void run() {
 		while (!Thread.interrupted()) {
 			notifyStatus(TerminalStatus.WAITING);
+			boolean cardPresent;
 			try {
-				if (cardTerminal.waitForCardPresent(500)) {
+				cardPresent = cardTerminal.waitForCardPresent(500);
+			} catch (CardException e) {
+				notifyStatus(TerminalStatus.CLOSED);
+				
+				break;
+			}
+			if (cardPresent) {
+				try {
 					Card card = null;
 					try {
 						card = cardTerminal.connect("*");
@@ -52,11 +60,11 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 					finally {
 						waitForCardAbsent();
 					}
+				} catch (CardException e) {
+					e.printStackTrace();
 				}
 			}
-			catch (CardException e) {
-				e.printStackTrace();
-			}
+			
 		}
 	}
 
@@ -70,6 +78,7 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 		else {
 			tagListener.onTag(acsTag);
 		}
+		
 	}
 
 	private void connectAsInitiator(ApduTag tag) {

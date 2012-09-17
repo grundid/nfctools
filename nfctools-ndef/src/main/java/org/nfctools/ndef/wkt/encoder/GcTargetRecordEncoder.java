@@ -16,7 +16,7 @@
 package org.nfctools.ndef.wkt.encoder;
 
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.records.GcTargetRecord;
 import org.nfctools.ndef.wkt.records.WellKnownRecord;
@@ -24,12 +24,12 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class GcTargetRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 		GcTargetRecord gcTargetRecord = (GcTargetRecord)wellKnownRecord;
 		if (!gcTargetRecord.hasTargetIdentifier()) {
 			throw new NdefEncoderException(wellKnownRecord.getClass().getSimpleName()
 					+ " must have target identifier", wellKnownRecord);
 		}
-		return messageEncoder.encodeSingle(gcTargetRecord.getTargetIdentifier());
+		return messageEncoder.encode(gcTargetRecord.getTargetIdentifier());
 	}
 }

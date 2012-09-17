@@ -16,11 +16,12 @@
 package org.nfctools.ndef.ext;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
@@ -35,34 +36,38 @@ public class ExternalTypeEncoder implements RecordEncoder {
 	}
 
 	@Override
-	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
+	public NdefRecord encodeRecord(Record record, NdefEncoder messageEncoder) {
 		ExternalTypeRecord externalType = (ExternalTypeRecord)record;
 		
 		ExternalTypeRecordConfig config = externalRecordTypes.get(record.getClass());
 		
-		String namespace;
+		String domainAndType;
 		byte[] payload;
 		if(config != null) {
-			namespace = config.getNamespace();
+			domainAndType = config.getDomainAndType();
 			payload = config.getContentEncoder().encodeContent(externalType).getBytes(NdefConstants.DEFAULT_CHARSET);
 			
 		} else if(externalType instanceof UnsupportedExternalTypeRecord){
 			UnsupportedExternalTypeRecord externalTypeUnsupportedRecord = (UnsupportedExternalTypeRecord)externalType;
 			
-			if(!externalTypeUnsupportedRecord.hasContent()) {
+			if(!externalTypeUnsupportedRecord.hasData()) {
 				throw new NdefEncoderException("Expected content", record);
 			}
-			if(!externalTypeUnsupportedRecord.hasNamespace()) {
-				throw new NdefEncoderException("Expected namespace", record);
+			if(!externalTypeUnsupportedRecord.hasDomain()) {
+				throw new NdefEncoderException("Expected domain", record);
+			}
+			if(!externalTypeUnsupportedRecord.hasType()) {
+				throw new NdefEncoderException("Expected type", record);
 			}
 
-			namespace = externalTypeUnsupportedRecord.getNamespace();
-			payload = externalTypeUnsupportedRecord.getContent().getBytes(NdefConstants.DEFAULT_CHARSET);
+			domainAndType = externalTypeUnsupportedRecord.getDomain().trim().toLowerCase(Locale.US) + ":" + externalTypeUnsupportedRecord.getType().trim().toLowerCase(Locale.US);
+			
+			payload = externalTypeUnsupportedRecord.getData();
 		} else {
 			throw new NdefEncoderException("Unable to encode external type " + externalType.getClass().getName(), record);
 		}
 		
-		byte[] type = namespace.getBytes(NdefConstants.DEFAULT_CHARSET);
+		byte[] type = domainAndType.getBytes(NdefConstants.UTF_8_CHARSET);
 		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, type, record.getId(), payload);
 	}
 	

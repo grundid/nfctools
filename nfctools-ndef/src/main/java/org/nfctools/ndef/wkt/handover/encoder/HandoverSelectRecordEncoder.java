@@ -17,10 +17,11 @@
 package org.nfctools.ndef.wkt.handover.encoder;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nfctools.ndef.NdefMessageEncoder;
+import org.nfctools.ndef.NdefEncoder;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.handover.records.HandoverSelectRecord;
@@ -35,7 +36,7 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 public class HandoverSelectRecordEncoder implements WellKnownRecordPayloadEncoder {
 
 	@Override
-	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefMessageEncoder messageEncoder) {
+	public byte[] encodePayload(WellKnownRecord wellKnownRecord, NdefEncoder messageEncoder) {
 
 		HandoverSelectRecord handoverSelectRecord = (HandoverSelectRecord)wellKnownRecord;
 
@@ -55,17 +56,29 @@ public class HandoverSelectRecordEncoder implements WellKnownRecordPayloadEncode
 			// an error message
 			records.add(handoverSelectRecord.getError());
 
-			messageEncoder.encode(records, payload);
+			try {
+				messageEncoder.encode(records, payload);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		else if (handoverSelectRecord.hasAlternativeCarriers()) {
 
 			// n alternative carrier records
-			messageEncoder.encode(handoverSelectRecord.getAlternativeCarriers(), payload);
+			try {
+				messageEncoder.encode(handoverSelectRecord.getAlternativeCarriers(), payload);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		else if (handoverSelectRecord.hasError()) {
 
 			// an error message
-			messageEncoder.encodeSingle(handoverSelectRecord.getError(), payload);
+			try {
+				messageEncoder.encode(handoverSelectRecord.getError(), payload);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		else {
 			// do nothing

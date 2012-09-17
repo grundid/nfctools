@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 public class TamaNfcIpCommunicator extends AbstractTamaCommunicator implements NFCIPManager {
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
-
 	private byte[] felicaParams = new byte[TamaConstants.FELICA_PARAM_LENGTH];
 	private byte[] mifareParams = new byte[TamaConstants.MIFARE_PARAM_LENGTH];
 	private byte[] nfcId = new byte[TamaConstants.NFCID_PARAM_LENGTH];

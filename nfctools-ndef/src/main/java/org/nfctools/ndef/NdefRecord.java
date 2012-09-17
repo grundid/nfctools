@@ -15,6 +15,8 @@
  */
 package org.nfctools.ndef;
 
+import java.util.Arrays;
+
 /**
  * 
  * An NDEF record contains a payload described by a type, a length, and an optional identifier
@@ -75,5 +77,38 @@ public class NdefRecord {
 	public int getPayloadSize() {
 		return payload.length;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (chunked ? 1231 : 1237);
+		result = prime * result + Arrays.hashCode(id);
+		result = prime * result + Arrays.hashCode(payload);
+		result = prime * result + tnf;
+		result = prime * result + Arrays.hashCode(type);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NdefRecord other = (NdefRecord) obj;
+		if (chunked != other.chunked)
+			return false;
+		if (!Arrays.equals(id, other.id))
+			return false;
+		if (!Arrays.equals(payload, other.payload))
+			return false;
+		if (tnf != other.tnf)
+			return false;
+		if (!Arrays.equals(type, other.type))
+			return false;
+		return true;
+	}
 
+	
 }
