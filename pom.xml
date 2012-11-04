@@ -7,7 +7,7 @@
 		<version>7</version>
 	</parent>
 	<groupId>org.nfctools</groupId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0-M6</version>
 	<artifactId>nfctools-parent</artifactId>
 	<packaging>pom</packaging>
 
