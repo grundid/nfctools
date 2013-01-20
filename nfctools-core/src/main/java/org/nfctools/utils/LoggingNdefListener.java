@@ -60,5 +60,4 @@ public class LoggingNdefListener implements NdefListener, NdefOperationsListener
 		log.info("SNEP put");
 		onNdefMessages(requestRecords);
 	}
-
 }

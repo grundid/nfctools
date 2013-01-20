@@ -50,48 +50,37 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 	@Override
 	public MfBlock[] readBlock(MfClassicAccess access) throws IOException {
 		byte blockNumber;
-
 		loginIntoSector(access, (byte)0);
-
 		MfBlock[] returnBlocks = new Block[access.getBlocksToRead()];
-
 		for (int currentBlock = 0; currentBlock < access.getBlocksToRead(); currentBlock++) {
-
 			blockNumber = (byte)memoryLayout.getBlockNumber(access.getSector(), access.getBlock() + currentBlock);
-
 			Command readBlock = new Command(Apdu.INS_READ_BINARY, 0x00, blockNumber, 16);
 			Response readBlockResponse;
 			readBlockResponse = apduTag.transmit(readBlock);
-			if (!Apdu.isSuccess(readBlockResponse)) {
+			if (!readBlockResponse.isSuccess()) {
 				throw new MfException("Reading block failed. Sector: " + access.getSector() + ", Block: "
 						+ access.getBlock() + " Key: " + access.getKeyValue().getKey().name() + ", Response: "
 						+ readBlockResponse);
 			}
-
 			returnBlocks[currentBlock] = BlockResolver.resolveBlock(memoryLayout, access.getSector(), currentBlock
 					+ access.getBlock(), readBlockResponse.getData());
-
 		}
 		return returnBlocks;
 	}
 
 	@Override
 	public void writeBlock(MfClassicAccess access, MfBlock... mfBlock) throws IOException {
-
 		loginIntoSector(access, (byte)0);
-
 		for (int currentBlock = 0; currentBlock < mfBlock.length; currentBlock++) {
 			int blockNumber = memoryLayout.getBlockNumber(access.getSector(), access.getBlock()) + currentBlock;
-
 			if (memoryLayout.isTrailerBlock(access.getSector(), access.getBlock() + currentBlock)) {
 				if (!(mfBlock[currentBlock] instanceof TrailerBlock))
 					throw new MfException("invalid block for trailer");
 			}
-
 			Command writeBlock = new Command(Apdu.INS_UPDATE_BINARY, 0x00, blockNumber, mfBlock[currentBlock].getData());
 			Response writeBlockResponse;
 			writeBlockResponse = apduTag.transmit(writeBlock);
-			if (!Apdu.isSuccess(writeBlockResponse)) {
+			if (!writeBlockResponse.isSuccess()) {
 				throw new MfException("Writing block failed. Sector: " + access.getSector() + ", Block: "
 						+ access.getBlock() + " Key: " + access.getKeyValue().getKey().name() + ", Response: "
 						+ writeBlockResponse);
@@ -105,24 +94,20 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 	}
 
 	protected void loginIntoSector(MfClassicAccess access, byte memoryKeyId) throws IOException {
-
 		Command loadKey = new Command(Apdu.INS_EXTERNAL_AUTHENTICATE, Acs.P1_LOAD_KEY_INTO_VOLATILE_MEM, memoryKeyId,
 				access.getKeyValue().getKeyValue());
 		Response loadKeyResponse = apduTag.transmit(loadKey);
-		if (!Apdu.isSuccess(loadKeyResponse)) {
+		if (!loadKeyResponse.isSuccess()) {
 			throw new MfLoginException("Loading key failed. Sector: " + access.getSector() + ", Block: "
 					+ access.getBlock() + " Key: " + access.getKeyValue().getKey().name() + ", Response: "
 					+ loadKeyResponse);
 		}
-
 		byte blockNumber = (byte)memoryLayout.getBlockNumber(access.getSector(), access.getBlock());
-
 		byte keyTypeToUse = access.getKeyValue().getKey() == Key.A ? Acs.KEY_A : Acs.KEY_B;
-
 		Command auth = new Command(Apdu.INS_INTERNAL_AUTHENTICATE_ACS, 0, 0, new byte[] { 0x01, 0x00, blockNumber,
 				keyTypeToUse, memoryKeyId });
 		Response authResponse = apduTag.transmit(auth);
-		if (!Apdu.isSuccess(authResponse)) {
+		if (!authResponse.isSuccess()) {
 			throw new MfLoginException("Login failed. Sector: " + access.getSector() + ", Block: " + access.getBlock()
 					+ " Key: " + access.getKeyValue().getKey().name() + ", Response: " + authResponse);
 		}
@@ -133,9 +118,7 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 		try {
 			MfClassicAccess access = new MfClassicAccess(MfClassicConstants.MAD_KEY, 0,
 					memoryLayout.getTrailerBlockNumberForSector(0));
-
 			TrailerBlock madTrailer = (TrailerBlock)readBlock(access)[0];
-
 			return ((madTrailer.getGeneralPurposeByte() & MadConstants.GPB_MAD_AVAILABLE) != 0);
 		}
 		catch (MfLoginException e) {

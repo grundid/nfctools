@@ -38,10 +38,9 @@ public class AcrMfUlReaderWriter implements MfUlReaderWriter {
 		MfBlock[] returnBlocks = new MfBlock[pagesToRead];
 		for (int currentPage = 0; currentPage < pagesToRead; currentPage++) {
 			int pageNumber = startPage + currentPage;
-
 			Command readBlock = new Command(Apdu.INS_READ_BINARY, 0x00, pageNumber, 4);
 			Response readBlockResponse = tag.transmit(readBlock);
-			if (!Apdu.isSuccess(readBlockResponse)) {
+			if (!readBlockResponse.isSuccess()) {
 				throw new MfException("Reading block failed. Page: " + pageNumber + ", Response: " + readBlockResponse);
 			}
 			returnBlocks[currentPage] = new DataBlock(readBlockResponse.getData());
@@ -53,10 +52,9 @@ public class AcrMfUlReaderWriter implements MfUlReaderWriter {
 	public void writeBlock(int startPage, MfBlock... mfBlock) throws IOException {
 		for (int currentBlock = 0; currentBlock < mfBlock.length; currentBlock++) {
 			int blockNumber = startPage + currentBlock;
-
 			Command writeBlock = new Command(Apdu.INS_UPDATE_BINARY, 0x00, blockNumber, mfBlock[currentBlock].getData());
 			Response writeBlockResponse = tag.transmit(writeBlock);
-			if (!Apdu.isSuccess(writeBlockResponse)) {
+			if (!writeBlockResponse.isSuccess()) {
 				throw new MfException("Writing block failed. Page: " + blockNumber + ", Response: "
 						+ writeBlockResponse);
 			}

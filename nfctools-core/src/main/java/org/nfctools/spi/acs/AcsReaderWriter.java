@@ -89,7 +89,7 @@ public abstract class AcsReaderWriter implements MfReaderWriter {
 			ResponseAPDU readBlockResponse;
 			try {
 				readBlockResponse = cardChannel.transmit(readBlock);
-				if (!Apdu.isSuccess(readBlockResponse)) {
+				if (!ApduUtils.isSuccess(readBlockResponse)) {
 					throw new MfException("Reading block failed. Sector: " + mfAccess.getSector() + ", Block: "
 							+ mfAccess.getBlock() + " Key: " + mfAccess.getKey().name() + ", Response: "
 							+ readBlockResponse);
@@ -114,7 +114,7 @@ public abstract class AcsReaderWriter implements MfReaderWriter {
 			CommandAPDU loadKey = new CommandAPDU(Apdu.CLS_PTS, Apdu.INS_EXTERNAL_AUTHENTICATE,
 					Acs.P1_LOAD_KEY_INTO_VOLATILE_MEM, memoryKeyId, mfAccess.getKeyValue());
 			ResponseAPDU loadKeyResponse = cardChannel.transmit(loadKey);
-			if (!Apdu.isSuccess(loadKeyResponse)) {
+			if (!ApduUtils.isSuccess(loadKeyResponse)) {
 				throw new MfLoginException("Loading key failed. Sector: " + mfAccess.getSector() + ", Block: "
 						+ mfAccess.getBlock() + " Key: " + mfAccess.getKey().name() + ", Response: " + loadKeyResponse);
 			}
@@ -126,7 +126,7 @@ public abstract class AcsReaderWriter implements MfReaderWriter {
 			CommandAPDU auth = new CommandAPDU(Apdu.CLS_PTS, Apdu.INS_INTERNAL_AUTHENTICATE_ACS, 0, 0, new byte[] {
 					0x01, 0x00, blockNumber, keyTypeToUse, memoryKeyId });
 			ResponseAPDU authResponse = cardChannel.transmit(auth);
-			if (!Apdu.isSuccess(authResponse)) {
+			if (!ApduUtils.isSuccess(authResponse)) {
 				throw new MfLoginException("Login failed. Sector: " + mfAccess.getSector() + ", Block: "
 						+ mfAccess.getBlock() + " Key: " + mfAccess.getKey().name() + ", Response: " + authResponse);
 			}
@@ -161,7 +161,7 @@ public abstract class AcsReaderWriter implements MfReaderWriter {
 			ResponseAPDU writeBlockResponse;
 			try {
 				writeBlockResponse = cardChannel.transmit(writeBlock);
-				if (!Apdu.isSuccess(writeBlockResponse)) {
+				if (!ApduUtils.isSuccess(writeBlockResponse)) {
 					throw new MfException("Writing block failed. Sector: " + mfAccess.getSector() + ", Block: "
 							+ mfAccess.getBlock() + " Key: " + mfAccess.getKey().name() + ", Response: "
 							+ writeBlockResponse);

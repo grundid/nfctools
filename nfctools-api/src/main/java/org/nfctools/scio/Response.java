@@ -44,4 +44,7 @@ public class Response {
 		return "SW1: " + sw1 + " SW2: " + sw2;
 	}
 
+	public boolean isSuccess() {
+		return sw1 == 0x90 && sw2 == 0x00;
+	}
 }

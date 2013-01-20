@@ -27,7 +27,6 @@ import org.nfctools.utils.NfcUtils;
 public class ApduTagReaderWriter implements ByteArrayReader, ByteArrayWriter {
 
 	private byte[] responseData;
-
 	private final ApduTag apduTag;
 
 	public ApduTagReaderWriter(ApduTag apduTag) {
@@ -39,7 +38,7 @@ public class ApduTagReaderWriter implements ByteArrayReader, ByteArrayWriter {
 		Command command = new Command(data, offset, length);
 		Response response = apduTag.transmit(command);
 		responseData = response.getData();
-		if (!Apdu.isSuccess(response))
+		if (!response.isSuccess())
 			throw new ApduException("Error sending message [" + NfcUtils.convertBinToASCII(data) + "] (" + offset + ","
 					+ length + ") => [SW1: " + response.getSw1() + ", SW2:" + response.getSw2() + ", Data: "
 					+ NfcUtils.convertBinToASCII(responseData) + "]");
@@ -54,9 +53,7 @@ public class ApduTagReaderWriter implements ByteArrayReader, ByteArrayWriter {
 		if (responseData.length > length - offset)
 			throw new IllegalArgumentException("buffer too small for response, needed " + responseData.length
 					+ " bytes");
-
 		System.arraycopy(responseData, 0, data, offset, responseData.length);
 		return responseData.length;
 	}
-
 }

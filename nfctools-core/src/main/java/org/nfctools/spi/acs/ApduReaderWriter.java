@@ -107,7 +107,7 @@ public class ApduReaderWriter implements ByteArrayReader, ByteArrayWriter {
 			if (log.isDebugEnabled())
 				log.debug("response APDU <= " + NfcUtils.convertBinToASCII(responseData));
 
-			if (!Apdu.isSuccess(responseAPDU))
+			if (!ApduUtils.isSuccess(responseAPDU))
 				throw new ApduException("Error sending message [" + NfcUtils.convertBinToASCII(data) + "] (" + offset
 						+ "," + length + ") => [" + NfcUtils.convertBinToASCII(responseData) + "]");
 		}

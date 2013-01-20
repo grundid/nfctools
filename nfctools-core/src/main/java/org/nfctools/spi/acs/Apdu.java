@@ -15,15 +15,10 @@
  */
 package org.nfctools.spi.acs;
 
-import javax.smartcardio.ResponseAPDU;
-
-import org.nfctools.scio.Response;
-
 public class Apdu {
 
 	public static final int MAX_EXPECTED_LENGTH = 256;
 	public static final int MAX_EXPECTED_LENGTH_LONG = 65536;
-
 	public static final int INS_ERASE_BINARY = 0x0E;
 	public static final int INS_VERIFY = 0x20;
 	public static final int INS_MANAGE_CHANNEL = 0x70;
@@ -43,14 +38,5 @@ public class Apdu {
 	public static final int INS_PUT_DATA = 0xDA;
 	public static final int INS_UPDATE_DATA = 0xDC;
 	public static final int INS_APPEND_RECORD = 0xE2;
-
 	public static final int CLS_PTS = 0xFF; // Class for PTS
-
-	public static boolean isSuccess(ResponseAPDU responseAPDU) {
-		return responseAPDU.getSW1() == 0x90 && responseAPDU.getSW2() == 0x00;
-	}
-
-	public static boolean isSuccess(Response response) {
-		return response.getSw1() == 0x90 && response.getSw2() == 0x00;
-	}
 }
