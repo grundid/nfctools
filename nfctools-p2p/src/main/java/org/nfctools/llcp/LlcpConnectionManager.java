@@ -42,23 +42,17 @@ import org.slf4j.LoggerFactory;
 public class LlcpConnectionManager implements Llcp {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
-
 	private final int SERVICE_DISCOVERY_ADDRESS = 1;
 	private final int PREFERRED_MIUX = 120;
 	private final int MAX_CONNECT_WAIT = 200;
 	private static final int MAX_RETRIES = 4;
-
 	private static final byte VERSION_MAJOR = 1;
 	private int miuExtension = PREFERRED_MIUX;
 	private int linkTimeOut = MAX_CONNECT_WAIT;
-
 	private ServiceDiscovery serviceDiscovery = new ServiceDiscovery();
-
 	private Map<Integer, PendingConnection> pendingConnections = new HashMap<Integer, PendingConnection>();
 	private Map<Integer, LlcpSocket> openConnections = new HashMap<Integer, LlcpSocket>();
-
 	private Map<Integer, ServiceAccessPoint> services = new HashMap<Integer, ServiceAccessPoint>();
-
 	private AbstractProtocolDataUnit messageToSend = null;
 
 	public void registerWellKnownServiceAccessPoint(String serviceName, ServiceAccessPoint serviceAccessPoint) {
@@ -86,7 +80,6 @@ public class LlcpConnectionManager implements Llcp {
 		Set<Integer> usedAddresses = new HashSet<Integer>();
 		usedAddresses.addAll(openConnections.keySet());
 		usedAddresses.addAll(pendingConnections.keySet());
-
 		for (int x = 32; x < 64; x++) {
 			Integer address = Integer.valueOf(x);
 			if (!usedAddresses.contains(address))
@@ -132,16 +125,13 @@ public class LlcpConnectionManager implements Llcp {
 	public AbstractProtocolDataUnit onLlcpActive() {
 		// TODO make messageToSend method local variable, implement Llcp interface similar to SnepAgent
 		messageToSend = new Symmetry();
-
 		handlePendingConnectionTimeout();
-
 		if (pendingConnections.isEmpty()) {
 			serviceDiscovery.onLlcpActive(this);
 			for (Entry<Integer, ServiceAccessPoint> entry : services.entrySet()) {
 				ServiceAccessPoint serviceAccessPoint = entry.getValue();
 				serviceAccessPoint.onLlcpActive(this);
 			}
-
 			if (messageToSend instanceof Symmetry) {
 				for (LlcpSocket llcpSocket : openConnections.values()) {
 					llcpSocket.onConnectionActive();
@@ -149,7 +139,6 @@ public class LlcpConnectionManager implements Llcp {
 				}
 			}
 		}
-
 		return messageToSend;
 	}
 
@@ -175,7 +164,6 @@ public class LlcpConnectionManager implements Llcp {
 
 	public AbstractProtocolDataUnit onConnectComplete(int remoteAddress, int localAddress, Object[] parameters) {
 		log.info("connect complete, remote: " + remoteAddress + " lA: " + localAddress);
-
 		Integer pendingLocalAddress = Integer.valueOf(localAddress);
 		if (pendingConnections.containsKey(pendingLocalAddress)) {
 			PendingConnection pendingConnection = pendingConnections.remove(pendingLocalAddress);
@@ -200,20 +188,17 @@ public class LlcpConnectionManager implements Llcp {
 		// TODO move this to llcpsocket
 		Object[] parameter = { new ServiceName(serviceName) };
 		// TODO MIUX
-
 		int outgoingAddress = getFreeOutgoingAddress();
 		Connect connectPdu = new Connect(SERVICE_DISCOVERY_ADDRESS, outgoingAddress, parameter);
 		pendingConnections.put(outgoingAddress, new PendingConnection(serviceAccessPoint, System.currentTimeMillis(),
 				connectPdu));
 		messageToSend = connectPdu;
-
 	}
 
 	@Override
 	public void connectToService(int serviceAddress, ServiceAccessPoint serviceAccessPoint) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
-
 	}
 
 	private LlcpSocket getOpenLlcpSocket(AddressPair addressPair) {
@@ -246,16 +231,13 @@ public class LlcpConnectionManager implements Llcp {
 		else {
 			if (serviceAccessPoint.canAcceptConnection(parameters)) {
 				Integer outgoingAddress = getFreeOutgoingAddress();
-
 				LlcpSocket llcpSocket = new LlcpSocket(new AddressPair(remoteAddress, outgoingAddress),
 						serviceAccessPoint);
 				openConnections.put(outgoingAddress, llcpSocket);
 				int aggreeOnMiux = aggreeOnMiux(parameters, llcpSocket);
-
 				List<Object> parameter = new ArrayList<Object>(getParameter());
 				if (aggreeOnMiux != 0)
 					parameter.add(new Miux(aggreeOnMiux));
-
 				return new ConnectComplete(remoteAddress, outgoingAddress, parameter.toArray());
 			}
 			else {
@@ -267,7 +249,6 @@ public class LlcpConnectionManager implements Llcp {
 	private int aggreeOnMiux(Object[] parameters, LlcpSocket llcpSocket) {
 		int remoteMiux = LlcpUtils.getMiuExtension(parameters);
 		int aggreeOnMiux = Math.min(miuExtension, remoteMiux);
-
 		llcpSocket.setMaximumInformationUnitExtension(aggreeOnMiux);
 		return aggreeOnMiux;
 	}
@@ -349,7 +330,6 @@ public class LlcpConnectionManager implements Llcp {
 					llcpSocket.onDisconnect();
 					return new Symmetry();
 				}
-
 			case 0x02: // no service bound
 			case 0x03: // rejected by service layer
 			case 0x10: // perm not accept connection at same target point
@@ -368,6 +348,5 @@ public class LlcpConnectionManager implements Llcp {
 			default:
 				return new Symmetry();
 		}
-
 	}
 }

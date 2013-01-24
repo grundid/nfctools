@@ -23,22 +23,22 @@ import java.util.List;
 import org.junit.Test;
 import org.nfctools.ndef.Record;
 import org.nfctools.ndef.wkt.records.UriRecord;
+import org.nfctools.ndefpush.NdefPushLlcpService;
 import org.nfctools.test.NfcipHelper;
 import org.nfctools.test.NotifyingNdefListener;
+import org.nfctools.utils.LoggingNdefListener;
 
 public class LlcpTest {
 
 	@Test
 	public void testSendReceiveNdefOverNPP() throws Exception {
 		NotifyingNdefListener ndefListener = new NotifyingNdefListener(this);
-		NfcipHelper helper = new NfcipHelper();
-		helper.registerNPPOnInitiator(ndefListener);
 		List<Record> records = new ArrayList<Record>();
 		records.add(new UriRecord("http://www.nfctools.org"));
-
-		helper.registerNPPOnTarget().addMessages(records, null);
+		NdefPushLlcpService ndefPushLlcpService = new NdefPushLlcpService(new LoggingNdefListener());
+		ndefPushLlcpService.addMessages(records, null);
+		NfcipHelper helper = new NfcipHelper(null, null, ndefListener, ndefPushLlcpService);
 		helper.launch();
-
 		synchronized (this) {
 			wait(5000);
 		}

@@ -36,17 +36,13 @@ public class SnepServerTest {
 
 	public SnepServerTest() {
 		ndefListener = new NotifyingNdefListener(this);
-		helper = new NfcipHelper();
-
 		snepServer = new SnepServer(ndefListener);
 		snepClient = new SnepClient();
-		helper.registerSnepClientTarget(snepClient);
-		helper.registerSnepServerInitiator(snepServer);
+		helper = new NfcipHelper(snepServer, snepClient, null, null);
 	}
 
 	@Test
 	public void testSnepPut() throws Exception {
-
 		snepClient.setSnepAgentListener(new SnepAgentListener() {
 
 			@Override
@@ -62,30 +58,22 @@ public class SnepServerTest {
 				return true;
 			}
 		});
-
 		helper.launch();
-
 		synchronized (this) {
 			wait(500000);
 		}
 		assertTrue(ndefListener.isSuccess());
-
 		Collection<Record> receivedRecords = ndefListener.getRecords();
 		assertEquals(50, receivedRecords.size());
-
 		UriRecord uriRecord = (UriRecord)receivedRecords.iterator().next();
 		assertEquals("http://www.nfctools.org", uriRecord.getUri());
-
 	}
 
 	@Test
 	public void testSnepGet() throws Exception {
-
 		List<Record> records = new ArrayList<Record>();
 		records.add(new UriRecord("http://www.nfctools.org"));
-
 		ndefListener.setGetResponseRecords(records);
-
 		snepClient.setSnepAgentListener(new SnepAgentListener() {
 
 			@Override
@@ -101,18 +89,13 @@ public class SnepServerTest {
 				return true;
 			}
 		});
-
 		helper.launch();
-
 		synchronized (this) {
 			wait(500000);
 		}
-
 		Collection<Record> receivedRecords = ndefListener.getReceivedGetResponseRecords();
 		assertEquals(1, receivedRecords.size());
-
 		UriRecord uriRecord = (UriRecord)receivedRecords.iterator().next();
 		assertEquals("http://www.nfctools.org", uriRecord.getUri());
-
 	}
 }

@@ -26,17 +26,20 @@ import org.nfctools.nfcip.NFCIPConnectionListener;
 public class LlcpOverNfcip implements NFCIPConnectionListener {
 
 	private PduDecoder pduDecoder = new PduDecoder();
-	private LlcpConnectionManager connectionManager = new LlcpConnectionManager();
+	private LlcpConnectionManagerFactory connectionManagerFactory;
+
+	public LlcpOverNfcip(LlcpConnectionManagerFactory connectionManagerFactory) {
+		this.connectionManagerFactory = connectionManagerFactory;
+	}
 
 	@Override
 	public void onConnection(NFCIPConnection connection) throws IOException {
-		initFromGeneralBytes(connection.getGeneralBytes());
+		LlcpConnectionManager connectionManager = connectionManagerFactory.createInstance();
+		connectionManager.init(extractParameters(connection.getGeneralBytes()));
 		try {
 			byte[] data = connection.isInitiator() ? pduDecoder.encode(new Symmetry()) : connection.receive();
-
 			while (!Thread.interrupted()) {
 				AbstractProtocolDataUnit requestPdu = pduDecoder.decode(data);
-
 				AbstractProtocolDataUnit responsePdu = requestPdu.processPdu(connectionManager);
 				byte[] pdu = pduDecoder.encode(responsePdu);
 				connection.send(pdu);
@@ -44,24 +47,16 @@ public class LlcpOverNfcip implements NFCIPConnectionListener {
 			}
 		}
 		finally {
-			clearStack();
+			connectionManager.clearConnections();
 		}
 	}
 
-	private void initFromGeneralBytes(byte[] generalBytes) {
+	public Object[] extractParameters(byte[] generalBytes) {
 		if (generalBytes.length >= 3) {
 			if (generalBytes[0] == 0x46 && generalBytes[1] == 0x66 && generalBytes[2] == 0x6D) {
-				Object[] parameters = pduDecoder.decodeParameter(generalBytes, 3);
-				connectionManager.init(parameters);
+				return pduDecoder.decodeParameter(generalBytes, 3);
 			}
 		}
-	}
-
-	public LlcpConnectionManager getConnectionManager() {
-		return connectionManager;
-	}
-
-	private void clearStack() {
-		connectionManager.clearConnections();
+		return new Object[0];
 	}
 }

@@ -18,6 +18,7 @@ package org.nfctools.test;
 import java.io.IOException;
 
 import org.nfctools.llcp.LlcpConnectionManager;
+import org.nfctools.llcp.LlcpConnectionManagerFactory;
 import org.nfctools.llcp.LlcpConstants;
 import org.nfctools.llcp.LlcpOverNfcip;
 import org.nfctools.ndef.NdefListener;
@@ -25,7 +26,6 @@ import org.nfctools.ndefpush.NdefPushLlcpService;
 import org.nfctools.snep.SnepClient;
 import org.nfctools.snep.SnepConstants;
 import org.nfctools.snep.SnepServer;
-import org.nfctools.utils.LoggingNdefListener;
 
 public class NfcipHelper {
 
@@ -34,15 +34,38 @@ public class NfcipHelper {
 	private LlcpOverNfcip initiatorLlcp;
 	private LlcpOverNfcip targetLlcp;
 
-	public NfcipHelper() {
+	public NfcipHelper(final SnepServer snepServer, final SnepClient snepClient,
+			final NdefListener initiatorNdefListener, final NdefPushLlcpService targetNdefPushLlcpService) {
 		final NfcipConnectionDummy initiator = new NfcipConnectionDummy(true, LlcpConstants.initiatorGeneralBytes);
 		final NfcipConnectionDummy target = new NfcipConnectionDummy(false, LlcpConstants.initiatorGeneralBytes);
 		initiator.setOther(target);
 		target.setOther(initiator);
+		initiatorLlcp = new LlcpOverNfcip(new LlcpConnectionManagerFactory() {
 
-		initiatorLlcp = new LlcpOverNfcip();
-		targetLlcp = new LlcpOverNfcip();
+			@Override
+			protected void configureConnectionManager(LlcpConnectionManager connectionManager) {
+				if (snepServer != null) {
+					connectionManager.registerWellKnownServiceAccessPoint(SnepConstants.SNEP_SERVICE_NAME, snepServer);
+					connectionManager.registerServiceAccessPoint(SnepConstants.SNEP_SERVICE_ADDRESS, snepServer);
+				}
+				if (initiatorNdefListener != null) {
+					NdefPushLlcpService ndefPushLlcpService = new NdefPushLlcpService(initiatorNdefListener);
+					connectionManager.registerWellKnownServiceAccessPoint(LlcpConstants.COM_ANDROID_NPP,
+							ndefPushLlcpService);
+				}
+			}
+		});
+		targetLlcp = new LlcpOverNfcip(new LlcpConnectionManagerFactory() {
 
+			@Override
+			protected void configureConnectionManager(LlcpConnectionManager connectionManager) {
+				if (snepClient != null)
+					connectionManager.registerServiceAccessPoint(snepClient);
+				if (targetNdefPushLlcpService != null)
+					connectionManager.registerWellKnownServiceAccessPoint(LlcpConstants.COM_ANDROID_NPP,
+							targetNdefPushLlcpService);
+			}
+		});
 		threadInitiator = new Thread(new Runnable() {
 
 			@Override
@@ -51,11 +74,9 @@ public class NfcipHelper {
 					initiatorLlcp.onConnection(initiator);
 				}
 				catch (IOException e) {
-
 				}
 			}
 		});
-
 		threadTarget = new Thread(new Runnable() {
 
 			@Override
@@ -64,11 +85,9 @@ public class NfcipHelper {
 					targetLlcp.onConnection(target);
 				}
 				catch (IOException e) {
-
 				}
 			}
 		});
-
 	}
 
 	public void launch() {
@@ -83,35 +102,15 @@ public class NfcipHelper {
 	public LlcpOverNfcip getTargetLlcp() {
 		return targetLlcp;
 	}
-
-	public NdefPushLlcpService registerNPPOnInitiator() {
-		return setupNpp(initiatorLlcp, new LoggingNdefListener());
-	}
-
-	public NdefPushLlcpService registerNPPOnInitiator(NdefListener ndefListener) {
-		return setupNpp(initiatorLlcp, ndefListener);
-	}
-
-	public NdefPushLlcpService registerNPPOnTarget() {
-		return setupNpp(targetLlcp, new LoggingNdefListener());
-	}
-
-	public void registerSnepServerInitiator(SnepServer snepServer) {
-		LlcpConnectionManager connectionManager = initiatorLlcp.getConnectionManager();
-		connectionManager.registerWellKnownServiceAccessPoint(SnepConstants.SNEP_SERVICE_NAME, snepServer);
-		connectionManager.registerServiceAccessPoint(SnepConstants.SNEP_SERVICE_ADDRESS, snepServer);
-	}
-
-	public void registerSnepClientTarget(SnepClient snepClient) {
-		LlcpConnectionManager connectionManager = targetLlcp.getConnectionManager();
-		connectionManager.registerServiceAccessPoint(snepClient);
-	}
-
-	private NdefPushLlcpService setupNpp(LlcpOverNfcip llcpOverNfcip, NdefListener ndefListener) {
-		NdefPushLlcpService ndefPushLlcpService = new NdefPushLlcpService(ndefListener);
-		LlcpConnectionManager connectionManager = llcpOverNfcip.getConnectionManager();
-		connectionManager.registerWellKnownServiceAccessPoint(LlcpConstants.COM_ANDROID_NPP, ndefPushLlcpService);
-		return ndefPushLlcpService;
-	}
-
+	//	public NdefPushLlcpService registerNPPOnInitiator() {
+	//		return setupNpp(initiatorLlcp, new LoggingNdefListener());
+	//	}
+	//
+	//	public void registerNPPOnInitiator(NdefListener ndefListener) {
+	//		setupNpp(initiatorLlcp, ndefListener);
+	//	}
+	//
+	//	public NdefPushLlcpService registerNPPOnTarget() {
+	//		return setupNpp(targetLlcp, new LoggingNdefListener());
+	//	}
 }
