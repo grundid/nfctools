@@ -18,6 +18,7 @@ package org.nfctools.scio;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
@@ -25,6 +26,7 @@ import javax.smartcardio.TerminalFactory;
 
 public class TerminalHandler {
 
+	private Logger log = Logger.getLogger(TerminalHandler.class.getName());
 	private Collection<Terminal> knownTerminals = new HashSet<Terminal>();
 
 	public void addTerminal(Terminal terminal) {
@@ -38,9 +40,9 @@ public class TerminalHandler {
 	public Terminal getAvailableTerminal(String preferredTerminalName) {
 		try {
 			TerminalFactory terminalFactory = TerminalFactory.getDefault();
-
 			List<CardTerminal> terminals = terminalFactory.terminals().list();
 			for (CardTerminal terminal : terminals) {
+				log.info("Checking terminal: " + terminal.getName());
 				if (preferredTerminalName == null || preferredTerminalName.equals(terminal.getName())) {
 					for (Terminal knownTerminal : knownTerminals) {
 						if (knownTerminal.canHandle(terminal.getName())) {
@@ -50,12 +52,14 @@ public class TerminalHandler {
 					}
 				}
 			}
+			StringBuilder sb = new StringBuilder();
+			for (CardTerminal terminal : terminals) {
+				sb.append(" [").append(terminal.getName()).append("]");
+			}
+			throw new IllegalArgumentException("No supported card terminal found. Available Terminals " + sb.toString());
 		}
 		catch (CardException e) {
 			throw new RuntimeException(e);
 		}
-
-		throw new IllegalArgumentException("no supported card terminal found");
-
 	}
 }
