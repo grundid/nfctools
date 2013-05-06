@@ -31,11 +31,9 @@ public class ClassicHandler {
 		try {
 			MemoryLayout memoryLayout = readerWriter.getMemoryLayout();
 			for (int sector = 0; sector < memoryLayout.getSectors(); sector++) {
-
 				TrailerBlock trailerBlock = readTrailerBlock(readerWriter, sector, MfClassicConstants.TRANSPORT_KEY);
 				if (!Arrays.equals(MfConstants.TRANSPORT_ACCESS_CONDITIONS, trailerBlock.getAccessConditions()))
 					return false;
-
 				if (trailerBlock.getGeneralPurposeByte() != MfConstants.TRANSPORT_GPB)
 					return false;
 			}
@@ -46,15 +44,13 @@ public class ClassicHandler {
 		}
 	}
 
-	public static boolean isFormattedWritable(Application application) throws IOException {
+	public static boolean isFormattedWritable(Application application, KeyValue keyValue) throws IOException {
 		try {
-			TrailerBlock trailerBlock = application.readTrailer(MfClassicConstants.TRANSPORT_KEY);
-
+			TrailerBlock trailerBlock = application.readTrailer(keyValue);
 			for (int dataArea = 0; dataArea < 3; dataArea++) {
-				if (!trailerBlock.canWriteDataBlock(MfClassicConstants.TRANSPORT_KEY.getKey(), dataArea))
+				if (!trailerBlock.canWriteDataBlock(keyValue.getKey(), dataArea))
 					return false;
 			}
-
 			if (NfcUtils.getLeastSignificantNibble(trailerBlock.getGeneralPurposeByte()) != 0)
 				return false;
 			return true;
@@ -79,7 +75,6 @@ public class ClassicHandler {
 	@SuppressWarnings("null")
 	private static TrailerBlock readTrailerBlock(MfClassicReaderWriter readerWriter, int sector, KeyValue... keys)
 			throws IOException {
-
 		MfLoginException lastException = null;
 		for (KeyValue keyValue : keys) {
 			try {
@@ -95,5 +90,4 @@ public class ClassicHandler {
 		}
 		throw lastException;
 	}
-
 }

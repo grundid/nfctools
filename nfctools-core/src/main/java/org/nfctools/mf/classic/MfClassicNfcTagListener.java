@@ -51,7 +51,6 @@ public class MfClassicNfcTagListener implements NfcTagListener {
 		MfClassicNdefOperations ndefOperations = createNdefOperations((ApduTag)tag, memoryLayout);
 		if (ndefListener != null)
 			ndefListener.onNdefOperations(ndefOperations);
-
 	}
 
 	protected MfClassicNdefOperations createNdefOperations(ApduTag tag, MemoryLayout memoryLayout) {
@@ -64,7 +63,7 @@ public class MfClassicNfcTagListener implements NfcTagListener {
 				if (applicationDirectory.hasApplication(MfConstants.NDEF_APP_ID)) {
 					formatted = true;
 					Application application = applicationDirectory.openApplication(MfConstants.NDEF_APP_ID);
-					writable = ClassicHandler.isFormattedWritable(application);
+					writable = ClassicHandler.isFormattedWritable(application, MfClassicConstants.NDEF_KEY);
 				}
 				else {
 					throw new NfcException("Unknown tag contents");
@@ -81,8 +80,6 @@ public class MfClassicNfcTagListener implements NfcTagListener {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return new MfClassicNdefOperations(readerWriter, formatted, writable);
 	}
-
 }
