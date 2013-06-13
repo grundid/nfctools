@@ -18,6 +18,7 @@ package org.nfctools.spi.acs;
 import java.io.IOException;
 
 import org.nfctools.api.ApduTag;
+import org.nfctools.api.TagInfo;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.MfException;
 import org.nfctools.mf.MfLoginException;
@@ -26,6 +27,7 @@ import org.nfctools.mf.block.BlockResolver;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.block.TrailerBlock;
 import org.nfctools.mf.classic.Key;
+import org.nfctools.mf.classic.KeyValue;
 import org.nfctools.mf.classic.MemoryLayout;
 import org.nfctools.mf.classic.MfClassicAccess;
 import org.nfctools.mf.classic.MfClassicConstants;
@@ -39,6 +41,7 @@ import org.nfctools.scio.Response;
 
 public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 
+	private TagInfo tagInfo;
 	private ApduTag apduTag;
 	private MemoryLayout memoryLayout;
 
@@ -155,5 +158,30 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 	@Override
 	public ApplicationDirectory getApplicationDirectory(MadKeyConfig keyConfig) throws IOException {
 		return AbstractMad.initInstance(this, keyConfig);
+	}
+
+	@Override
+	public TagInfo getTagInfo() throws IOException {
+		if (tagInfo == null) {
+			byte[] id = new byte[4];
+			MfBlock[] block = readManuBlockWithMultiKeys(MfClassicConstants.MAD_KEY, MfClassicConstants.TRANSPORT_KEY);
+			if (block != null)
+				System.arraycopy(block[0].getData(), 0, id, 0, 4);
+			tagInfo = new TagInfo(apduTag.getTagType(), id);
+		}
+		return tagInfo;
+	}
+
+	private MfBlock[] readManuBlockWithMultiKeys(KeyValue... keyValues) throws IOException {
+		for (KeyValue keyValue : keyValues) {
+			try {
+				MfClassicAccess access = new MfClassicAccess(keyValue, 0, 0);
+				MfBlock[] block = readBlock(access);
+				return block;
+			}
+			catch (MfLoginException e) {
+			}
+		}
+		return null;
 	}
 }

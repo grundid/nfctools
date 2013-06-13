@@ -20,5 +20,7 @@ import org.nfctools.scio.Response;
 
 public interface ApduTag {
 
+	TagType getTagType();
+
 	Response transmit(Command command);
 }

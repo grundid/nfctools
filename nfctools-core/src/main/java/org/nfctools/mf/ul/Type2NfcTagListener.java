@@ -21,6 +21,7 @@ import org.nfctools.NfcException;
 import org.nfctools.api.ApduTag;
 import org.nfctools.api.NfcTagListener;
 import org.nfctools.api.Tag;
+import org.nfctools.api.TagInfo;
 import org.nfctools.api.TagType;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.ndef.NdefOperationsListener;
@@ -58,7 +59,9 @@ public class Type2NfcTagListener implements NfcTagListener {
 		MemoryLayout memoryLayout = null;
 		boolean formatted = false;
 		boolean writable = false;
+		TagInfo tagInfo = null;
 		try {
+			tagInfo = readerWriter.getTagInfo();
 			MfBlock[] initBlocks = readerWriter.readBlock(0, 5);
 			CapabilityBlock capabilityBlock = new CapabilityBlock(initBlocks[3].getData());
 			if (UltralightHandler.isBlank(initBlocks)) {
@@ -92,7 +95,7 @@ public class Type2NfcTagListener implements NfcTagListener {
 		catch (Exception e) {
 			throw new NfcException(e);
 		}
-		return new Type2NdefOperations(memoryLayout, readerWriter, formatted, writable);
+		return new Type2NdefOperations(memoryLayout, readerWriter, tagInfo, formatted, writable);
 	}
 
 	private boolean isLocked(MfUlReaderWriter readerWriter, MemoryLayout memoryLayout) throws IOException {

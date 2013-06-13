@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.nfctools.NfcException;
+import org.nfctools.api.TagInfo;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.block.TrailerBlock;
 import org.nfctools.mf.mad.Application;
@@ -41,8 +42,9 @@ public class MfClassicNdefOperations extends AbstractNdefOperations {
 	private MfClassicReaderWriter readerWriter;
 	private byte[] writeKey = MfConstants.NDEF_KEY;
 
-	public MfClassicNdefOperations(MfClassicReaderWriter readerWriter, boolean formatted, boolean writeable) {
-		super(formatted, writeable);
+	public MfClassicNdefOperations(MfClassicReaderWriter readerWriter, TagInfo tagInfo, boolean formatted,
+			boolean writeable) {
+		super(tagInfo, formatted, writeable);
 		this.readerWriter = readerWriter;
 	}
 
@@ -63,13 +65,10 @@ public class MfClassicNdefOperations extends AbstractNdefOperations {
 				Application application = getApplication();
 				// TODO create TagInputStream for better performance
 				byte[] tlvWrappedNdefMessage = application.read(new KeyValue(Key.A, MfConstants.NDEF_KEY));
-
 				if (log.isDebugEnabled())
 					log.debug(NfcUtils.convertBinToASCII(tlvWrappedNdefMessage));
-
 				TypeLengthValueReader reader = new TypeLengthValueReader(
 						new ByteArrayInputStream(tlvWrappedNdefMessage));
-
 				convertRecords(reader);
 				return lastReadRecords;
 			}
@@ -124,11 +123,9 @@ public class MfClassicNdefOperations extends AbstractNdefOperations {
 		try {
 			ApplicationDirectory applicationDirectory = readerWriter.createApplicationDirectory(new MadKeyConfig(Key.A,
 					MfConstants.TRANSPORT_KEY, writeKey));
-
 			TrailerBlock readWriteTrailerBlock = ClassicHandler.createReadWriteDataTrailerBlock();
 			readWriteTrailerBlock.setKey(Key.A, writeKey);
 			readWriteTrailerBlock.setKey(Key.B, writeKey);
-
 			Application application = applicationDirectory.createApplication(MfConstants.NDEF_APP_ID,
 					applicationDirectory.getMaxContinousSize(), writeKey, readWriteTrailerBlock);
 			return application;
@@ -156,5 +153,4 @@ public class MfClassicNdefOperations extends AbstractNdefOperations {
 		writer.close();
 		return out.getBuffer();
 	}
-
 }

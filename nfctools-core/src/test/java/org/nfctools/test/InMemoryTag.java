@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.nfctools.api.ApduTag;
+import org.nfctools.api.TagType;
 import org.nfctools.mf.ul.MemoryMap;
 import org.nfctools.scio.Command;
 import org.nfctools.scio.Response;
@@ -78,8 +79,11 @@ public class InMemoryTag implements ApduTag {
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-
 		return new Response(0x90, 0x00, out.toByteArray());
 	}
 
+	@Override
+	public TagType getTagType() {
+		return TagType.IN_MEMORY;
+	}
 }

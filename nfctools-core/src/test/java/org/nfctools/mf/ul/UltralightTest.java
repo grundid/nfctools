@@ -40,4 +40,12 @@ public class UltralightTest {
 		assertTrue(UltralightHandler.isFormatted(blocks));
 	}
 
+	@Test
+	public void itShouldExtractId() throws Exception {
+		MfBlock[] blocks = new MfBlock[2];
+		blocks[0] = new DataBlock(new byte[] { 0, 1, 2, 3 });
+		blocks[1] = new DataBlock(new byte[] { 4, 5, 6, 7 });
+		byte[] id = UltralightHandler.extractId(blocks);
+		assertArrayEquals(new byte[] { 0, 1, 2, 4, 5, 6, 7 }, id);
+	}
 }

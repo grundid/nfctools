@@ -17,12 +17,12 @@ package org.nfctools.mf.ul;
 
 import java.io.IOException;
 
+import org.nfctools.api.TagInfoReader;
 import org.nfctools.mf.block.MfBlock;
 
-public interface MfUlReaderWriter {
+public interface MfUlReaderWriter extends TagInfoReader {
 
 	MfBlock[] readBlock(int startPage, int pagesToRead) throws IOException;
 
 	void writeBlock(int startPage, MfBlock... mfBlock) throws IOException;
-
 }

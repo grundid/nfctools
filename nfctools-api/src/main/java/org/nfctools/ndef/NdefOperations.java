@@ -17,6 +17,7 @@ package org.nfctools.ndef;
 
 import java.util.List;
 
+import org.nfctools.api.TagInfo;
 
 /**
  * Some methods are inspired by the Ndef/NdefFormatable classes from the Android Project.
@@ -71,4 +72,10 @@ public interface NdefOperations {
 	 * Formats a tag as NDEF, write a NdefMessage, and make read-only.
 	 */
 	void formatReadOnly(Record... records);
+
+	/**
+	 * 
+	 * @return additional information about the tag like the ID
+	 */
+	TagInfo getTagInfo();
 }

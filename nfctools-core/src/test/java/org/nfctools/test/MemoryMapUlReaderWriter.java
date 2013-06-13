@@ -17,6 +17,7 @@ package org.nfctools.test;
 
 import java.io.IOException;
 
+import org.nfctools.api.TagInfo;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.ul.DataBlock;
 import org.nfctools.mf.ul.MemoryMap;
@@ -37,11 +38,9 @@ public class MemoryMapUlReaderWriter implements MfUlReaderWriter {
 	@Override
 	public MfBlock[] readBlock(int startPage, int pagesToRead) throws IOException {
 		MfBlock[] blocks = new MfBlock[pagesToRead];
-
 		for (int x = 0; x < pagesToRead; x++) {
 			blocks[x] = new DataBlock(memoryMap.getPage(startPage + x));
 		}
-
 		return blocks;
 	}
 
@@ -50,5 +49,10 @@ public class MemoryMapUlReaderWriter implements MfUlReaderWriter {
 		for (int x = 0; x < mfBlock.length; x++) {
 			memoryMap.setPage(startPage + x, mfBlock[x].getData());
 		}
+	}
+
+	@Override
+	public TagInfo getTagInfo() throws IOException {
+		throw new RuntimeException("not implemented yet");
 	}
 }

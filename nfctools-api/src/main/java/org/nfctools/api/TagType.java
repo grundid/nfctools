@@ -16,16 +16,14 @@
 package org.nfctools.api;
 
 public enum TagType {
-
 	/**
 	 * Unkown tag
 	 */
-	UKNOWN,
+	UKNOWN, IN_MEMORY,
 	/**
 	 * Mifare Classic with 1k memory
 	 */
 	MIFARE_CLASSIC_1K,
-
 	/**
 	 * Mifare Classic with 4k memory
 	 */

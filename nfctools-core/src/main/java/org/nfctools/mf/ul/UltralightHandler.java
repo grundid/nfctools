@@ -62,4 +62,11 @@ public class UltralightHandler {
 	private static boolean isCapabilityContainerValid(byte[] block) {
 		return block[0] == (byte)0xE1 && block[1] == (byte)0x10 && block[2] >= (byte)0x06;
 	}
+
+	public static byte[] extractId(MfBlock[] idBlocks) {
+		byte[] id = new byte[7];
+		System.arraycopy(idBlocks[0].getData(), 0, id, 0, 3);
+		System.arraycopy(idBlocks[1].getData(), 0, id, 3, 4);
+		return id;
+	}
 }

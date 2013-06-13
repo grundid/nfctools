@@ -17,11 +17,12 @@ package org.nfctools.mf.classic;
 
 import java.io.IOException;
 
+import org.nfctools.api.TagInfoReader;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.mad.ApplicationDirectory;
 import org.nfctools.mf.mad.MadKeyConfig;
 
-public interface MfClassicReaderWriter {
+public interface MfClassicReaderWriter extends TagInfoReader {
 
 	MfBlock[] readBlock(MfClassicAccess access) throws IOException;
 

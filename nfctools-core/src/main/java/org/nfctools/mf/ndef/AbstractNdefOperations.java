@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.nfctools.api.TagInfo;
 import org.nfctools.mf.tlv.NdefMessageTlv;
 import org.nfctools.mf.tlv.Tlv;
 import org.nfctools.mf.tlv.TypeLengthValueReader;
@@ -30,11 +31,13 @@ import org.nfctools.ndef.Record;
 
 public abstract class AbstractNdefOperations implements NdefOperations {
 
+	private TagInfo tagInfo;
 	protected boolean formatted;
 	protected boolean writable;
 	protected List<Record> lastReadRecords;
 
-	protected AbstractNdefOperations(boolean formatted, boolean writable) {
+	protected AbstractNdefOperations(TagInfo tagInfo, boolean formatted, boolean writable) {
+		this.tagInfo = tagInfo;
 		this.formatted = formatted;
 		this.writable = writable;
 	}
@@ -43,7 +46,6 @@ public abstract class AbstractNdefOperations implements NdefOperations {
 	public boolean hasNdefMessage() {
 		if (lastReadRecords != null && !lastReadRecords.isEmpty())
 			return true;
-
 		Collection<Record> ndefMessage = readNdefMessage();
 		return !ndefMessage.isEmpty();
 	}
@@ -89,7 +91,6 @@ public abstract class AbstractNdefOperations implements NdefOperations {
 
 	protected void convertRecords(TypeLengthValueReader reader) {
 		lastReadRecords = new ArrayList<Record>();
-
 		NdefMessageDecoder ndefMessageDecoder = NdefContext.getNdefMessageDecoder();
 		while (reader.hasNext()) {
 			Tlv tlv = reader.next();
@@ -102,4 +103,8 @@ public abstract class AbstractNdefOperations implements NdefOperations {
 		}
 	}
 
+	@Override
+	public TagInfo getTagInfo() {
+		return tagInfo;
+	}
 }

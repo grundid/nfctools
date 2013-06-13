@@ -38,6 +38,7 @@ public class LoggingNdefListener implements NdefListener, NdefOperationsListener
 
 	@Override
 	public void onNdefOperations(NdefOperations ndefOperations) {
+		log.info("Tag ID: " + NfcUtils.convertBinToASCII(ndefOperations.getTagInfo().getId()));
 		if (ndefOperations.isFormatted()) {
 			if (ndefOperations.hasNdefMessage())
 				onNdefMessages(ndefOperations.readNdefMessage());

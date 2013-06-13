@@ -15,6 +15,8 @@
  */
 package org.nfctools.test;
 
+import java.io.IOException;
+
 import org.nfctools.mf.ul.MemoryLayout;
 import org.nfctools.mf.ul.Type2NdefOperations;
 import org.nfctools.spi.acs.AcrMfUlReaderWriter;
@@ -28,8 +30,14 @@ public abstract class TestConfigs {
 	}
 
 	public static Type2NdefOperations getType2BlankTag(String fileName, boolean formatted, boolean writable) {
-		InMemoryTag tag = new InMemoryTag(FileMfUlReader.loadCardFromFile(fileName));
-		return new Type2NdefOperations(fileName.startsWith("mful_") ? MemoryLayout.ULTRALIGHT
-				: MemoryLayout.ULTRALIGHT_C, new AcrMfUlReaderWriter(tag), formatted, writable);
+		try {
+			InMemoryTag tag = new InMemoryTag(FileMfUlReader.loadCardFromFile(fileName));
+			AcrMfUlReaderWriter readerWriter = new AcrMfUlReaderWriter(tag);
+			return new Type2NdefOperations(fileName.startsWith("mful_") ? MemoryLayout.ULTRALIGHT
+					: MemoryLayout.ULTRALIGHT_C, readerWriter, readerWriter.getTagInfo(), formatted, writable);
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.nfctools.NfcException;
+import org.nfctools.api.TagInfo;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.ndef.AbstractNdefOperations;
 import org.nfctools.mf.tlv.NdefMessageTlv;
@@ -33,9 +34,9 @@ public class Type2NdefOperations extends AbstractNdefOperations {
 	private MemoryLayout memoryLayout;
 	private MfUlReaderWriter readerWriter;
 
-	public Type2NdefOperations(MemoryLayout memoryLayout, MfUlReaderWriter readerWriter, boolean formatted,
-			boolean writable) {
-		super(formatted, writable);
+	public Type2NdefOperations(MemoryLayout memoryLayout, MfUlReaderWriter readerWriter, TagInfo tagInfo,
+			boolean formatted, boolean writable) {
+		super(tagInfo, formatted, writable);
 		this.memoryLayout = memoryLayout;
 		this.readerWriter = readerWriter;
 	}
@@ -128,7 +129,6 @@ public class Type2NdefOperations extends AbstractNdefOperations {
 		try {
 			for (LockPage lockPage : memoryLayout.getLockPages()) {
 				MfBlock[] block = readerWriter.readBlock(lockPage.getPage(), 1);
-
 				for (int lockByte : lockPage.getLockBytes()) {
 					block[0].getData()[lockByte] = (byte)0xff;
 				}

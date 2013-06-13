@@ -18,16 +18,19 @@ package org.nfctools.spi.acs;
 import java.io.IOException;
 
 import org.nfctools.api.ApduTag;
+import org.nfctools.api.TagInfo;
 import org.nfctools.mf.MfException;
 import org.nfctools.mf.block.MfBlock;
 import org.nfctools.mf.ul.DataBlock;
 import org.nfctools.mf.ul.MfUlReaderWriter;
+import org.nfctools.mf.ul.UltralightHandler;
 import org.nfctools.scio.Command;
 import org.nfctools.scio.Response;
 
 public class AcrMfUlReaderWriter implements MfUlReaderWriter {
 
 	private ApduTag tag;
+	private TagInfo tagInfo;
 
 	public AcrMfUlReaderWriter(ApduTag tag) {
 		this.tag = tag;
@@ -59,5 +62,15 @@ public class AcrMfUlReaderWriter implements MfUlReaderWriter {
 						+ writeBlockResponse);
 			}
 		}
+	}
+
+	@Override
+	public TagInfo getTagInfo() throws IOException {
+		if (tagInfo == null) {
+			MfBlock[] idBlocks = readBlock(0, 2);
+			byte[] id = UltralightHandler.extractId(idBlocks);
+			tagInfo = new TagInfo(tag.getTagType(), id);
+		}
+		return tagInfo;
 	}
 }

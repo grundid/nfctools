@@ -70,11 +70,9 @@ public class MfClassicNdefOperationsTest {
 	private static final Config[] READ_TEST = {
 			new Config("mfstd1k_ndef.txt", MemoryLayout.CLASSIC_1K, true, true, null),
 			new Config("mfstd4k_ndef.txt", MemoryLayout.CLASSIC_4K, true, true, null) };
-
 	private static final Config[] FORMAT_TEST = {
 			new Config("mfstd1k_blank.txt", MemoryLayout.CLASSIC_1K, false, true, "mfstd1k_formatted.txt", 720),
 			new Config("mfstd4k_blank.txt", MemoryLayout.CLASSIC_4K, false, true, "mfstd4k_formatted.txt", 3360) };
-
 	private static final Config[] MAKE_READ_ONLY_TEST = {
 			new Config("mfstd1k_formatted.txt", MemoryLayout.CLASSIC_1K, true, true, "mfstd1k_formatted_readonly.txt"),
 			new Config("mfstd4k_formatted.txt", MemoryLayout.CLASSIC_4K, true, true, "mfstd4k_formatted_readonly.txt") };
@@ -83,7 +81,8 @@ public class MfClassicNdefOperationsTest {
 		MemoryMap memoryMap = FileMfClassicReader.loadCardFromFile(config.fileName);
 		tag = new InMemoryTag(memoryMap);
 		readerWriter = new AcrMfClassicReaderWriter(tag, config.memoryLayout);
-		ndefOperations = new MfClassicNdefOperations(readerWriter, config.formatted, config.writeable);
+		ndefOperations = new MfClassicNdefOperations(readerWriter, readerWriter.getTagInfo(), config.formatted,
+				config.writeable);
 		if (config.expected != null && config.expected.startsWith("mfstd")) {
 			expectedTag = new InMemoryTag(FileMfClassicReader.loadCardFromFile(config.expected));
 		}

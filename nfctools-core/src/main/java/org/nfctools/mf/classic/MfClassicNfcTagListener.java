@@ -21,6 +21,7 @@ import org.nfctools.NfcException;
 import org.nfctools.api.ApduTag;
 import org.nfctools.api.NfcTagListener;
 import org.nfctools.api.Tag;
+import org.nfctools.api.TagInfo;
 import org.nfctools.api.TagType;
 import org.nfctools.mf.MfConstants;
 import org.nfctools.mf.mad.Application;
@@ -57,7 +58,9 @@ public class MfClassicNfcTagListener implements NfcTagListener {
 		boolean formatted = false;
 		boolean writable = false;
 		MfClassicReaderWriter readerWriter = new AcrMfClassicReaderWriter(tag, memoryLayout);
+		TagInfo tagInfo = null;
 		try {
+			tagInfo = readerWriter.getTagInfo();
 			if (readerWriter.hasApplicationDirectory()) {
 				ApplicationDirectory applicationDirectory = readerWriter.getApplicationDirectory();
 				if (applicationDirectory.hasApplication(MfConstants.NDEF_APP_ID)) {
@@ -78,8 +81,8 @@ public class MfClassicNfcTagListener implements NfcTagListener {
 			}
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			throw new NfcException(e);
 		}
-		return new MfClassicNdefOperations(readerWriter, formatted, writable);
+		return new MfClassicNdefOperations(readerWriter, tagInfo, formatted, writable);
 	}
 }
