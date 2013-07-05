@@ -17,6 +17,7 @@ package org.nfctools.llcp.pdu;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,9 +69,22 @@ public class PduDecoder {
 				byte[] unnumberedData = new byte[pduData.length - 2];
 				System.arraycopy(pduData, 2, unnumberedData, 0, unnumberedData.length);
 				return new UnnumberedInformation(destination, source, unnumberedData);
-
-			case PduConstants.PDU_RECEIVE_NOT_READY:
 			case PduConstants.PDU_AGGREGATED_FRAME:
+				int currIndex = 2;
+				ArrayList<AbstractProtocolDataUnit> frames = new ArrayList<AbstractProtocolDataUnit>();				
+				for(int i = currIndex; i+2 <pduData.length;)
+				{
+					short framelenght =  ByteBuffer.wrap(new byte[]{pduData[i],pduData[i+1]}).getShort();
+					byte[] currFrame = new byte[framelenght];
+					System.arraycopy(pduData, i+2, currFrame, 0, framelenght);					
+					frames.add(this.decode(currFrame));
+					i=i+2+framelenght;
+				}				
+				AbstractProtocolDataUnit[] resultantFrames = new AbstractProtocolDataUnit[frames.size()];
+				for(int i = 0; i < frames.size();i++)
+					resultantFrames[i] = frames.get(i);				
+				return new AggregatedFrame(resultantFrames);
+			case PduConstants.PDU_RECEIVE_NOT_READY:
 			case PduConstants.PDU_FRAME_REJECT:
 				throw new UnsupportedOperationException("PDU TYPE: " + pduType);
 			default:
@@ -114,6 +128,18 @@ public class PduDecoder {
 		else if (protocolDataUnit instanceof UnnumberedInformation) {
 			appendHeader(baos, protocolDataUnit, PduConstants.PDU_UNNUMBERED_INFORMATION);
 			appendData(baos, ((UnnumberedInformation)protocolDataUnit).getServiceDataUnit());
+		}
+		else if (protocolDataUnit instanceof AggregatedFrame) {
+			appendHeader(baos, protocolDataUnit, PduConstants.PDU_AGGREGATED_FRAME);
+			for(int i = 0 ; i < ((AggregatedFrame)protocolDataUnit).getInnerFrames().length;i++)
+			{
+				byte[] currFrame = this.encode(((AggregatedFrame)protocolDataUnit).getInnerFrames()[i]);	
+				
+				byte[] currFrameLenght = ByteBuffer.allocate(2).putShort((short)currFrame.length).array();
+				
+				appendData(baos, currFrameLenght);
+				appendData(baos, currFrame);
+			}			
 		}
 		return baos.toByteArray();
 	}
