@@ -25,25 +25,39 @@ public class Acs {
 	public static final byte KEY_A = 0x60;
 	public static final byte KEY_B = 0x61;
 
-	public static final int FILE_DEVICE_SMARTCARD = 0x310000; // Reader action IOCTLs
-	public static final int IOCTL_SMARTCARD_DIRECT = FILE_DEVICE_SMARTCARD + 2050 * 4;
-	public static final int IOCTL_SMARTCARD_SELECT_SLOT = FILE_DEVICE_SMARTCARD + 2051 * 4;
-	public static final int IOCTL_SMARTCARD_DRAW_LCDBMP = FILE_DEVICE_SMARTCARD + 2052 * 4;
-	public static final int IOCTL_SMARTCARD_DISPLAY_LCD = FILE_DEVICE_SMARTCARD + 2053 * 4;
-	public static final int IOCTL_SMARTCARD_CLR_LCD = FILE_DEVICE_SMARTCARD + 2054 * 4;
-	public static final int IOCTL_SMARTCARD_READ_KEYPAD = FILE_DEVICE_SMARTCARD + 2055 * 4;
-	public static final int IOCTL_SMARTCARD_READ_RTC = FILE_DEVICE_SMARTCARD + 2057 * 4;
-	public static final int IOCTL_SMARTCARD_SET_RTC = FILE_DEVICE_SMARTCARD + 2058 * 4;
-	public static final int IOCTL_SMARTCARD_SET_OPTION = FILE_DEVICE_SMARTCARD + 2059 * 4;
-	public static final int IOCTL_SMARTCARD_SET_LED = FILE_DEVICE_SMARTCARD + 2060 * 4;
-	public static final int IOCTL_SMARTCARD_LOAD_KEY = FILE_DEVICE_SMARTCARD + 2062 * 4;
-	public static final int IOCTL_SMARTCARD_READ_EEPROM = FILE_DEVICE_SMARTCARD + 2065 * 4;
-	public static final int IOCTL_SMARTCARD_WRITE_EEPROM = FILE_DEVICE_SMARTCARD + 2066 * 4;
-	public static final int IOCTL_SMARTCARD_GET_VERSION = FILE_DEVICE_SMARTCARD + 2067 * 4;
-	public static final int IOCTL_SMARTCARD_GET_READER_INFO = FILE_DEVICE_SMARTCARD + 2051 * 4;
-	public static final int IOCTL_SMARTCARD_SET_CARD_TYPE = FILE_DEVICE_SMARTCARD + 2060 * 4;
-	public static final int IOCTL_SMARTCARD_ACR128_ESCAPE_COMMAND = FILE_DEVICE_SMARTCARD + 2079 * 4;
-	public static final int IOCTL_SMARTCARD_ACR122_ESCAPE_COMMAND = FILE_DEVICE_SMARTCARD + 3500 * 4;
+	//Linux: FILE_DEVICE_SMARTCARD = 0x42000000
+	// IOCTL_X = FILE_DEVICE_SMARTCARD + X
+	//Windows: 0x310000 + X * 4
+	
+	private static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+	private static final int FILE_DEVICE_SMARTCARD_WINDOWS = 0x310000;
+	private static final int FILE_DEVICE_SMARTCARD_LINUX = 0x42000000;
+
+	public static final int MakeIoctl(int command) {
+		int base = IS_WINDOWS ? FILE_DEVICE_SMARTCARD_WINDOWS : FILE_DEVICE_SMARTCARD_LINUX;
+		base += IS_WINDOWS ? command * 4 : command;
+		return base;
+	}
+	
+	// Reader action IOCTLs
+	public static final int IOCTL_SMARTCARD_DIRECT = MakeIoctl(2050);
+	public static final int IOCTL_SMARTCARD_SELECT_SLOT = MakeIoctl(2051);
+	public static final int IOCTL_SMARTCARD_DRAW_LCDBMP = MakeIoctl(2052);
+	public static final int IOCTL_SMARTCARD_DISPLAY_LCD = MakeIoctl(2053);
+	public static final int IOCTL_SMARTCARD_CLR_LCD = MakeIoctl(2054);
+	public static final int IOCTL_SMARTCARD_READ_KEYPAD = MakeIoctl(2055);
+	public static final int IOCTL_SMARTCARD_READ_RTC = MakeIoctl(2057);
+	public static final int IOCTL_SMARTCARD_SET_RTC = MakeIoctl(2058);
+	public static final int IOCTL_SMARTCARD_SET_OPTION = MakeIoctl(2059);
+	public static final int IOCTL_SMARTCARD_SET_LED = MakeIoctl(2060);
+	public static final int IOCTL_SMARTCARD_LOAD_KEY = MakeIoctl(2062);
+	public static final int IOCTL_SMARTCARD_READ_EEPROM = MakeIoctl(2065);
+	public static final int IOCTL_SMARTCARD_WRITE_EEPROM = MakeIoctl(2066);
+	public static final int IOCTL_SMARTCARD_GET_VERSION = MakeIoctl(2067);
+	public static final int IOCTL_SMARTCARD_GET_READER_INFO = MakeIoctl(2051);
+	public static final int IOCTL_SMARTCARD_SET_CARD_TYPE = MakeIoctl(2060);
+	public static final int IOCTL_SMARTCARD_ACR128_ESCAPE_COMMAND = MakeIoctl(2079);
+	public static final int IOCTL_SMARTCARD_ACR122_ESCAPE_COMMAND = MakeIoctl(3500);
 
 	public static final byte[] CMD_GET_FIRMWARE_VERSION = new byte[] { 0x18, 0x00 };
 	public static final byte[] CMD_SET_BUZZER_DURATION = new byte[] { 0x28, 0x01 };
