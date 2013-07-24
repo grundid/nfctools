@@ -88,7 +88,7 @@ public class Scl3711 {
 
 	public byte[] transmit(int ioControl, byte[] command) throws IOException {
 		try {
-			ioControl = Acs.FILE_DEVICE_SMARTCARD + ioControl * 4;
+			ioControl = Acs.MakeIoctl(ioControl);
 			return card.transmitControlCommand(ioControl, command);
 		}
 		catch (CardException e) {
