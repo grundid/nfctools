@@ -4,3 +4,6 @@
 **/target
 **/bin
 target
+# IntelliJ Idea Project files.
+.idea/
+*.iml
