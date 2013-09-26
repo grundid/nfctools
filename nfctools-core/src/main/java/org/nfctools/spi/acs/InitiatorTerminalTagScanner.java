@@ -15,18 +15,17 @@
  */
 package org.nfctools.spi.acs;
 
-import java.io.IOException;
-
-import javax.smartcardio.Card;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CardTerminal;
-
 import org.nfctools.api.ApduTag;
 import org.nfctools.api.TagType;
 import org.nfctools.llcp.LlcpConstants;
 import org.nfctools.nfcip.NFCIPConnection;
 import org.nfctools.scio.TerminalStatus;
 import org.nfctools.spi.tama.nfcip.TamaNfcIpCommunicator;
+
+import javax.smartcardio.Card;
+import javax.smartcardio.CardException;
+import javax.smartcardio.CardTerminal;
+import java.io.IOException;
 
 public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner implements Runnable {
 
@@ -36,7 +35,8 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 
 	@Override
 	public void run() {
-		while (!Thread.interrupted()) {
+		int failureCount = 0;
+		while (!Thread.interrupted() && failureCount < 5) {
 			notifyStatus(TerminalStatus.WAITING);
 			try {
 				if (cardTerminal.waitForCardPresent(500)) {
@@ -53,10 +53,15 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 						waitForCardAbsent();
 					}
 				}
+				failureCount = 0;
 			}
 			catch (CardException e) {
+				failureCount++;
 				e.printStackTrace();
 			}
+		}
+		if(failureCount >= 5){
+			notifyStatus(TerminalStatus.DISCONNECTED);
 		}
 	}
 
