@@ -40,7 +40,6 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 			notifyStatus(TerminalStatus.WAITING);
 			try {
 				if (cardTerminal.waitForCardPresent(500)) {
-					failureCount = 0;
 					Card card = null;
 					try {
 						card = cardTerminal.connect("*");
@@ -54,6 +53,7 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 						waitForCardAbsent();
 					}
 				}
+				failureCount = 0;
 			}
 			catch (CardException e) {
 				failureCount++;
