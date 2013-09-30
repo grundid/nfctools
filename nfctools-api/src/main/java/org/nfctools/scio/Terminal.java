@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.smartcardio.CardTerminal;
 
 import org.nfctools.api.TagListener;
+import org.nfctools.api.TagScannerListener;
 import org.nfctools.io.NfcDevice;
 import org.nfctools.ndef.NdefListener;
 import org.nfctools.nfcip.NFCIPConnectionListener;
@@ -32,7 +33,7 @@ public interface Terminal extends NfcDevice {
 
 	void setNfcipConnectionListener(NFCIPConnectionListener nfcipConnectionListener);
 
-	void setMode(TerminalMode terminalMode);
+	void setMode(TerminalMode terminalMode, TagScannerListener tagScannerListener);
 
 	void startListening();
 

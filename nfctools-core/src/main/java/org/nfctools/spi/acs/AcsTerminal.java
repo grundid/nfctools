@@ -22,6 +22,7 @@ import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
 
 import org.nfctools.api.TagListener;
+import org.nfctools.api.TagScannerListener;
 import org.nfctools.llcp.LlcpConstants;
 import org.nfctools.mf.MfException;
 import org.nfctools.mf.MfReaderWriter;
@@ -41,9 +42,7 @@ import org.slf4j.LoggerFactory;
 public class AcsTerminal extends AbstractTerminal {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
-
 	private MfReaderWriter mfReaderWriter;
-
 	private Thread scanningThread;
 	private AbstractTerminalTagScanner tagScanner;
 
@@ -58,9 +57,9 @@ public class AcsTerminal extends AbstractTerminal {
 	}
 
 	@Override
-	public void setMode(TerminalMode terminalMode) {
+	public void setMode(TerminalMode terminalMode, TagScannerListener tagScannerListener) {
 		if (TerminalMode.INITIATOR.equals(terminalMode))
-			tagScanner = new InitiatorTerminalTagScanner(cardTerminal);
+			tagScanner = new InitiatorTerminalTagScanner(cardTerminal, tagScannerListener);
 		else
 			tagScanner = new TargetTerminalTagScanner(cardTerminal);
 		scanningThread = new Thread(tagScanner);
@@ -97,14 +96,12 @@ public class AcsTerminal extends AbstractTerminal {
 					try {
 						card = cardTerminal.connect("*");
 						byte[] historicalBytes = card.getATR().getHistoricalBytes();
-
 						if (historicalBytes[9] == (byte)0xff && historicalBytes[10] == (byte)0x40) {
 							openLlcpStack(card);
 						}
 						else {
 							handleMfCard(card);
 						}
-
 					}
 					catch (Exception e) {
 						e.printStackTrace();
@@ -145,7 +142,6 @@ public class AcsTerminal extends AbstractTerminal {
 
 	private void openLlcpStack(Card card) throws IOException {
 		ApduReaderWriter apduReaderWriter = new ApduReaderWriter(card, true);
-
 		TamaNfcIpCommunicator nfcIpCommunicator = new TamaNfcIpCommunicator(apduReaderWriter, apduReaderWriter);
 		nfcIpCommunicator.setNfcId(LlcpConstants.nfcId3t);
 		nfcIpCommunicator.setFelicaParams(LlcpConstants.felicaParams);
@@ -163,9 +159,7 @@ public class AcsTerminal extends AbstractTerminal {
 	@Override
 	public void cardDetected(MfCard mfCard, MfReaderWriter mfReaderWriter) throws IOException {
 		MfNdefReader ndefReader = new MfNdefReader(mfReaderWriter, NdefContext.getNdefMessageDecoder());
-
 		List<Record> records = ndefReader.readNdefMessage(mfCard);
-
 		if (ndefListener != null) {
 			ndefListener.onNdefMessages(records);
 		}
@@ -201,7 +195,6 @@ public class AcsTerminal extends AbstractTerminal {
 	}
 
 	private void connectAsTarget(ApduReaderWriter apduReaderWriter) throws IOException {
-
 		TamaNfcIpCommunicator nfcIpCommunicator = new TamaNfcIpCommunicator(apduReaderWriter, apduReaderWriter);
 		nfcIpCommunicator.setNfcId(LlcpConstants.nfcId3t);
 		nfcIpCommunicator.setFelicaParams(LlcpConstants.felicaParams);
@@ -209,7 +202,6 @@ public class AcsTerminal extends AbstractTerminal {
 		nfcIpCommunicator.setGeneralBytes(LlcpConstants.generalBytes);
 		NFCIPConnection nfcipConnection = nfcIpCommunicator.connectAsTarget();
 		log.info("Connection: " + nfcipConnection);
-
 		handleNfcipConnection(nfcipConnection);
 	}
 }

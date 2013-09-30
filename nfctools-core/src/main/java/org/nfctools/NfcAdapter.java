@@ -21,6 +21,7 @@ import java.util.List;
 import org.nfctools.api.NfcTagListener;
 import org.nfctools.api.Tag;
 import org.nfctools.api.TagListener;
+import org.nfctools.api.TagScannerListener;
 import org.nfctools.api.UnknownTagListener;
 import org.nfctools.nfcip.NFCIPConnectionListener;
 import org.nfctools.scio.Terminal;
@@ -29,20 +30,22 @@ import org.nfctools.scio.TerminalMode;
 public class NfcAdapter implements TagListener {
 
 	private Terminal terminal;
-
 	private List<NfcTagListener> nfcTagListeners = new ArrayList<NfcTagListener>();
 	private UnknownTagListener unknownTagListener = new UnknownTagListener() {
 
 		@Override
 		public void unsupportedTag(Tag tag) {
-
 		}
 	};
 
-	public NfcAdapter(Terminal terminal, TerminalMode terminalMode) {
+	public NfcAdapter(Terminal terminal, TerminalMode terminalMode, TagScannerListener tagScannerListener) {
 		this.terminal = terminal;
-		setMode(terminalMode);
+		setMode(terminalMode, tagScannerListener);
 		terminal.registerTagListener(this);
+	}
+
+	public NfcAdapter(Terminal terminal, TerminalMode terminalMode) {
+		this(terminal, terminalMode, null);
 	}
 
 	public void setNfcipConnectionListener(NFCIPConnectionListener nfcipConnectionListener) {
@@ -57,8 +60,8 @@ public class NfcAdapter implements TagListener {
 		this.unknownTagListener = unknownTagListener;
 	}
 
-	public void setMode(TerminalMode terminalMode) {
-		terminal.setMode(terminalMode);
+	public void setMode(TerminalMode terminalMode, TagScannerListener tagScannerListener) {
+		terminal.setMode(terminalMode, tagScannerListener);
 	}
 
 	public void startListening() {

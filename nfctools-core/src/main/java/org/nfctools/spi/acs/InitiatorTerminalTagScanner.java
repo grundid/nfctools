@@ -22,6 +22,7 @@ import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 
 import org.nfctools.api.ApduTag;
+import org.nfctools.api.TagScannerListener;
 import org.nfctools.api.TagType;
 import org.nfctools.llcp.LlcpConstants;
 import org.nfctools.nfcip.NFCIPConnection;
@@ -30,8 +31,15 @@ import org.nfctools.spi.tama.nfcip.TamaNfcIpCommunicator;
 
 public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner implements Runnable {
 
-	public InitiatorTerminalTagScanner(CardTerminal cardTerminal) {
+	private TagScannerListener tagScannerListener;
+
+	public InitiatorTerminalTagScanner(CardTerminal cardTerminal, TagScannerListener tagScannerListener) {
 		super(cardTerminal);
+		this.tagScannerListener = tagScannerListener;
+	}
+
+	public InitiatorTerminalTagScanner(CardTerminal cardTerminal) {
+		this(cardTerminal, null);
 	}
 
 	@Override
@@ -47,7 +55,10 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 						handleCard(card);
 					}
 					catch (Exception e) {
-						e.printStackTrace();
+						if (tagScannerListener != null)
+							tagScannerListener.onTagHandingFailed(e);
+						else
+							e.printStackTrace();
 					}
 					finally {
 						waitForCardAbsent();
@@ -55,9 +66,16 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 				}
 			}
 			catch (CardException e) {
-				e.printStackTrace();
+				if (tagScannerListener != null) {
+					tagScannerListener.onScanningFailed(e);
+					return;
+				}
+				else
+					e.printStackTrace();
 			}
 		}
+		if (tagScannerListener != null)
+			tagScannerListener.onScanningEnded();
 	}
 
 	private void handleCard(Card card) {
@@ -74,7 +92,6 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 
 	private void connectAsInitiator(ApduTag tag) {
 		ApduTagReaderWriter apduReaderWriter = new ApduTagReaderWriter(tag);
-
 		TamaNfcIpCommunicator nfcIpCommunicator = new TamaNfcIpCommunicator(apduReaderWriter, apduReaderWriter);
 		nfcIpCommunicator.setConnectionSetup(LlcpConstants.CONNECTION_SETUP);
 		try {
@@ -85,5 +102,4 @@ public class InitiatorTerminalTagScanner extends AbstractTerminalTagScanner impl
 			e.printStackTrace();
 		}
 	}
-
 }

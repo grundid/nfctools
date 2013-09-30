@@ -21,6 +21,7 @@ import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
 
 import org.nfctools.api.TagListener;
+import org.nfctools.api.TagScannerListener;
 import org.nfctools.nfcip.NFCIPConnection;
 import org.nfctools.scio.AbstractTerminal;
 import org.nfctools.scio.TerminalMode;
@@ -42,25 +43,20 @@ public class SclTerminal extends AbstractTerminal {
 	@Override
 	public void registerTagListener(TagListener tagListener) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void setMode(TerminalMode terminalMode) {
-		// TODO Auto-generated method stub
-
+	public void setMode(TerminalMode terminalMode, TagScannerListener tagScannerListener) {
 	}
 
 	@Override
 	public void startListening() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void stopListening() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
