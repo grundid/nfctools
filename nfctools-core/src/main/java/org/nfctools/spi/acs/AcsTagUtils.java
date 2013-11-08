@@ -21,10 +21,9 @@ import org.nfctools.utils.NfcUtils;
 public class AcsTagUtils {
 
 	public static TagType identifyTagType(byte[] historicalBytes) {
-		TagType tagType = TagType.UKNOWN;
+		TagType tagType = TagType.UNKNOWN;
 		if (historicalBytes.length >= 11) {
 			int tagId = (historicalBytes[9] & 0xff) << 8 | historicalBytes[10];
-
 			switch (tagId) {
 				case 0x0001:
 					return TagType.MIFARE_CLASSIC_1K;
@@ -48,5 +47,4 @@ public class AcsTagUtils {
 			System.out.println(NfcUtils.convertBinToASCII(historicalBytes));
 		return tagType;
 	}
-
 }

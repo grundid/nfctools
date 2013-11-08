@@ -19,7 +19,7 @@ public enum TagType {
 	/**
 	 * Unkown tag
 	 */
-	UKNOWN, IN_MEMORY,
+	UNKNOWN, IN_MEMORY,
 	/**
 	 * Mifare Classic with 1k memory
 	 */
@@ -28,6 +28,10 @@ public enum TagType {
 	 * Mifare Classic with 4k memory
 	 */
 	MIFARE_CLASSIC_4K, MIFARE_ULTRALIGHT, MIFARE_MINI, TOPAZ_JEWEL, FELICA_212K, FELICA_424K,
+	/**
+	 * ISO DEP
+	 */
+	ISO_DEP,
 	/**
 	 * Tag with NFCIP (P2P) capabilities
 	 */
