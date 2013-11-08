@@ -50,8 +50,21 @@ public class TamaRequestEncoder {
 			return rfCommunication((RfCommunicationReq)request);
 		else if (request instanceof TgResponseToInitiatorReq)
 			return tgResponseToInitiator((TgResponseToInitiatorReq)request);
-
+		else if (request instanceof InListPassiveTargetReq)
+			return inListPassiveTarget((InListPassiveTargetReq)request);
 		throw new TamaException("Unknown request object: " + request.getClass().getName());
+	}
+
+	private byte[] inListPassiveTarget(InListPassiveTargetReq request) {
+		byte[] buffer = new byte[4 + request.getInitiatorDataLength()];
+		buffer[0] = (byte)0xD4;
+		buffer[1] = (byte)0x4A;
+		buffer[2] = request.getMaxTargets();
+		buffer[3] = request.getBateRate();
+		if (request.hasInitiatorData()) {
+			System.arraycopy(request.getInitiatorData(), 0, buffer, 4, request.getInitiatorDataLength());
+		}
+		return buffer;
 	}
 
 	private byte[] inDataExchange(DataExchangeReq request) {
@@ -66,19 +79,15 @@ public class TamaRequestEncoder {
 	}
 
 	private byte[] inJumpForDep(JumpForDepReq request) {
-
 		if (!request.isActive() && request.getPassiveInitiatorData() == null
 				|| request.getPassiveInitiatorData().length != 5)
 			throw new IllegalArgumentException("must set passive initiator data in passive mode");
-
 		// TODO check for 4 bytes in PassiveInitiatorData if baud = 106 and 5 bytes if baud = 212/424
 		// TODO check nfcid length 10 bytes
-
 		byte[] buffer = new byte[5
 				+ (request.getPassiveInitiatorData() == null ? 0 : request.getPassiveInitiatorData().length)
 				+ (request.getNfcId3i() == null ? 0 : request.getNfcId3i().length)
 				+ (request.getGeneralBytes() == null ? 0 : request.getGeneralBytes().length)];
-
 		buffer[0] = (byte)0xD4;
 		buffer[1] = 0x56;
 		buffer[2] = (byte)(request.isActive() ? 0x01 : 0x00);
@@ -99,13 +108,11 @@ public class TamaRequestEncoder {
 			System.arraycopy(request.getGeneralBytes(), 0, buffer, bufPos, request.getGeneralBytes().length);
 			bufPos += request.getGeneralBytes().length;
 		}
-
 		return buffer;
 	}
 
 	private byte[] tgInitTamaTarget(InitTamaTargetReq request) {
 		byte[] buffer = new byte[37 + 1 + 1 + (request.getGeneralBytes() == null ? 0 : request.getGeneralBytes().length)];
-
 		buffer[0] = (byte)0xD4;
 		buffer[1] = (byte)0x8C;
 		buffer[2] = (byte)((request.isDepOnly() ? 0x02 : 0) | (request.isPassiveOnly() ? 0x01 : 0));
@@ -194,6 +201,5 @@ public class TamaRequestEncoder {
 		buffer[2] = (byte)request.getConfigItem();
 		System.arraycopy(request.getConfigData(), 0, buffer, 3, request.getConfigData().length);
 		return buffer;
-
 	}
 }
