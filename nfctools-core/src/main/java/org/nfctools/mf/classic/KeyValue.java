@@ -15,6 +15,8 @@
  */
 package org.nfctools.mf.classic;
 
+import java.util.Arrays;
+
 
 public class KeyValue {
 
@@ -34,4 +36,30 @@ public class KeyValue {
 		return keyValue;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + Arrays.hashCode(keyValue);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		KeyValue other = (KeyValue) obj;
+		if (key != other.key)
+			return false;
+		if (!Arrays.equals(keyValue, other.keyValue))
+			return false;
+		return true;
+	}
+
+	
 }

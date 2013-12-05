@@ -16,6 +16,7 @@
 
 package org.nfctools.mf.tlv;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -23,6 +24,18 @@ import java.util.NoSuchElementException;
 
 public class TypeLengthValueReader implements Iterator<Tlv> {
 
+	public final static void readFully(InputStream in, byte b[], int off, int len) throws IOException {
+		if (len < 0)
+			throw new IndexOutOfBoundsException();
+		int n = 0;
+		while (n < len) {
+			int count = in.read(b, off + n, len - n);
+			if (count < 0)
+				throw new EOFException();
+			n += count;
+		}
+	}
+	
 	private InputStream in = null;
 	private Tlv nextValue = null;
 
@@ -65,20 +78,34 @@ public class TypeLengthValueReader implements Iterator<Tlv> {
 	}
 
 	private Tlv readNextValue(int type) throws IOException {
+		
 		int size = in.read();
-		if (size == 0xFF) {
-			size = (in.read() << 8) | in.read();
+		
+		if (size == -1) {
+			throw new EOFException();
 		}
-		byte[] valueToReturn = new byte[size];
-		in.read(valueToReturn, 0, size);
+
+		if (size == 0xFF) {
+			int ch1 = in.read();
+			int ch2 = in.read();
+			if ((ch1 == -1 || ch2 == -1)) {
+				throw new EOFException();
+			}
+			
+			size = ((ch1 << 8) + (ch2 << 0));
+		}
+		
+		byte[] bytes = new byte[size];
+		
+		readFully(in, bytes, 0, bytes.length);
 
 		switch (type) {
 			case TlvConstants.NDEF_TLV:
-				return new NdefMessageTlv(valueToReturn);
+				return new NdefMessageTlv(bytes);
 			case TlvConstants.LOCK_CONTROL_TLV:
-				return new LockControlTlv(valueToReturn);
+				return new LockControlTlv(bytes);
 			case TlvConstants.MEMORY_CONTROL_TLV:
-				return new MemoryControlTlv(valueToReturn);
+				return new MemoryControlTlv(bytes);
 			case TlvConstants.PROPRIETARY_TLV:
 				return null; // skip it
 		}

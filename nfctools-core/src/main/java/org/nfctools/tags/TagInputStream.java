@@ -71,6 +71,6 @@ public class TagInputStream extends InputStream {
 		}
 
 		byte returnByte = currentBlock[currentByte++];
-		return returnByte;
+		return returnByte & 0xFF;
 	}
 }
