@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.nfctools.mf.tlv;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -41,14 +41,11 @@ public class TypeLengthValueReader implements Iterator<Tlv> {
 			try {
 				while (in.available() > 0) {
 					int type = in.read();
-
 					while (type == TlvConstants.NULL_TLV && type != -1) {
 						type = in.read();
 					}
-
 					if (type == TlvConstants.TERMINATOR_TLV)
 						throw new NoSuchElementException();
-
 					if (TlvConstants.KNOWN_TLVS.contains(type)) {
 						return readNextValue(type);
 					}
@@ -64,14 +61,26 @@ public class TypeLengthValueReader implements Iterator<Tlv> {
 		}
 	}
 
-	private Tlv readNextValue(int type) throws IOException {
+	private int readSize() throws IOException {
 		int size = in.read();
-		if (size == 0xFF) {
-			size = (in.read() << 8) | in.read();
+		if (size == -1) {
+			throw new EOFException();
 		}
+		if (size == 0xFF) {
+			int ch1 = in.read();
+			int ch2 = in.read();
+			if ((ch1 == -1 || ch2 == -1)) {
+				throw new EOFException();
+			}
+			size = (ch1 << 8) | ch2;
+		}
+		return size;
+	}
+
+	private Tlv readNextValue(int type) throws IOException {
+		int size = readSize();
 		byte[] valueToReturn = new byte[size];
 		in.read(valueToReturn, 0, size);
-
 		switch (type) {
 			case TlvConstants.NDEF_TLV:
 				return new NdefMessageTlv(valueToReturn);
@@ -82,7 +91,6 @@ public class TypeLengthValueReader implements Iterator<Tlv> {
 			case TlvConstants.PROPRIETARY_TLV:
 				return null; // skip it
 		}
-
 		throw new RuntimeException("unkown TLV type " + type + "");
 	}
 
@@ -105,5 +113,4 @@ public class TypeLengthValueReader implements Iterator<Tlv> {
 			}
 		}
 	}
-
 }
