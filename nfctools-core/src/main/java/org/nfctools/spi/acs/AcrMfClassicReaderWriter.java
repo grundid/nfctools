@@ -44,6 +44,7 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 	private TagInfo tagInfo;
 	private ApduTag apduTag;
 	private MemoryLayout memoryLayout;
+	private LoginKeyHandler loginKeyHandler = new LoginKeyHandler();
 
 	public AcrMfClassicReaderWriter(ApduTag apduTag, MemoryLayout memoryLayout) {
 		this.apduTag = apduTag;
@@ -53,7 +54,7 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 	@Override
 	public MfBlock[] readBlock(MfClassicAccess access) throws IOException {
 		byte blockNumber;
-		loginIntoSector(access, (byte)0);
+		loginIntoSector(access);
 		MfBlock[] returnBlocks = new Block[access.getBlocksToRead()];
 		for (int currentBlock = 0; currentBlock < access.getBlocksToRead(); currentBlock++) {
 			blockNumber = (byte)memoryLayout.getBlockNumber(access.getSector(), access.getBlock() + currentBlock);
@@ -73,7 +74,7 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 
 	@Override
 	public void writeBlock(MfClassicAccess access, MfBlock... mfBlock) throws IOException {
-		loginIntoSector(access, (byte)0);
+		loginIntoSector(access);
 		for (int currentBlock = 0; currentBlock < mfBlock.length; currentBlock++) {
 			int blockNumber = memoryLayout.getBlockNumber(access.getSector(), access.getBlock()) + currentBlock;
 			if (memoryLayout.isTrailerBlock(access.getSector(), access.getBlock() + currentBlock)) {
@@ -96,7 +97,26 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 		return memoryLayout;
 	}
 
-	protected void loginIntoSector(MfClassicAccess access, byte memoryKeyId) throws IOException {
+	protected void loginIntoSector(MfClassicAccess access) throws IOException {
+		if (loginKeyHandler.isAlreadyLoggedIn(access)) {
+			return;
+		}
+		int index = loginKeyHandler.getPreviouslyLoadedKeyIndex(access);
+		if (index == -1) {
+			index = loadAccessKey(access);
+		}
+		loginIntoSector(access, index);
+	}
+
+	/**
+	 * The “Load Authentication Keys command” will load the authentication keys into the reader. The authentication keys
+	 * are used to authenticate the particular sector of the Mifare 1K/4K Memory Card.
+	 * 
+	 * @param access
+	 * @throws IOException
+	 */
+	private int loadAccessKey(MfClassicAccess access) throws IOException {
+		int memoryKeyId = loginKeyHandler.getNextKeyPosition();
 		Command loadKey = new Command(Apdu.INS_EXTERNAL_AUTHENTICATE, Acs.P1_LOAD_KEY_INTO_VOLATILE_MEM, memoryKeyId,
 				access.getKeyValue().getKeyValue());
 		Response loadKeyResponse = apduTag.transmit(loadKey);
@@ -105,14 +125,23 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 					+ access.getBlock() + " Key: " + access.getKeyValue().getKey().name() + ", Response: "
 					+ loadKeyResponse);
 		}
+		loginKeyHandler.rememberKey(access);
+		return memoryKeyId;
+	}
+
+	private void loginIntoSector(MfClassicAccess access, int memoryKeyId) throws IOException {
 		byte blockNumber = (byte)memoryLayout.getBlockNumber(access.getSector(), access.getBlock());
 		byte keyTypeToUse = access.getKeyValue().getKey() == Key.A ? Acs.KEY_A : Acs.KEY_B;
 		Command auth = new Command(Apdu.INS_INTERNAL_AUTHENTICATE_ACS, 0, 0, new byte[] { 0x01, 0x00, blockNumber,
-				keyTypeToUse, memoryKeyId });
+				keyTypeToUse, (byte)memoryKeyId });
 		Response authResponse = apduTag.transmit(auth);
 		if (!authResponse.isSuccess()) {
+			loginKeyHandler.resetCurrentKeys();
 			throw new MfLoginException("Login failed. Sector: " + access.getSector() + ", Block: " + access.getBlock()
 					+ " Key: " + access.getKeyValue().getKey().name() + ", Response: " + authResponse);
+		}
+		else {
+			loginKeyHandler.setSuccessfulLogin(access);
 		}
 	}
 
