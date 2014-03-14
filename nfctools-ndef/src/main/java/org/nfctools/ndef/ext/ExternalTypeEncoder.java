@@ -16,6 +16,7 @@
 package org.nfctools.ndef.ext;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.nfctools.ndef.NdefConstants;
@@ -40,12 +41,11 @@ public class ExternalTypeEncoder implements RecordEncoder {
 		
 		ExternalTypeRecordConfig config = externalRecordTypes.get(record.getClass());
 		
-		String namespace;
+		String domainType;
 		byte[] payload;
 		if(config != null) {
-			namespace = config.getNamespace();
-			payload = config.getContentEncoder().encodeContent(externalType).getBytes(NdefConstants.DEFAULT_CHARSET);
-			
+			domainType = config.getNamespace();
+			payload = config.getContentEncoder().encodeContent(externalType);
 		} else if(externalType instanceof UnsupportedExternalTypeRecord){
 			UnsupportedExternalTypeRecord externalTypeUnsupportedRecord = (UnsupportedExternalTypeRecord)externalType;
 			
@@ -56,13 +56,32 @@ public class ExternalTypeEncoder implements RecordEncoder {
 				throw new NdefEncoderException("Expected namespace", record);
 			}
 
-			namespace = externalTypeUnsupportedRecord.getNamespace();
+			domainType = externalTypeUnsupportedRecord.getNamespace();
 			payload = externalTypeUnsupportedRecord.getContent().getBytes(NdefConstants.DEFAULT_CHARSET);
+		} else if(externalType instanceof GenericExternalTypeRecord){
+			GenericExternalTypeRecord genericExternalTypeRecord = (GenericExternalTypeRecord)externalType;
+			
+			if(!genericExternalTypeRecord.hasData()) {
+				throw new NdefEncoderException("Expected data (empty byte array is acceptable)", record);
+			}
+			if(!genericExternalTypeRecord.hasDomain()) {
+				throw new NdefEncoderException("Expected domain", record);
+			}
+
+			if(!genericExternalTypeRecord.hasType()) {
+				throw new NdefEncoderException("Expected type", record);
+			}
+			
+			String domain = genericExternalTypeRecord.getDomain().toLowerCase(Locale.US);
+			String type = genericExternalTypeRecord.getType().toLowerCase(Locale.US);
+			
+			domainType = domain + ":" + type;
+			payload = genericExternalTypeRecord.getData();
 		} else {
 			throw new NdefEncoderException("Unable to encode external type " + externalType.getClass().getName(), record);
 		}
 		
-		byte[] type = namespace.getBytes(NdefConstants.DEFAULT_CHARSET);
+		byte[] type = domainType.getBytes(NdefConstants.DEFAULT_CHARSET);
 		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, type, record.getId(), payload);
 	}
 	

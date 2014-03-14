@@ -24,6 +24,6 @@ package org.nfctools.ndef.ext;
 
 public interface ExternalTypeContentEncoder {
 
-	String encodeContent(ExternalTypeRecord externalType);
+	byte[] encodeContent(ExternalTypeRecord externalType);
 	
 }

@@ -15,7 +15,14 @@
  */
 package org.nfctools.ndef.ext;
 
+/**
+ * 
+ * 
+ * @deprecated Use {@linkplain GenericExternalTypeRecord} instead.
+ *
+ */
 
+@Deprecated
 public class UnsupportedExternalTypeRecord extends ExternalTypeRecord {
 
 	private String content;

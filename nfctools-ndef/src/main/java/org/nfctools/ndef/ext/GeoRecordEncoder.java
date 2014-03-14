@@ -16,6 +16,7 @@
 
 package org.nfctools.ndef.ext;
 
+import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
 
 /**
@@ -56,7 +57,7 @@ public class GeoRecordEncoder implements ExternalTypeContentEncoder {
     }
     
 	@Override
-	public String encodeContent(ExternalTypeRecord externalType) {
+	public byte[] encodeContent(ExternalTypeRecord externalType) {
 		
 		GeoRecord geoRecord = (GeoRecord)externalType;
 
@@ -100,7 +101,7 @@ public class GeoRecordEncoder implements ExternalTypeContentEncoder {
 			result.append(encode(geoRecord.getAddressInformation()));
 		}
 		
-		return result.toString();
+		return result.toString().getBytes(NdefConstants.DEFAULT_CHARSET);
 	}
 
 }

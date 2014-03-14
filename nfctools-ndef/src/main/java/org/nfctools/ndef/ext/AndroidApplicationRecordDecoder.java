@@ -16,6 +16,8 @@
 
 package org.nfctools.ndef.ext;
 
+import org.nfctools.ndef.NdefConstants;
+
 /**
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
@@ -24,9 +26,11 @@ package org.nfctools.ndef.ext;
 public class AndroidApplicationRecordDecoder implements ExternalTypeContentDecoder {
 
 	@Override
-	public ExternalTypeRecord decodeContent(String content) {
+	public ExternalTypeRecord decodeContent(byte[] content) {
 		
-		return new AndroidApplicationRecord(content);
+		String packageName = new String(content, NdefConstants.DEFAULT_CHARSET);
+
+		return new AndroidApplicationRecord(packageName);
 		
 	}
 
