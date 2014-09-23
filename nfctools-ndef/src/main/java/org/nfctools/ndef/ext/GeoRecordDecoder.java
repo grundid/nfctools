@@ -19,6 +19,7 @@ package org.nfctools.ndef.ext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefDecoderException;
 
 /**
@@ -34,9 +35,11 @@ public class GeoRecordDecoder implements ExternalTypeContentDecoder {
 	private static final Pattern GEO_URL_PATTERN = Pattern.compile("([\\-0-9.]+),([\\-0-9.]+)(?:,([\\-0-9.]+))?(?:\\?(.*))?", Pattern.CASE_INSENSITIVE);
 
 	@Override
-	public ExternalTypeRecord decodeContent(String content) {
+	public ExternalTypeRecord decodeContent(byte[] content) {
 
-		Matcher matcher = GEO_URL_PATTERN.matcher(content);
+		String geoString = new String(content, NdefConstants.DEFAULT_CHARSET);
+		
+		Matcher matcher = GEO_URL_PATTERN.matcher(geoString);
 		if (!matcher.matches()) {
 			return null;
 		}

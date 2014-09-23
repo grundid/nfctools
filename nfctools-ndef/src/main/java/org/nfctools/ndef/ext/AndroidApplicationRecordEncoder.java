@@ -16,6 +16,7 @@
 
 package org.nfctools.ndef.ext;
 
+import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
 
 /**
@@ -26,7 +27,7 @@ import org.nfctools.ndef.NdefEncoderException;
 public class AndroidApplicationRecordEncoder implements ExternalTypeContentEncoder {
 
 	@Override
-	public String encodeContent(ExternalTypeRecord externalType) {
+	public byte[] encodeContent(ExternalTypeRecord externalType) {
 		
 		AndroidApplicationRecord androidApplicationRecord = (AndroidApplicationRecord)externalType;
 		
@@ -34,7 +35,7 @@ public class AndroidApplicationRecordEncoder implements ExternalTypeContentEncod
 			throw new NdefEncoderException("Expected package name ", androidApplicationRecord);
 		}
 
-		return androidApplicationRecord.getPackageName();
+		return androidApplicationRecord.getPackageName().getBytes(NdefConstants.DEFAULT_CHARSET);
 	}
 
 }
