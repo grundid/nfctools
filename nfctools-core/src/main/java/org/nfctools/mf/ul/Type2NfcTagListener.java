@@ -78,14 +78,24 @@ public class Type2NfcTagListener implements NfcTagListener {
 			}
 			else if (UltralightHandler.isFormatted(initBlocks)) {
 				formatted = true;
-				if (capabilityBlock.getSize() == 0x06)
-					memoryLayout = MemoryLayout.ULTRALIGHT;
-				else if (capabilityBlock.getSize() == 0x12) {
-					memoryLayout = MemoryLayout.ULTRALIGHT_C;
-				}
-				else {
-					throw new NfcException("Unknown memory size " + capabilityBlock.getSize());
-				}
+                                switch (capabilityBlock.getSize()) {
+                                    case 0x06:
+                                        memoryLayout = MemoryLayout.ULTRALIGHT;
+                                        break;
+                                    case 0x12:
+                                        // could be ultralight C or NTAG213; almost identical in their memory layout
+                                        memoryLayout = MemoryLayout.ULTRALIGHT_C;
+                                        break;
+                                    case 0x3E:
+                                        memoryLayout = MemoryLayout.NTAG_215;
+                                        break;
+                                    case 0x6D:
+                                    case 0x6F:
+                                        memoryLayout = MemoryLayout.NTAG_216;
+                                        break;
+                                    default:
+                                        throw new NfcException("Unknown memory size " + capabilityBlock.getSize());
+                                }
 				writable = !capabilityBlock.isReadOnly() && !isLocked(readerWriter, memoryLayout);
 			}
 			else {

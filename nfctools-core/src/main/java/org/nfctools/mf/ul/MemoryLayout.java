@@ -19,10 +19,28 @@ import org.nfctools.mf.tlv.LockControlTlv;
 
 public class MemoryLayout {
 
-	public static final MemoryLayout ULTRALIGHT = new MemoryLayout(
-			new LockPage[] { new LockPage(2, new byte[] { 2, 3 }) }, 0, 15, 4, 15);
-	public static final MemoryLayout ULTRALIGHT_C = new MemoryLayout(new LockPage[] {
-			new LockPage(2, new byte[] { 2, 3 }), new LockPage(40, new byte[] { 0, 1 }) }, 0, 47, 4, 39);
+        public static final MemoryLayout ULTRALIGHT = new MemoryLayout(
+                new LockPage[]{new LockPage(2, new byte[]{2, 3})}, 0, 15, 4, 15);
+        /**
+         * @see https://www.nxp.com/docs/en/data-sheet/MF0ICU2.pdf
+         */
+        public static final MemoryLayout ULTRALIGHT_C = new MemoryLayout(new LockPage[]{
+            new LockPage(2, new byte[]{2, 3}), new LockPage(40, new byte[]{0, 1})}, 0, 47, 4, 39);
+        /**
+         * @see https://www.nxp.com/docs/en/data-sheet/NTAG213_215_216.pdf
+         */
+        public static final MemoryLayout NTAG_213 = new MemoryLayout(new LockPage[]{
+            new LockPage(0x02, new byte[]{2, 3}), new LockPage(0x28, new byte[]{0, 1})}, 0x00, 0x2C, 0x04, 0x27);
+        /**
+         * @see https://www.nxp.com/docs/en/data-sheet/NTAG213_215_216.pdf
+         */
+        public static final MemoryLayout NTAG_215 = new MemoryLayout(new LockPage[]{
+            new LockPage(0x02, new byte[]{2, 3}), new LockPage(0x82, new byte[]{0})}, 0x00, 0x86, 0x04, 0x81);
+        /**
+         * @see https://www.nxp.com/docs/en/data-sheet/NTAG213_215_216.pdf
+         */
+        public static final MemoryLayout NTAG_216 = new MemoryLayout(new LockPage[]{
+            new LockPage(0x02, new byte[]{2, 3}), new LockPage(0xE2, new byte[]{0, 1})}, 0x00, 0xE6, 0x04, 0xE1);
 
 	private LockPage[] lockPages;
 	private int firstPage;
