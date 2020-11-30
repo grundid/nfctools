@@ -167,8 +167,6 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 	 * Returns the application directory in read-only mode. If a write attempt is made on the application directory an
 	 * IllegalStateException is thrown. If the card does not have an application directory a MfException is thrown.
 	 * 
-	 * @param card
-	 * @param readerWriter
 	 * @throws IOException
 	 */
 	@Override
@@ -180,8 +178,6 @@ public class AcrMfClassicReaderWriter implements MfClassicReaderWriter {
 	 * Returns the application directory in read-write mode. If the card does not have an application directory a
 	 * MfException is thrown.
 	 * 
-	 * @param card
-	 * @param readerWriter
 	 * @throws IOException
 	 */
 	@Override
