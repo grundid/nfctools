@@ -1,5 +1,6 @@
 /**
  * Copyright 2011-2012 Adrian Stabiszewski, as@nfctools.org
+ * Copyright 2020 https://github.com/tontg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,10 +40,16 @@ public class Response {
 		return data;
 	}
 
-	@Override
-	public String toString() {
-		return "SW1: " + sw1 + " SW2: " + sw2;
-	}
+        /**
+         * SW1 & SW2 in hexadecimal format
+         *
+         * @see
+         * https://www.eftlab.com/knowledge-base/complete-list-of-apdu-responses/
+         */
+        @Override
+        public String toString() {
+            return "SW1: 0x" + Integer.toHexString(sw1) + " SW2: 0x" + Integer.toHexString(sw2);
+        }
 
 	public boolean isSuccess() {
 		return sw1 == 0x90 && sw2 == 0x00;
